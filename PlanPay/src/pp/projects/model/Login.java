@@ -4,7 +4,7 @@ package pp.projects.model;
  * interfaccia per identificare l'utente
  */
 
-public interface AuthenticationService {
+public interface Login {
 	
 	void loadCredential();			
 	

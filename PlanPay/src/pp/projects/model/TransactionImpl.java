@@ -1,19 +1,34 @@
 package pp.projects.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class TransactionImpl implements Transaction{
+public class TransactionImpl {
+	// Definizione dei campi
+	private String tipo; // deposito o prelievo
+	private String sorgente;
 	
-	private List<ServicesImpl> transactionsList;
-	
-	public TransactionImpl() {
-		this.transactionsList = new ArrayList<>();
+	// Costruttore per inizializzare la transazione
+	public TransactionImpl(String t, String s) {
+		this.tipo = t;
+		this.sorgente = s;
 	}
 	
-	@Override
-	public void addToTransaction(ServicesImpl s) {
-		transactionsList.add(s);
-	}
+	// Getter e Setter per i campi
+	/**
+	 * 
+	 * @return tipo (mi dice se vado ad incrementare o diminuire il conto)
+	 */
+    public String getTipo() {
+        return tipo;
+    }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+	/**
+	 * 
+	 * @return sorgente (mi dice da dove la transazione è stata effettuata)
+	 */
+    public String getSorgente() {
+        return sorgente;
+    }
 }

@@ -4,22 +4,15 @@ import java.util.List;
 
 import pp.projects.model.EventImpl;
 import pp.projects.model.ObjectiveImpl;
+import pp.projects.model.ServicesImpl;
 import pp.projects.model.TransactionImpl;
 
 public interface ConsoleController {
-	/**
-	 * @return la lista delle transazioni effettuate dall'utente in ordine di data
-	 */
-	List<TransactionImpl> getTransaction();	
 	
-	/**
-	 * @return la lista degli eventi inseriti dall'utente
-	 */
-	List<EventImpl> getEvent();		/// MI SERVE?????
+	List<TransactionImpl> getAllTransactions();
 	
-	/**
-	 * @return la lista degli obbiettivi inseriti dall'utente
-	 */
+	List<EventImpl> getEvent();	
+	
 	List<ObjectiveImpl> getObjective();
 	
 	/**
@@ -54,5 +47,4 @@ public interface ConsoleController {
 	 * @param o = obbiettivo da eliminare
 	 */
 	void removeEvent(EventImpl e);
-
 }
