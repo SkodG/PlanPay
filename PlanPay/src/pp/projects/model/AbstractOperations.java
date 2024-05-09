@@ -1,5 +1,18 @@
 package pp.projects.model;
 
-public abstract class AbstractOperations {
+import java.util.List;
 
+public abstract class AbstractOperations {
+	
+	protected List<Transaction> transactionList;
+	
+	protected Account accountRef;
+	
+	public abstract void deposit(double amount);
+	
+	public abstract void withdraw(double amount);
+	
+	public abstract List<Transaction> getList();
+	
+	
 }
