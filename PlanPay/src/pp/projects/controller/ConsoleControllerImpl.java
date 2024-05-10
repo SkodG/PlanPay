@@ -78,5 +78,9 @@ public class ConsoleControllerImpl implements ConsoleController{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public String setNameController() {
+		return this.controllerLogin.getUserName();
+	}
 
 }

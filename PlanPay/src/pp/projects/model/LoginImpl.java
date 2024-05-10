@@ -4,30 +4,30 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoginImpl implements Login{
 	
 	/* Campi della classe */
-	private static final String FILE_NAME = "credenziali.txt";
 	private BufferedReader reader;
 	private BufferedWriter writer;
-    private Map<String, String> credentials;
+    private Map<String, UserCredentials> credentials;
     private String accountName;
     
-	private String tempDir;		// percorso di cartella temporanea;
-	private String filePath;
+	private InputStream inputStream; 
+    
 
 	
 	public LoginImpl() {
 		this.credentials = new HashMap<>();
 		this.accountName = "";
-		this.tempDir = System.getProperty("java.io.tmpdir");
-		this.filePath = tempDir + FILE_NAME;
+		this.inputStream = this.getClass().getResourceAsStream("/resource/credentials.txt");
+		this.writer = null;
 		// Alla creazione di un nuovo elemento autenticazione ricarico sempre i dati.
 		// In tal modo se sono stati modificati ricarico sempre quelli corretti.
 		loadCredential();
@@ -39,20 +39,27 @@ public class LoginImpl implements Login{
 	@Override
 	public void loadCredential() {
 		try {
-			this.reader = new BufferedReader(new FileReader(filePath));
+			this.reader = new BufferedReader(new InputStreamReader(inputStream));
 			
-			String input = this.reader.readLine();
-			if (input != null) {
+			String input;
+			while ((input = reader.readLine()) != null) {
 				String[] arrayCredentials = input.split(" ");
-				// arrayCredentials[0] è il nome account
-				accountName = arrayCredentials[0];
-				credentials.put(arrayCredentials[1], arrayCredentials[2]);
+				credentials.put(arrayCredentials[1], new UserCredentials(arrayCredentials[2], arrayCredentials[0]));
 			}
 		} catch (FileNotFoundException e) {
             // Se il file non esiste, lo creeremo in seguito
-            System.out.println("Creazione del file '" + FILE_NAME + "'.");
+			System.out.print("File non trovato: " + e);
         } catch (IOException e) {
             System.out.print("Problemi all'apertura del file: " + e);
+        } finally {
+        	// chiudo il reader se è stato aperto con successo
+        	if (reader != null) {
+        		try {
+        			reader.close();
+        		}catch (IOException e) {
+        			System.out.println("Errore durante la chiusura del reader: " + e.getMessage());
+        		}
+        	}
         }
 	}
 	
@@ -63,19 +70,30 @@ public class LoginImpl implements Login{
 	public boolean valideAuthenticate(String utente, String password) {
 		// Controlla che la chiave sia contenuta in "credentials".
 		// In caso positivo prende la password da utente e la confronta con la password fornita come argomento.
-		return credentials.containsKey(utente) && credentials.get(utente).equals(password);
+		System.out.println(utente);
+		System.out.println(credentials);
+		System.out.println(credentials.containsKey(utente));
+		if (credentials.containsKey(utente)) {
+			UserCredentials cred = credentials.get(utente);
+            // Verifica se la password è corretta
+            if (cred != null && cred.getPassword().equals(password)) {
+                this.accountName = cred.getUserName();
+                return true;
+            }
+		}
+		return false;
 	}
 	
 	/**
 	 * ritorna un booleano per sapere se l'utente è stato registrato. Il metodo viene usato anche per la registrazione dello stesso.
 	 */
 	@Override
-	public boolean registration(String utente, String password) {
-		if(credentials.containsKey(utente) || !createFile()) {
+	public boolean registration(String utente, String password, String nomeUser) {
+		if(credentials.containsKey(utente)) {
 			return false;
 		}
-		credentials.put(utente, password);
-		saveCredential();
+		credentials.put(utente, new UserCredentials(password, nomeUser));
+		saveCredential(utente, password, nomeUser);
 		return true;
 	}
 	
@@ -83,38 +101,32 @@ public class LoginImpl implements Login{
 	 * metodo per salvare le credenziali su un file. Richiamato ad ogni nuova registrazione.
 	 */
 	@Override
-	public void saveCredential() {
+	public void saveCredential(String utente, String password, String nomeUer) {
+		// Percorso relativo al file nel progetto
+        String relativePath = "src/resource/credentials.txt";
+        File file = new File(relativePath);
+
+        // Mi assicuro che la directory esista
+        file.getParentFile().mkdirs();
 		try {
-			this.writer = new BufferedWriter(new FileWriter(filePath));
+			this.writer = new BufferedWriter(new FileWriter(file, true));
 			
-			//itero su ogni coppia chiave-valore (o "entry") nella mappa credentials. 
-			for (Map.Entry<String, String> entry : credentials.entrySet()) {
-				writer.write(entry.getKey() + " " + entry.getValue());
-				writer.newLine();
-				System.out.println("SCritta riga in " + filePath);
-			}
+			writer.write(nomeUer + " " + utente + " " + password);
+			writer.newLine();
 		} catch (IOException e) {
             System.out.print("Problemi al salvataggio del file: " + e);
+        } finally {
+        	// Chiusura del writer, se è stato aperto con successo
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    System.out.println("Errore durante la chiusura del writer: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         }		
 	}	
-	
-	public boolean createFile() {	
-		// creo un nuovo file
-		File file = new File(filePath);
-		
-		try {
-			// creazione del file
-			if (file.createNewFile()) {
-				System.out.println("Il file è stato creato con successo nella cartella: " + filePath);
-            }
-		}catch(IOException e) {
-            System.out.println("Si è verificato un errore durante la creazione del file.");
-            e.printStackTrace();
-            return false;
-		}
-		return true;
-		
-	}
 	
 	public String getAccountName() {
 		return this.accountName;

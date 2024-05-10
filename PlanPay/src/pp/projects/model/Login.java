@@ -10,7 +10,7 @@ public interface Login {
 	
 	boolean valideAuthenticate(String u, String p);		
 	
-	boolean registration(String u, String p);		
+	boolean registration(String u, String p, String n);		
 	
-	void saveCredential();			
+	void saveCredential(String u, String p, String n);			
 }
