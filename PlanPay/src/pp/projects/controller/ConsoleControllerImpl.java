@@ -3,6 +3,8 @@ package pp.projects.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import pp.projects.model.Account;
+import pp.projects.model.AccountImpl;
 import pp.projects.model.EventImpl;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.ServicesImpl;
@@ -15,11 +17,13 @@ public class ConsoleControllerImpl implements ConsoleController{
 	private List<ObjectiveImpl> listObjectives;
 	private List<EventImpl> listEvents;
 	private List<TransactionImpl> listTransactions;
+	private Account account;
 	
 	// costruttore
 	public ConsoleControllerImpl(LoginControllerImpl cl) {
 		this.controllerLogin = cl;
-		this.services = new ServicesImpl();
+		this.account = new AccountImpl(controllerLogin.getUserName());
+		this.services = new ServicesImpl(this.account);
 		this.listEvents = new ArrayList<EventImpl>();
 		this.listObjectives = new ArrayList<ObjectiveImpl>();
 		this.listTransactions = new ArrayList<TransactionImpl>();

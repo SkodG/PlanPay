@@ -6,8 +6,8 @@ public class TransactionImpl {
 	private String sorgente;
 	
 	// Costruttore per inizializzare la transazione
-	public TransactionImpl(String t, String s) {
-		this.tipo = t;
+	public TransactionImpl(String s) {
+		this.tipo = "";
 		this.sorgente = s;
 	}
 	
