@@ -12,7 +12,7 @@ public abstract class AbstractOperations {
 	
 	public abstract void withdraw(double amount);
 	
-	public abstract List<Transaction> getList();
-	
-	
+	public List<Transaction> getList(){
+		return transactionList;
+	}
 }

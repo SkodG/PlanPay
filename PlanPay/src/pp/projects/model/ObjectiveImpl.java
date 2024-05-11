@@ -8,11 +8,9 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private String name;
 	private String description;
 	private String date; //type?
-	private List<TransactionImpl> transactionList;
 	
 	public ObjectiveImpl(Account c, String n, String desc, String date) {
-		//super.transactionList = new ArrayList<>();
-		this.transactionList = new ArrayList<>();
+		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
 		this.description = desc;
@@ -31,10 +29,9 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		//operazione sul conto(-)
 		this.accountRef.subBalance(amount);
 		//istanzio nuova transazione
-		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
+		Transaction transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
 		//aggiungo la transazione alla lista
-		//super.transactionList.add(transaction);
-		this.transactionList.add(transaction);
+		transactionList.add(transaction);
 	}
 
 	@Override
@@ -44,13 +41,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		//istanzio nuova transazione
 		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
 		//aggiungo la transazione alla lista
-		//super.transactionList.add(transaction);
-		this.transactionList.add(transaction);
-	}
-
-	@Override
-	public List<Transaction> getList() {		
-		return super.transactionList;
+		transactionList.add(transaction);
 	}
 	
 	@Override
@@ -83,7 +74,4 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	public String getDate() {
 		return this.date;
 	}
-
-	
-
 }

@@ -1,6 +1,6 @@
 package pp.projects.model;
 
-public class TransactionImpl {
+public class TransactionImpl implements Transaction{
 	// Definizione dei campi
 	private String tipo; // deposito o prelievo
 	private String sorgente;

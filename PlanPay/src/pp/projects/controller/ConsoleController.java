@@ -2,16 +2,19 @@ package pp.projects.controller;
 
 import java.util.List;
 
+import pp.projects.model.Event;
 import pp.projects.model.EventImpl;
+import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.ServicesImpl;
+import pp.projects.model.Transaction;
 import pp.projects.model.TransactionImpl;
 
 public interface ConsoleController {
 	
-	List<TransactionImpl> getAllTransactions();
+	List<Transaction> getAllTransactions();
 	
-	List<EventImpl> getEvent();	
+	List<Event> getEvent();	
 	
 	List<ObjectiveImpl> getObjective();
 	
