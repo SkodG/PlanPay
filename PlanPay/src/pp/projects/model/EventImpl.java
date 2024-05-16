@@ -1,13 +1,15 @@
 package pp.projects.model;
 
+import java.util.Date;
+
 public class EventImpl implements Data, Event{
 	
 	private String eventName;
 	private String eventDescr;
-	private String eventData;
+	private Date eventData;
 	private State eventState;
 	
-	public EventImpl(String name, String desc, String data, State s) {
+	public EventImpl(String name, String desc, Date data, State s) {
 		this.eventName = name;
 		this.eventDescr = desc;
 		this.eventData = data;
@@ -36,7 +38,7 @@ public class EventImpl implements Data, Event{
 	}
 
 	@Override
-	public String getDate() {
+	public Date getDate() {
 		return this.eventData;
 	}
 	
@@ -48,6 +50,14 @@ public class EventImpl implements Data, Event{
 	@Override
 	public void setState(State s) {
 		this.eventState = s;
+	}
+	
+	/**
+	 * 
+	 * @return orario modificato
+	 */
+	public Date setDateTime() {
+		return this.eventData;
 	}
 
 }

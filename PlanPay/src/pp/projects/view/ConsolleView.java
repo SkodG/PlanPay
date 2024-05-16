@@ -6,6 +6,8 @@ import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import javax.swing.JLabel;
+import javax.swing.JList;
+
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.List;
@@ -25,7 +27,6 @@ public class ConsolleView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private ConsoleControllerImpl controller;
 	private JButton btnCalendar;
 	private JButton btnServices;
 	private JButton btnTransactions;
@@ -37,6 +38,9 @@ public class ConsolleView extends JFrame {
 	private JButton btnObjectives;
 	private int count;
 	
+	private ConsoleControllerImpl controller;
+	private CalendarView calendarView;
+	
 	/**
 	 * Create the frame.
 	 * @throws IOException 
@@ -45,6 +49,7 @@ public class ConsolleView extends JFrame {
 		setTitle("CONSOLLE");
 		this.controller = c;
 		this.count = 0;
+		this.calendarView = new CalendarView(c);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 736, 490);
@@ -75,10 +80,15 @@ public class ConsolleView extends JFrame {
 		lblmporto.setBounds(228, 76, 122, 42);
 		contentPane.add(lblmporto);
 		
-		List listTransactions = new List();
+		JList listTransactions = new JList();
 		listTransactions.setBounds(31, 433, 661, 249);
 		listTransactions.setVisible(false);
+		
+		// TO DO: controllare che vengano visualizzate. Impostare metodo di visualizzazione:
+		// *data, testo, importo
 		contentPane.add(listTransactions);
+		
+		//listTransactions.setToolTipText(controller.getAllTransactions().toString());
 		
 		lbTransactions = new JLabel("Transazioni");
 		lbTransactions.setFont(new Font("Calibri", Font.PLAIN, 36));
@@ -86,6 +96,11 @@ public class ConsolleView extends JFrame {
 		contentPane.add(lbTransactions);
 		
 		btnCalendar = new JButton();
+		btnCalendar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				calendarView.setVisible(true);
+			}
+		});
 		try {
 			btnCalendar.setIcon(new ImageIcon(this.getClass().getResource("/images/calendar.png")));
 		} catch (Exception ex) {

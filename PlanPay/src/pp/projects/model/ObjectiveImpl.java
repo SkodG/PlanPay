@@ -1,15 +1,16 @@
 package pp.projects.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ObjectiveImpl extends AbstractOperations implements Objective, Data {
 	
 	private String name;
 	private String description;
-	private String date; //type?
+	private Date date; //type?
 	
-	public ObjectiveImpl(Account c, String n, String desc, String date) {
+	public ObjectiveImpl(Account c, String n, String desc, Date date) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
@@ -71,7 +72,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	}
 
 	@Override
-	public String getDate() {
+	public Date getDate() {
 		return this.date;
 	}
 }

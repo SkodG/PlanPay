@@ -1,5 +1,7 @@
 package pp.projects.model;
 
+import java.util.Date;
+
 public interface Data {
 	/**
 	 * @return del nome
@@ -28,5 +30,5 @@ public interface Data {
 	/**
 	 * @return della data 
 	 */
-	String getDate();
+	Date getDate();
 }

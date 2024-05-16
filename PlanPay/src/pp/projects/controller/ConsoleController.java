@@ -1,20 +1,16 @@
 package pp.projects.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import pp.projects.model.Event;
 import pp.projects.model.EventImpl;
-import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
-import pp.projects.model.ServicesImpl;
 import pp.projects.model.Transaction;
-import pp.projects.model.TransactionImpl;
 
 public interface ConsoleController {
 	
 	List<Transaction> getAllTransactions();
-	
-	List<Event> getEvent();	
 	
 	List<ObjectiveImpl> getObjective();
 	
@@ -26,7 +22,7 @@ public interface ConsoleController {
 	 * @param date = data.... 
 	 * @param imp = importo dell'obbiettivo
 	 */
-	void newObject(String n, String d, String date, Double imp);
+	void newObject(ObjectiveImpl o);
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
@@ -42,12 +38,12 @@ public interface ConsoleController {
 	 * @param d = descrizione obbiettivo
 	 * @param date = data.... 
 	 */
-	void newEvent(String n, String d, String date);
+	void newEvent(LocalDate date);
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
 	 * 
 	 * @param o = obbiettivo da eliminare
 	 */
-	void removeEvent(EventImpl e);
+	void removeEvent(Event e);
 }

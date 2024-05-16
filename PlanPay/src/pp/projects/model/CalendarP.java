@@ -1,6 +1,6 @@
 package pp.projects.model;
 
-public interface Calendar {
+public interface CalendarP {
 
 	void newEvent(EventImpl e);
 	

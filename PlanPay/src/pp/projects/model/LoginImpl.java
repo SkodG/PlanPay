@@ -70,9 +70,6 @@ public class LoginImpl implements Login{
 	public boolean valideAuthenticate(String utente, String password) {
 		// Controlla che la chiave sia contenuta in "credentials".
 		// In caso positivo prende la password da utente e la confronta con la password fornita come argomento.
-		System.out.println(utente);
-		System.out.println(credentials);
-		System.out.println(credentials.containsKey(utente));
 		if (credentials.containsKey(utente)) {
 			UserCredentials cred = credentials.get(utente);
             // Verifica se la password è corretta
