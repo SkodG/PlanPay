@@ -32,7 +32,9 @@ public class AccountImpl implements Account{
 
 	@Override
 	public void subBalance(double amount) {
-		this.balance -= amount;		
+		/*come comunico l'eccezione? es. NegativeBalanceExcpetion?*/
+		if(this.balance - amount >= 0.0)
+			this.balance -= amount;		
 	}
 
 
