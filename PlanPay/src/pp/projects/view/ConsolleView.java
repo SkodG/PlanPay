@@ -40,6 +40,7 @@ public class ConsolleView extends JFrame {
 	
 	private ConsoleControllerImpl controller;
 	private CalendarView calendarView;
+	private ServicesView servicesView;
 	
 	/**
 	 * Create the frame.
@@ -50,6 +51,7 @@ public class ConsolleView extends JFrame {
 		this.controller = c;
 		this.count = 0;
 		this.calendarView = new CalendarView(c);
+		this.servicesView = new ServicesView("SERVIZIO: ");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 736, 490);
@@ -66,6 +68,11 @@ public class ConsolleView extends JFrame {
 		contentPane.add(lbUsername);
 		
 		btnServices = new JButton("SERVIZI");
+		btnServices.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				servicesView.setVisible(true);
+			}
+		});
 		btnServices.setFont(new Font("Calibri", Font.PLAIN, 36));
 		btnServices.setBounds(31, 165, 307, 176);
 		contentPane.add(btnServices);

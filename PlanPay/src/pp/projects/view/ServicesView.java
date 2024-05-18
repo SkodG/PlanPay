@@ -36,7 +36,7 @@ public class ServicesView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView() {
+	public ServicesView(String tipo) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 200);
 		contentPane = new JPanel();

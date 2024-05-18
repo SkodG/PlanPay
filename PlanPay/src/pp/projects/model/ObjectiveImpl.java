@@ -1,5 +1,6 @@
 package pp.projects.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,9 +9,10 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	
 	private String name;
 	private String description;
-	private Date date; //type?
+	private LocalDate date; //type?
+	// toDO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
-	public ObjectiveImpl(Account c, String n, String desc, Date date) {
+	public ObjectiveImpl(Account c, String n, String desc, LocalDate date) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
@@ -72,7 +74,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	}
 
 	@Override
-	public Date getDate() {
+	public LocalDate getDate() {
 		return this.date;
 	}
 }

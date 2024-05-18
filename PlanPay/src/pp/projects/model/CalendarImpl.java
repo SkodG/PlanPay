@@ -1,5 +1,6 @@
 package pp.projects.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,14 +15,14 @@ import javax.swing.table.AbstractTableModel;
 public class CalendarImpl implements CalendarP{
 
 	// Lista di eventi che accadono in quella specifica data
-	private Map<Date, List<EventImpl>> eventsMap;
+	private Map<LocalDate, List<EventImpl>> eventsMap;
 	private List<EventImpl> listToDate;
 	private int day;
 		
 	public CalendarImpl(int day) {
 		// ordino le date in ordine cronologico.
 		// quindi quando inserisco un elemento nella mappa, le date saranno subito ordinate dal meno recente al più recente.
-		this.eventsMap = new TreeMap<>(Date::compareTo);
+		this.eventsMap = new TreeMap<>(LocalDate::compareTo);
 		this.listToDate = new ArrayList<>();
 		this.day = day;
 	}
@@ -33,7 +34,7 @@ public class CalendarImpl implements CalendarP{
 	 */
 	public void newEvent(EventImpl e) {
 		// Normalizzo la data per togliere orario, minuti, sec...
-		Date dateNoOrario = normalizeDate(e.getDate());
+		LocalDate dateNoOrario = e.getDate();
 		// recupero la lista degli eventi associati alla data
 		List<EventImpl> events = eventsMap.get(dateNoOrario);
 		if(events == null) {
@@ -44,31 +45,14 @@ public class CalendarImpl implements CalendarP{
 		eventsMap.put(dateNoOrario, events);
 	}
 	
-	/** 
-	 * @return la data senza ora, minuti, secondi, millisecondi.
-	 */
-	public Date normalizeDate(Date date) {
-		// oggetto per manipolazione dati. Calendario con dati locali
-		Calendar cal = Calendar.getInstance();
-		// impostazione della data
-		cal.setTime(date);
-		// azzero l'orario
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-			
-		return cal.getTime();	// data normalizzata
-	}
-	
 	/**
 	 * 
 	 * @param d = data utilizzata come chiave di ricerca.
 	 * @return la lista degli eventi in base alla data passata.
 	 */
-	public List<EventImpl> getEventsForDate(Calendar d) {
-		Date date = d.getTime();
-		Date dateNoOrario = normalizeDate(date);
+	public List<EventImpl> getEventsForDate(LocalDate d) {
+		LocalDate date = d;
+		LocalDate dateNoOrario = date;
 		// recupero la lista degli eventi associati alla data
 		return eventsMap.get(dateNoOrario);
 	}
@@ -81,7 +65,7 @@ public class CalendarImpl implements CalendarP{
 	@Override
 	public void removeEvent(EventImpl e) {
 		// Normalizzo la data
-		Date dateNoOrario = normalizeDate(e.getDate());
+		LocalDate dateNoOrario = e.getDate();
 		// recupero la lista degli eventi associati alla data
 		List<EventImpl> events = eventsMap.get(dateNoOrario);
 		

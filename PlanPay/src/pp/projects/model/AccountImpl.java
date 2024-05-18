@@ -30,13 +30,11 @@ public class AccountImpl implements Account{
 		this.balance += amount;		
 	}
 
-	@Override
+	// to do diventaboolean
+	@Override 
 	public void subBalance(double amount) {
 		/*come comunico l'eccezione? es. NegativeBalanceExcpetion?*/
 		if(this.balance - amount >= 0.0)
 			this.balance -= amount;		
 	}
-
-
-	
 }

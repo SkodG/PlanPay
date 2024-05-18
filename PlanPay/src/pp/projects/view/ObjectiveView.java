@@ -17,6 +17,7 @@ public class ObjectiveView extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
+	// creo una nuova variabile bNew che prenderà il cvalore del costruttore
 
 	/**
 	 * Launch the application.
@@ -37,7 +38,12 @@ public class ObjectiveView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ObjectiveView() {
+	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
+	// al click del bottone instanzierai una nuova istanza di ObjectiveView, passandogli True, definendo quindi la creazione di una nuova istanza.
+	
+	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
+	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
+	public ObjectiveView(boolean bNew) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -65,11 +71,19 @@ public class ObjectiveView extends JFrame {
 		btnNewButton.setBounds(238, 16, 101, 23);
 		btnNewButton.setFont(new Font("Calibri", Font.PLAIN, 12));
 		contentPane.add(btnNewButton);
+		// TO DO: al click creo il servizio
+		// avrai quindi new ServiceView("OBBIETTIVO: {nomeobbiettivo}"), il cui nome obbiettivo lo prendi dalla text box del nome obbiettivo
+		// rendo visibile servicesView
 		
 		JButton btnNewButton_1 = new JButton("Preleva");
 		btnNewButton_1.setBounds(238, 50, 101, 23);
 		btnNewButton_1.setFont(new Font("Calibri", Font.PLAIN, 12));
 		contentPane.add(btnNewButton_1);
+		// TO DO: al click creo il servizio e rendo visibile servicesView
+		// avrai quindi new ServiceView("OBBIETTIVO: {nomeobbiettivo}"), il cui nome obbiettivo lo prendi dalla text box del nome obbiettivo
+		// rendo visibile servicesView
+		
+		// TO DO: creare un bottone salva. Al click chiama il metodo controller.salvaObbiettivo(dove gli passi la variabile bNew, istanziata nel costruttore)
 		
 		JButton btnNewButton_2 = new JButton("Proiezione risparmio");
 		btnNewButton_2.setBounds(238, 128, 162, 23);

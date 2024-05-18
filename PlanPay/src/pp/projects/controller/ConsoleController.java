@@ -12,24 +12,14 @@ public interface ConsoleController {
 	
 	List<Transaction> getAllTransactions();
 	
-	List<ObjectiveImpl> getObjective();
-	
-	/**
-	 * Aggiunge un obbiettivo alla lista degli obbiettivi
-	 * 
-	 * @param n = nome obbiettivo
-	 * @param d = descrizione obbiettivo
-	 * @param date = data.... 
-	 * @param imp = importo dell'obbiettivo
-	 */
-	void newObject(ObjectiveImpl o);
+	List<ObjectiveImpl> getObjectiveList();
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
 	 * 
 	 * @param o = obbiettivo da eliminare
 	 */
-	void removeObject(ObjectiveImpl o);
+	void removeObjective(ObjectiveImpl o);
 	
 	/**
 	 * Aggiunge un obbiettivo alla lista degli obbiettivi

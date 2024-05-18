@@ -20,6 +20,7 @@ import pp.projects.model.Transaction;
 import pp.projects.model.TransactionImpl;
 import pp.projects.view.CalendarView;
 import pp.projects.view.EventView;
+import pp.projects.view.ObjectiveView;
 
 public class ConsoleControllerImpl implements ConsoleController{
 
@@ -31,6 +32,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	private CalendarView calendarView;
 	private Account account;
 	private EventView eventView;
+	private ObjectiveView objectiveView;
 	
 	private List<String> datiTransazione;
 	
@@ -77,19 +79,12 @@ public class ConsoleControllerImpl implements ConsoleController{
 	 * @return la lista degli obbiettivi inseriti dall'utente
 	 */
 	@Override
-	public List<ObjectiveImpl> getObjective() {
+	public List<ObjectiveImpl> getObjectiveList() {
 		return listObjectives;
 	}
-
+	
 	@Override
-	public void newObject(ObjectiveImpl o) {
-		//ObjectiveImpl newObjective = new Objective(n, d, date, imp);
-		
-		
-	}
-
-	@Override
-	public void removeObject(ObjectiveImpl o) {
+	public void removeObjective(ObjectiveImpl o) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -112,4 +107,19 @@ public class ConsoleControllerImpl implements ConsoleController{
 	public void drawCalendar() {
 		this.calendarView = new CalendarView(this);
 	}
+	
+	public void saveObjective(boolean bNew, String nameObjective, String descObjective, LocalDate dateObjective) {
+		// controllo che l'obbiettivo non sia già presente nella lista. Come lo controllo?
+		// nome deve essere diverso. (OBBIETTIVO BIUNIVOCO)
+		// se non sto modificando l'obbiettivo lo aggiungo alla lista
+		if(!bNew) {
+			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, dateObjective));
+		} else {
+			// TODO: prendo l'obbiettivo nella lista e setto i campi modificati
+			
+		}
+		
+	}
+	
+	// TODO inserire un metodo per controllare che se serviceview.bGetNegative() è false > do messaggio di errore.
 }

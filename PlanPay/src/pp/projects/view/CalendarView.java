@@ -56,7 +56,6 @@ public class CalendarView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// carica nuovo mese + carica nuovi eventi
 				actualMonth -= 1;
-				//calendar = new CalendarModel(today.getYear(), actualMonth);
 				calendar.setYearMonth(today.getYear(), actualMonth);		
 				updateMonthLable();
 			}
