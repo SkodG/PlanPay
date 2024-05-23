@@ -112,8 +112,9 @@ public class ConsoleControllerImpl implements ConsoleController{
 		// controllo che l'obbiettivo non sia già presente nella lista. Come lo controllo?
 		// nome deve essere diverso. (OBBIETTIVO BIUNIVOCO)
 		// se non sto modificando l'obbiettivo lo aggiungo alla lista
-		if(!bNew) {
+		if(bNew) {
 			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, dateObjective));//TODO: togliere dateObjective una volta che è stato modificato il costruttore di ObjectiveImpl
+			System.out.println(listObjectives);
 		} else {
 			// TODO: prendo l'obbiettivo nella lista e setto i campi modificati
 			

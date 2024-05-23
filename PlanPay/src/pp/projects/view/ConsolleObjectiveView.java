@@ -9,45 +9,36 @@ import javax.swing.border.EmptyBorder;
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.ObjectiveImpl;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.Font;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import javax.swing.border.LineBorder;
 
 public class ConsolleObjectiveView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private String[] objectives = {"Obbiettivo_1", "Obbiettivo_2", "Obbiettivo_3", "Obbiettivo_4"};//ho bisogno che questi oggetti siano creati in base a quanti obbettivi sono istanziati
-	//quindi devo poter prendere la lista dal controller o da consoleview!
-	//una volta ottenuta la lista, istanzio un DescObjView per ognuno(stream o loop?)
-	//per far ciò non è necessaria laclasse  DescObjectiveView!!!
-	//dopodichè  li metto nella lista di questo JFrame
+	JPanel panelObjective;
 	
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ConsolleObjectiveView frame = new ConsolleObjectiveView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+	private List<DescObjectiveView> listObjective = new ArrayList<DescObjectiveView>();
+	private DescObjectiveView descObjectiveView;
+	List<ObjectiveImpl> list;
 
 	/**
 	 * Create the frame.
@@ -57,10 +48,8 @@ public class ConsolleObjectiveView extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
 				//TODO inserire elementi in una lista scrollabile
 		//ottengo la lista di elementi dal controller e istanzio un oggetto DescObjectiveView per ogni Objective nella lista
 		//e li salvo in un array (devo fare cast)->controllare slide
@@ -70,32 +59,58 @@ public class ConsolleObjectiveView extends JFrame {
 		//uso di toString() sugli Objective invece di usare DescObjectiveView???
 		//TEST objectives = new DescObjectiveView[100];
 		
-		JList list = new JList(objectives);
-		list.setFont(new Font("Calibri", Font.PLAIN, 12));
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		//JList list = new JList(listObjective.toArray());
+		//list.setFont(new Font("Calibri", Font.PLAIN, 12));
+		//list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		
-		JScrollPane scrollPane = new JScrollPane(list);
-		scrollPane.setBounds(10, 11, 414, 160);
-		contentPane.add(scrollPane);
-		list.setVisible(true);
-		ListCellRenderer renderer = new DescObjectiveView();
-		list.setCellRenderer(renderer);
+		//JScrollPane scrollPane = new JScrollPane(list);
+		//scrollPane.setBounds(10, 11, 414, 160);
+		//contentPane.add(scrollPane);
+		//list.setVisible(true);
+		//ListCellRenderer renderer = new DescObjectiveView();
+		//list.setCellRenderer(renderer);
 		
-		list.getCellRenderer();
+		//list.getCellRenderer();
 		
-		JButton btnNewObjective = new JButton("Nuovo Obbiettivo");
-		btnNewObjective.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ObjectiveView newObjective = new ObjectiveView(true, consoleController);
-				newObjective.setVisible(true);
-			}
-		});
+	    JButton btnNewObjective = new JButton("Nuovo Obbiettivo");
+			btnNewObjective.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ObjectiveView newObjective = new ObjectiveView(true, consoleController, ConsolleObjectiveView.this);
+					newObjective.setVisible(true);
+					list = consoleController.getObjectiveList();
+					System.out.println(list);
+				}
+			});
 		btnNewObjective.setBounds(155, 218, 135, 32);
 		btnNewObjective.setFont(new Font("Calibri", Font.PLAIN, 12));
 		contentPane.add(btnNewObjective);
 		
-
-
-		
+		panelObjective = new JPanel();
+		panelObjective.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panelObjective.setBounds(10, 10, 416, 198);
+		panelObjective.setLayout(new BoxLayout(panelObjective, BoxLayout.Y_AXIS));
+		contentPane.add(panelObjective);
+				
 	}
+	
+    // Metodo per aggiornare l'interfaccia utente
+	public void updateUI() {
+
+		Optional<ObjectiveImpl> objective = list.stream().reduce((first, second) -> second);
+		if (objective.isPresent()) {
+			System.out.println(objective);
+			descObjectiveView = new DescObjectiveView(objective.get().getName()); // TODO aggiungere getImporto
+			//listObjective.add(descObjectiveView);
+	
+	        // Creare un nuovo componente da aggiungere
+	        // Aggiungi il nuovo componente al pannello principale
+	    	panelObjective.add(descObjectiveView);
+	    	descObjectiveView.setVisible(true);
+	    	System.out.println(panelObjective.countComponents());
+	
+	        // Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
+	    	panelObjective.revalidate();
+	    	panelObjective.repaint();
+		}
+    }
 }

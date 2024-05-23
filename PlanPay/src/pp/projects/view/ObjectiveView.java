@@ -48,7 +48,7 @@ public class ObjectiveView extends JFrame {
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
 	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
-	public ObjectiveView(boolean bNew, ConsoleControllerImpl controller) {
+	public ObjectiveView(boolean bNew, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -147,6 +147,8 @@ public class ObjectiveView extends JFrame {
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.saveObjective(bNew, lblName.getText(), lblDescr.getText(), null);
+				setVisible(false);
+				contObj.updateUI();
 			}
 		});
 		btnNewButton_3.setFont(new Font("Calibri", Font.PLAIN, 12));
