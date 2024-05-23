@@ -10,5 +10,5 @@ public interface Account {
 	
 	public void addBalance(double amount);
 	
-	public void subBalance(double amount);
+	public boolean subBalance(double amount);
 }

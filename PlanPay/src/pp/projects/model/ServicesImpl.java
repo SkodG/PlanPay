@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class ServicesImpl extends AbstractOperations implements Services {
 	
-	private List<TransactionImpl> transactionList;
+	private List<Transaction> transactionList;
 	
 	// bNegative = false;
 	
@@ -27,21 +27,21 @@ public class ServicesImpl extends AbstractOperations implements Services {
 	}
 
 	@Override
-	public void withdraw(double amount) {
+	public boolean withdraw(double amount) {
 		//operazione sul conto(-)
-		
-		//TODO bNegative = (questo sotto che è boolean)
-		this.accountRef.subBalance(amount);
-		//istanzio nuova transazione
-		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Services");
-		//aggiungo la transazione alla lista
-		//super.transactionList.add(transaction);
-		this.transactionList.add(transaction);
+		boolean bOccured = this.accountRef.subBalance(amount);
+		if(bOccured) {
+			//istanzio nuova transazione
+			TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Services");
+			//aggiungo la transazione alla lista
+			this.transactionList.add(transaction);
+		}
+		return bOccured;
 	}
 
 	@Override
 	public List<Transaction> getList() {
-		return super.transactionList;
+		return this.transactionList;
 	}
 	
 

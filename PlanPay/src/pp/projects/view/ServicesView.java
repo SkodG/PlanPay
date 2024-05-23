@@ -5,17 +5,24 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import pp.projects.controller.ConsoleControllerImpl;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ServicesView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField depAmount;
+	private JTextField wthAmount;
 
 	/**
 	 * Launch the application.
@@ -36,7 +43,7 @@ public class ServicesView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView(String tipo) {
+	public ServicesView(String tipo, ConsoleControllerImpl controller) {//TODO modifica come nello screen
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 200);
 		contentPane = new JPanel();
@@ -45,42 +52,65 @@ public class ServicesView extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(214, 59, 86, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		depAmount = new JTextField();
+		depAmount.setBounds(214, 59, 86, 20);
+		depAmount.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(depAmount);
+		depAmount.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(214, 93, 86, 20);
-		contentPane.add(textField_1);
+		wthAmount = new JTextField();
+		wthAmount.setBounds(214, 93, 86, 20);
+		wthAmount.setFont(new Font("Calibri", Font.PLAIN, 12));
+		wthAmount.setColumns(10);
+		contentPane.add(wthAmount);
 		
-		JButton btnNewButton = new JButton("Deposita nel conto");
-		btnNewButton.setBounds(62, 58, 149, 23);
-		contentPane.add(btnNewButton);
+		JButton btnDeposit = new JButton("Deposita nel conto");
+		btnDeposit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO effettuare l'operazione di deposito
+				
+				
+			}
+		});
+		btnDeposit.setBounds(62, 58, 149, 23);
+		btnDeposit.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(btnDeposit);
 		
-		JButton btnNewButton_1 = new JButton("Preleva dal conto");
-		btnNewButton_1.setBounds(62, 92, 149, 23);
-		contentPane.add(btnNewButton_1);
+		JButton btnWithdraw = new JButton("Preleva dal conto");
+		btnWithdraw.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO effettuare l'operazione di prelievo
+				
+			}
+		});
+		btnWithdraw.setBounds(62, 92, 149, 23);
+		btnWithdraw.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(btnWithdraw);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(184, 16, 86, 18);
-		contentPane.add(textArea);
+		JLabel lblBalance = new JLabel("Saldo attuale");
+		lblBalance.setBounds(123, 21, 81, 14);
+		lblBalance.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(lblBalance);
 		
-		JLabel lblNewLabel = new JLabel("Saldo attuale");
-		lblNewLabel.setBounds(93, 21, 81, 14);
-		contentPane.add(lblNewLabel);
+		JLabel lblCurrency_1 = new JLabel("EUR");
+		lblCurrency_1.setBounds(276, 21, 37, 14);
+		lblCurrency_1.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(lblCurrency_1);
 		
-		JLabel lblNewLabel_1 = new JLabel("EUR");
-		lblNewLabel_1.setBounds(276, 21, 37, 14);
-		contentPane.add(lblNewLabel_1);
+		JLabel lblCurrency_2 = new JLabel("EUR");
+		lblCurrency_2.setBounds(302, 62, 37, 14);
+		lblCurrency_2.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(lblCurrency_2);
 		
-		JLabel lblNewLabel_1_1 = new JLabel("EUR");
-		lblNewLabel_1_1.setBounds(302, 62, 37, 14);
-		contentPane.add(lblNewLabel_1_1);
+		JLabel lblCurrency_3 = new JLabel("EUR");
+		lblCurrency_3.setBounds(302, 96, 37, 14);
+		lblCurrency_3.setFont(new Font("Calibri", Font.PLAIN, 12));
+		contentPane.add(lblCurrency_3);
 		
-		JLabel lblNewLabel_1_2 = new JLabel("EUR");
-		lblNewLabel_1_2.setBounds(302, 96, 37, 14);
-		contentPane.add(lblNewLabel_1_2);
+		JLabel lblDisplayBalance = new JLabel("...");
+		lblDisplayBalance.setBounds(214, 21, 46, 14);
+		lblDisplayBalance.setFont(new Font("Calibri", Font.PLAIN, 12));
+		lblDisplayBalance.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblDisplayBalance);
 	}
 }

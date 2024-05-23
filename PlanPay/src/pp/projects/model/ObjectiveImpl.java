@@ -9,22 +9,26 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	
 	private String name;
 	private String description;
+	private double savedBalance;
 	private LocalDate date; //type?
-	// toDO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
+	//TODO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
 	public ObjectiveImpl(Account c, String n, String desc, LocalDate date) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
 		this.description = desc;
-		this.date = date;
+		this.savedBalance = 0.0;
+		this.date = date; // conviene modificare date per generarla 
+		//al momento  dell'istanziazione senza prenderla dagli argomenti del costruttore
 	}
 	
 	public Double projection(double inflationRate, double interestRate, double monthlySaving, int years) {
-		//TODO metodo per il calcolo del risparmio per questo obbiettivo
-		//data inflazione, flusso giornaliero  di risparmio, interesse annuo
-		//e periodo temporale
-		return 0.0;
+		//metodo per il calcolo del risparmio per questo obbiettivo
+		//data inflazione annua, flusso giornaliero  di risparmio, interesse annuo
+		//e durata del periodo di risparmio
+		
+		return monthlySaving*12*years*savedBalance*Math.pow((1+interestRate-inflationRate), years);
 	}
 	
 	@Override
@@ -35,16 +39,26 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		Transaction transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
 		//aggiungo la transazione alla lista
 		transactionList.add(transaction);
+		//se la transazione è avvenuta posso modificare il bilancio(+)
+		savedBalance += amount;
 	}
 
 	@Override
-	public void withdraw(double amount) {
-		//operazione sul conto(-)
-		this.accountRef.addBalance(amount);
-		//istanzio nuova transazione
-		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
-		//aggiungo la transazione alla lista
-		transactionList.add(transaction);
+	public boolean withdraw(double amount) {
+		boolean bOccured = false;
+		//controllo che sia presente la somma sufficiente
+		if(savedBalance >= amount) {
+			bOccured = true;
+			//operazione sul conto(-)
+			this.accountRef.addBalance(amount);
+			//istanzio nuova transazione
+			TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
+			//aggiungo la transazione alla lista
+			transactionList.add(transaction);
+			//se la transazione è avvenuta posso modificare il bilancio(-)
+			savedBalance -= amount;
+		}
+		return bOccured;
 	}
 	
 	@Override

@@ -113,7 +113,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		// nome deve essere diverso. (OBBIETTIVO BIUNIVOCO)
 		// se non sto modificando l'obbiettivo lo aggiungo alla lista
 		if(!bNew) {
-			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, dateObjective));
+			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, dateObjective));//TODO: togliere dateObjective una volta che è stato modificato il costruttore di ObjectiveImpl
 		} else {
 			// TODO: prendo l'obbiettivo nella lista e setto i campi modificati
 			

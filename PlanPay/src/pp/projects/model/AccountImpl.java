@@ -30,11 +30,15 @@ public class AccountImpl implements Account{
 		this.balance += amount;		
 	}
 
-	// to do diventaboolean
+	// restituisce true se è stata prelevata la somma
+	// tenendo conto che non si può prelevare più del saldo corrente
 	@Override 
-	public void subBalance(double amount) {
-		/*come comunico l'eccezione? es. NegativeBalanceExcpetion?*/
-		if(this.balance - amount >= 0.0)
-			this.balance -= amount;		
+	public boolean subBalance(double amount) {
+		boolean legalOp = false;
+		if(this.balance - amount >= 0.0) {
+			this.balance -= amount;
+			legalOp = true;
+		}
+		return legalOp;
 	}
 }

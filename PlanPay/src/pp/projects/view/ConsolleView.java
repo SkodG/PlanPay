@@ -41,6 +41,7 @@ public class ConsolleView extends JFrame {
 	private ConsoleControllerImpl controller;
 	private CalendarView calendarView;
 	private ServicesView servicesView;
+	private ConsolleObjectiveView consolleObjectiveView;
 	
 	/**
 	 * Create the frame.
@@ -51,7 +52,8 @@ public class ConsolleView extends JFrame {
 		this.controller = c;
 		this.count = 0;
 		this.calendarView = new CalendarView(c);
-		this.servicesView = new ServicesView("SERVIZIO: ");
+		this.servicesView = new ServicesView("SERVIZIO: ", c);//modificato costruttore
+		this.consolleObjectiveView = new ConsolleObjectiveView(c);												
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 736, 490);
@@ -141,6 +143,12 @@ public class ConsolleView extends JFrame {
 		btnObjectives.setFont(new Font("Calibri", Font.PLAIN, 36));
 		btnObjectives.setBounds(385, 165, 307, 176);
 		contentPane.add(btnObjectives);
+		
+		btnObjectives.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consolleObjectiveView.setVisible(true);
+			}
+		});
 		
 		// WindowListener per gestire l'evento "windowOpened"
         addWindowListener(new WindowAdapter() {
