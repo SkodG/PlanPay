@@ -48,8 +48,9 @@ public class ConsolleObjectiveView extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
+
 				//TODO inserire elementi in una lista scrollabile
 		//ottengo la lista di elementi dal controller e istanzio un oggetto DescObjectiveView per ogni Objective nella lista
 		//e li salvo in un array (devo fare cast)->controllare slide
@@ -87,9 +88,11 @@ public class ConsolleObjectiveView extends JFrame {
 		
 		panelObjective = new JPanel();
 		panelObjective.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelObjective.setBounds(10, 10, 416, 198);
 		panelObjective.setLayout(new BoxLayout(panelObjective, BoxLayout.Y_AXIS));
-		contentPane.add(panelObjective);
+		
+		// 	TODO metterlo in verticale e sistemare la dimensione di panelObjective.
+        JScrollPane scrollPane = new JScrollPane(panelObjective);
+        contentPane.add(scrollPane, BorderLayout.CENTER);
 				
 	}
 	
@@ -98,7 +101,7 @@ public class ConsolleObjectiveView extends JFrame {
 
 		Optional<ObjectiveImpl> objective = list.stream().reduce((first, second) -> second);
 		if (objective.isPresent()) {
-			System.out.println(objective);
+			System.out.println(objective.get());
 			descObjectiveView = new DescObjectiveView(objective.get().getName()); // TODO aggiungere getImporto
 			//listObjective.add(descObjectiveView);
 	
@@ -106,7 +109,7 @@ public class ConsolleObjectiveView extends JFrame {
 	        // Aggiungi il nuovo componente al pannello principale
 	    	panelObjective.add(descObjectiveView);
 	    	descObjectiveView.setVisible(true);
-	    	System.out.println(panelObjective.countComponents());
+	    	System.out.println(panelObjective.getComponentCount());
 	
 	        // Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
 	    	panelObjective.revalidate();
