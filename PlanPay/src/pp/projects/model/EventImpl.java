@@ -9,12 +9,16 @@ public class EventImpl implements Data, Event{
 	private String eventDescr;
 	private LocalDate eventData;
 	private State eventState;
+	private String daOra;
+	private String aOra;
 	
-	public EventImpl(String name, String desc, LocalDate data, State s) {
+	public EventImpl(String name, String desc, LocalDate data, String daOra, String aOra) {
 		this.eventName = name;
 		this.eventDescr = desc;
 		this.eventData = data;
-		this.eventState = s;
+		this.daOra = daOra;
+		this.aOra = aOra;
+		//this.eventState = s;
 	}
 	
 	@Override
@@ -53,12 +57,33 @@ public class EventImpl implements Data, Event{
 		this.eventState = s;
 	}
 	
+	@Override
+	public String getInfoEventToString() {
+		return this.getDaOra() + " - " + this.getAOra() + " : '" + this.getName() + "'";
+	}
+	
 	/**
 	 * 
 	 * @return orario modificato
 	 */
 	public LocalDate setDateTime() {
 		return this.eventData;
+	}
+	
+	public String getDaOra() {
+		return this.daOra;
+	}
+	
+	public void setDaOra(String da) {
+		this.daOra = da;
+	}
+	
+	public String getAOra() {
+		return this.aOra;
+	}
+	
+	public void setAOra(String a) {
+		this.daOra = a;
 	}
 
 }

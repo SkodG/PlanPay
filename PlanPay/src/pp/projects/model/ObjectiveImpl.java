@@ -11,12 +11,14 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private String description;
 	private double savedBalance;
 	private LocalDate date; //type?
+	private int id;
 	//TODO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
-	public ObjectiveImpl(Account c, String n, String desc, LocalDate date) {
+	public ObjectiveImpl(Account c, int id, String n, String desc) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
+		this.id = id;
 		this.description = desc;
 		this.savedBalance = 0.0;
 		this.date = date; // conviene modificare date per generarla 
@@ -36,7 +38,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		//operazione sul conto(-)
 		this.accountRef.subBalance(amount);
 		//istanzio nuova transazione
-		Transaction transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
+		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
 		//aggiungo la transazione alla lista
 		transactionList.add(transaction);
 		//se la transazione è avvenuta posso modificare il bilancio(+)
@@ -90,5 +92,9 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	@Override
 	public LocalDate getDate() {
 		return this.date;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 }

@@ -12,4 +12,6 @@ public interface Event {
 	 * @param s = stato
 	 */
 	void setState(State s);
+	
+	String getInfoEventToString();
 }

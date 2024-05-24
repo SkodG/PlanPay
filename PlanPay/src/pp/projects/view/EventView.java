@@ -1,20 +1,30 @@
 package pp.projects.view;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
+
+import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.model.EventImpl;
+import pp.projects.model.State;
+
 import javax.swing.JLabel;
+
 import java.awt.Font;
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import javax.swing.JTextField;
-import javax.swing.JComboBox;
 import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * Creazione di una JDialog per la capacità di essere modale. Usata per interazioni secondarie.
@@ -24,15 +34,26 @@ public class EventView extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField edTitolo;
-	private JTextField edDaGiorno;
-	private JTextField edAGiorno;
+	private JDateChooser dateChooserDa;
+	private JDateChooser dateChooserA;
 	private JTextField edAOra;
 	private JTextField edDaOra;
+	private JTextArea txtDescrizione;
+	
+	private String name;
+	private String desc;
+	private State s;
+	private String daOra;
+	private String aOra;
+	//private String formattedDateDa;
+	//private String formattedDateA;
+	private LocalDate localDateDa;
+	private LocalDate localDateA;
 
 	/**
 	 * Create the dialog.
 	 */
-	public EventView(LocalDate date) {
+	public EventView(boolean bNew, LocalDate date, ConsoleControllerImpl c, CalendarView calendar) {		
 		setTitle("EVENTO");
 		setBounds(100, 100, 450, 506);
 		getContentPane().setLayout(new BorderLayout());
@@ -54,23 +75,13 @@ public class EventView extends JDialog {
 		edTitolo.setBounds(104, 138, 322, 27);
 		contentPanel.add(edTitolo);
 		edTitolo.setColumns(10);
+		this.name = edTitolo.getText();
 		
-		JTextArea txtDescrizione = new JTextArea();
+		txtDescrizione = new JTextArea();
 		txtDescrizione.setBounds(10, 202, 416, 211);
 		contentPanel.add(txtDescrizione);
-		
-		JButton btnSalva = new JButton("Salva");
-		btnSalva.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnSalva.setActionCommand("OK");
-		btnSalva.setBounds(224, 423, 95, 36);
-		contentPanel.add(btnSalva);
-		
-		JButton btnCancella = new JButton("Cancella");
-		btnCancella.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnCancella.setActionCommand("Cancel");
-		btnCancella.setBounds(331, 423, 95, 36);
-		contentPanel.add(btnCancella);
-		
+		this.desc = txtDescrizione.getText();
+			
 		JLabel lbDaGiorno = new JLabel("Da giorno:");
 		lbDaGiorno.setFont(new Font("Calibri", Font.PLAIN, 20));
 		lbDaGiorno.setBounds(10, 20, 95, 27);
@@ -80,21 +91,51 @@ public class EventView extends JDialog {
 		lbAGiorno.setFont(new Font("Calibri", Font.PLAIN, 20));
 		lbAGiorno.setBounds(10, 58, 95, 27);
 		contentPanel.add(lbAGiorno);
-		
-		edDaGiorno = new JTextField();
-		edDaGiorno.setColumns(10);
-		edDaGiorno.setBounds(104, 19, 120, 27);
-		contentPanel.add(edDaGiorno);
-		
-		edAGiorno = new JTextField();
-		edAGiorno.setColumns(10);
-		edAGiorno.setBounds(104, 57, 120, 27);
-		contentPanel.add(edAGiorno);
+        	
+        dateChooserDa = new JDateChooser();
+        dateChooserDa.setBounds(104, 20, 120, 30);
+        dateChooserDa.setVisible(true); // Nascondi il JDateChooser inizialmente
+        contentPanel.add(dateChooserDa);
+        
+        
+        // Aggiungi l'ActionListener al JDateChooser
+        dateChooserDa.addPropertyChangeListener("date", evt -> {
+            Date selectedDate = dateChooserDa.getDate();
+            if (selectedDate != null) {
+                // Converti Date a LocalDate
+                localDateDa = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                
+             // Formatta LocalDate come stringa
+                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                //formattedDateDa = localDateDa.format(formatter);
+            }
+        });
+        
+		// Crea il JDateChooser
+        dateChooserA = new JDateChooser();
+        dateChooserA.setBounds(104, 55, 120, 30);
+        dateChooserA.setVisible(true); 
+        contentPanel.add(dateChooserA);
+        
+        
+        // Aggiungi l'ActionListener al JDateChooser
+        dateChooserA.addPropertyChangeListener("date", evt -> {
+            Date selectedDate = dateChooserA.getDate();
+            if (selectedDate != null) {
+                // Converti Date a LocalDate
+                localDateA = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                
+             // Formatta LocalDate come stringa
+                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                //formattedDateA = localDateA.format(formatter);
+            }
+        });
 		
 		edAOra = new JTextField();
 		edAOra.setColumns(10);
 		edAOra.setBounds(306, 57, 120, 27);
 		contentPanel.add(edAOra);
+		this.aOra = edAOra.getText();
 		
 		JLabel lbAOra = new JLabel("Ora:");
 		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -110,5 +151,50 @@ public class EventView extends JDialog {
 		edDaOra.setColumns(10);
 		edDaOra.setBounds(306, 19, 120, 27);
 		contentPanel.add(edDaOra);
+		this.daOra = edDaOra.getText();
+		
+		JButton btnSalva = new JButton("Salva");
+		btnSalva.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
+				System.err.println(bNew);
+				EventImpl event = c.saveEvent(bNew, name, desc, localDateDa, localDateA, daOra, aOra, s, 
+										 		edTitolo.getText(), txtDescrizione.getText(), edDaOra.getText(), edAOra.getText());
+
+				//if (!msg.trim().equals("")) {
+				//	JOptionPane.showMessageDialog(EventView.this, msg, "Errore", JOptionPane.ERROR_MESSAGE);
+				//}
+				// Aggiungi sul calendario la scritta!
+				if(event == null) {
+					System.err.println("NULL");
+				}
+								
+				if(event != null) {
+					System.err.println("DEFISGN:" + event.getInfoEventToString());
+					calendar.updateUI(localDateDa, localDateA, edDaOra.getText(), edAOra.getText(), event);
+				}
+				EventView.this.setVisible(false);
+			}
+		});
+		btnSalva.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnSalva.setActionCommand("OK");
+		btnSalva.setBounds(224, 423, 95, 36);
+		contentPanel.add(btnSalva);
+		
+		JButton btnCancella = new JButton("Cancella");
+		btnCancella.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCancella.setActionCommand("Cancel");
+		btnCancella.setBounds(331, 423, 95, 36);
+		contentPanel.add(btnCancella);
+	}
+	
+	public void setEventDetail(String name, LocalDate date, String daOra, String aOra, String desc) {
+		Date dateD = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		
+		edTitolo.setText(name);
+		dateChooserDa.setDate(dateD);
+		dateChooserA.setDate(dateD);
+		edDaOra.setText(daOra);
+		edAOra.setText(aOra);
+		txtDescrizione.setText(desc);
 	}
 }

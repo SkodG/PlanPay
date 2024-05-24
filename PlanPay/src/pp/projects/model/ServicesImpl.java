@@ -5,12 +5,9 @@ import java.util.ArrayList;
 
 public class ServicesImpl extends AbstractOperations implements Services {
 	
-	private List<Transaction> transactionList;
-	
-	// bNegative = false;
-	
+	private List<TransactionImpl> transactionList;
+
 	public ServicesImpl(Account c) {
-		 //super.transactionList = new ArrayList<>();
 		this.transactionList = new ArrayList<>();
 		super.accountRef = c;
 	}
@@ -22,7 +19,6 @@ public class ServicesImpl extends AbstractOperations implements Services {
 		//istanzio nuova transazione
 		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Services");
 		//aggiungo la transazione alla lista
-		//super.transactionList.add(transaction);
 		this.transactionList.add(transaction);
 	}
 
@@ -40,11 +36,7 @@ public class ServicesImpl extends AbstractOperations implements Services {
 	}
 
 	@Override
-	public List<Transaction> getList() {
+	public List<TransactionImpl> getList() {
 		return this.transactionList;
 	}
-	
-
-	//TODO 
-	// boolean getbNegative();
 }

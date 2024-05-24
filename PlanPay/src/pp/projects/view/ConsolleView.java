@@ -2,6 +2,7 @@ package pp.projects.view;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
@@ -10,16 +11,13 @@ import javax.swing.JList;
 
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.List;
+import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
@@ -36,6 +34,8 @@ public class ConsolleView extends JFrame {
 	private JLabel lblmporto;
 	private ImageIcon icon;
 	private JButton btnObjectives;
+	private JList<String> listTransactions;
+	private JScrollPane scrollPane;
 	private int count;
 	
 	private ConsoleControllerImpl controller;
@@ -88,17 +88,7 @@ public class ConsolleView extends JFrame {
 		lblmporto.setFont(new Font("Calibri", Font.PLAIN, 34));
 		lblmporto.setBounds(228, 76, 122, 42);
 		contentPane.add(lblmporto);
-		
-		JList listTransactions = new JList();
-		listTransactions.setBounds(31, 433, 661, 249);
-		listTransactions.setVisible(false);
-		
-		// TO DO: controllare che vengano visualizzate. Impostare metodo di visualizzazione:
-		// *data, testo, importo
-		contentPane.add(listTransactions);
-		
-		//listTransactions.setToolTipText(controller.getAllTransactions().toString());
-		
+		       
 		lbTransactions = new JLabel("Transazioni");
 		lbTransactions.setFont(new Font("Calibri", Font.PLAIN, 36));
 		lbTransactions.setBounds(31, 385, 597, 42);
@@ -128,11 +118,17 @@ public class ConsolleView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				count += 1;
 				if (count % 2 == 0) {
-					listTransactions.setVisible(false);
-					setBounds(100, 100, 736, 490);
+					if(updateUI()) {
+				        listTransactions.setVisible(false);
+				        scrollPane.setVisible(false);
+						setBounds(100, 100, 736, 490);
+					}
 				} else {
-					listTransactions.setVisible(true);
-					setBounds(100, 100, 736, 722);
+					if(updateUI()) {
+				        listTransactions.setVisible(true);
+				        scrollPane.setVisible(true);
+						setBounds(100, 100, 736, 722);
+					}
 				}
 			}
 		});
@@ -157,5 +153,30 @@ public class ConsolleView extends JFrame {
                 lbUsername.setText(c.setNameController().toUpperCase());
             }
         });
+	}
+	
+	public boolean updateUI() {
+		List<String> transactions = controller.getTransactionToString();	
+		
+		if(transactions != null) {
+		
+			String[] transactionArray = transactions.toArray(new String[0]);
+	            
+			System.out.println(transactionArray.length);
+			if(transactionArray.length > 0) {
+				listTransactions = new JList<>(transactionArray);
+				listTransactions.setBounds(31, 433, 661, 249);
+						
+			    // Aggiungi il JList ad uno JScrollPane
+		        scrollPane = new JScrollPane(listTransactions);
+		        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		        scrollPane.setBounds(31, 433, 661, 249);
+		        contentPane.add(scrollPane);
+		        
+		        return true; // devo aggiornare la GUI.
+			}
+		}
+		
+		return false;
 	}
 }

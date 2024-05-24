@@ -38,13 +38,16 @@ public class ConsolleObjectiveView extends JFrame {
 	
 	private List<DescObjectiveView> listObjective = new ArrayList<DescObjectiveView>();
 	private DescObjectiveView descObjectiveView;
-	List<ObjectiveImpl> list;
+	private List<ObjectiveImpl> list;
+	private int idCount;
 
 	/**
 	 * Create the frame.
 	 */
 	public ConsolleObjectiveView(ConsoleControllerImpl consoleController) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.idCount = 0;
+		
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -76,7 +79,8 @@ public class ConsolleObjectiveView extends JFrame {
 	    JButton btnNewObjective = new JButton("Nuovo Obbiettivo");
 			btnNewObjective.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					ObjectiveView newObjective = new ObjectiveView(true, consoleController, ConsolleObjectiveView.this);
+					idCount += 1;
+					ObjectiveView newObjective = new ObjectiveView(true, idCount, consoleController, ConsolleObjectiveView.this);
 					newObjective.setVisible(true);
 					list = consoleController.getObjectiveList();
 					System.out.println(list);

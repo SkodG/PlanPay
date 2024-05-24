@@ -4,7 +4,7 @@ import java.util.List;
 
 public abstract class AbstractOperations {
 	
-	protected List<Transaction> transactionList;
+	protected List<TransactionImpl> transactionList;
 	
 	protected Account accountRef;
 	
@@ -12,7 +12,7 @@ public abstract class AbstractOperations {
 	
 	public abstract boolean withdraw(double amount);
 	
-	public List<Transaction> getList(){
+	public List<TransactionImpl> getList(){
 		return transactionList;
 	}
 }

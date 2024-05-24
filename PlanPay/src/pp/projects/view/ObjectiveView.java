@@ -22,6 +22,7 @@ public class ObjectiveView extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_3;
+	
 	private boolean	bNew;
 
 	/**
@@ -48,12 +49,13 @@ public class ObjectiveView extends JFrame {
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
 	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
-	public ObjectiveView(boolean bNew, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ObjectiveView(boolean bNew, int idCount, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
+		this.bNew = bNew;
+		
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		this.bNew = bNew;
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -146,7 +148,10 @@ public class ObjectiveView extends JFrame {
 		JButton btnNewButton_3 = new JButton("Save changes");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.saveObjective(bNew, lblName.getText(), lblDescr.getText(), null);
+				if(bNew) {
+					
+				}
+				controller.saveObjective(bNew, idCount, lblName.getText(), lblDescr.getText());
 				setVisible(false);
 				contObj.updateUI();
 			}
