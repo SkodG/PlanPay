@@ -15,7 +15,9 @@ import java.awt.Font;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
@@ -33,11 +35,10 @@ public class ConsolleObjectiveView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private String[] objectives = {"Obbiettivo_1", "Obbiettivo_2", "Obbiettivo_3", "Obbiettivo_4"};//ho bisogno che questi oggetti siano creati in base a quanti obbettivi sono istanziati
 	JPanel panelObjective;
 	
-	private List<DescObjectiveView> listObjective = new ArrayList<DescObjectiveView>();
-	private DescObjectiveView descObjectiveView;
+	private Map<DescObjectiveView, ObjectiveView> objectiveList = new HashMap<DescObjectiveView, ObjectiveView>();//corrisp. tra DescObjectiveView e ObjectiveView
+	//private DescObjectiveView descObjectiveView;
 	private List<ObjectiveImpl> list;
 	private int idCount;
 
@@ -54,7 +55,6 @@ public class ConsolleObjectiveView extends JFrame {
 		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
 
-				//TODO inserire elementi in una lista scrollabile
 		//ottengo la lista di elementi dal controller e istanzio un oggetto DescObjectiveView per ogni Objective nella lista
 		//e li salvo in un array (devo fare cast)->controllare slide
 		
@@ -82,8 +82,9 @@ public class ConsolleObjectiveView extends JFrame {
 					idCount += 1;
 					ObjectiveView newObjective = new ObjectiveView(true, idCount, consoleController, ConsolleObjectiveView.this);
 					newObjective.setVisible(true);
+					
 					list = consoleController.getObjectiveList();
-					System.out.println(list);
+					list.stream().map(o ->"Obbiettivo: "+ o.getName()+" ID: "+o.getId()).forEach(System.out::println);
 				}
 			});
 		btnNewObjective.setBounds(155, 218, 135, 32);
@@ -105,9 +106,10 @@ public class ConsolleObjectiveView extends JFrame {
 
 		Optional<ObjectiveImpl> objective = list.stream().reduce((first, second) -> second);
 		if (objective.isPresent()) {
-			System.out.println(objective.get());
-			descObjectiveView = new DescObjectiveView(objective.get().getName()); // TODO aggiungere getImporto
-			//listObjective.add(descObjectiveView);
+			System.out.println(objective.get().getName());
+			DescObjectiveView descObjectiveView = new DescObjectiveView(objective.get().getName() /*TODO aggiunta param objectiveView*/); 
+			// TODO aggiungere getImporto
+			//objectiveList.add(descObjectiveView);
 	
 	        // Creare un nuovo componente da aggiungere
 	        // Aggiungi il nuovo componente al pannello principale

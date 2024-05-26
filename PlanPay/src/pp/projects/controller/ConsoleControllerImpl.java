@@ -49,6 +49,8 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.listTransactions = new ArrayList<TransactionImpl>();
 		this.listEvents = new ArrayList<EventImpl>();
 	}
+	//TODO: aggiungere metodi per il deposito e il prelievo di denaro dall'account per conto di ServicesView,
+	//il controller farà quindi da tramite tra ServiceView e ServiceImpl
 	
 	/**
 	 * @return la lista di tutte le transazioni da mostrare nell view
@@ -193,10 +195,10 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.calendarView = new CalendarView(this);
 	}
 	
-	public void saveObjective(boolean bNew, int id, String nameObjective, String descObjective) {
+	public void saveObjective(boolean bNew, int id, String nameObjective, String descObjective, double savingTarget) {
 		// Se sono su nuovo creo un nuovo obbiettivo > tanto l'id lo incremento alla creazione, quindi non può già esistere.
 		if(bNew) {
-			listObjectives.add(new ObjectiveImpl(account, id, nameObjective, descObjective));
+			listObjectives.add(new ObjectiveImpl(account, id, nameObjective, descObjective, savingTarget));//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
 		} else {
 			// Nel caso di modifica, controllo che l'obbiettivo esista e in caso positivo modifico i campi passati.
 			listObjectives.stream()

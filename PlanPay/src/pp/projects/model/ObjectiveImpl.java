@@ -10,17 +10,19 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private String name;
 	private String description;
 	private double savedBalance;
+	private double savingTarget;
 	private LocalDate date; //type?
 	private int id;
 	//TODO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
-	public ObjectiveImpl(Account c, int id, String n, String desc) {
+	public ObjectiveImpl(Account c, int id, String n, String desc, double savingTarget) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
 		this.id = id;
 		this.description = desc;
 		this.savedBalance = 0.0;
+		this.savingTarget = savingTarget;
 		this.date = date; // conviene modificare date per generarla 
 		//al momento  dell'istanziazione senza prenderla dagli argomenti del costruttore
 	}
@@ -29,8 +31,16 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		//metodo per il calcolo del risparmio per questo obbiettivo
 		//data inflazione annua, flusso giornaliero  di risparmio, interesse annuo
 		//e durata del periodo di risparmio
-		
+		//TODO formula da rivedere
 		return monthlySaving*12*years*savedBalance*Math.pow((1+interestRate-inflationRate), years);
+	}
+	
+	public Double getBalance() {
+		return this.savedBalance;
+	}
+	
+	public double getSavingTarget() {
+		return savingTarget;
 	}
 	
 	@Override
@@ -97,4 +107,6 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	public int getId() {
 		return this.id;
 	}
+
+
 }

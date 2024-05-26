@@ -17,7 +17,7 @@ public class ServicesImpl extends AbstractOperations implements Services {
 		//operazione sul conto(+)
 		this.accountRef.addBalance(amount);
 		//istanzio nuova transazione
-		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Services");
+		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Servizio");
 		//aggiungo la transazione alla lista
 		this.transactionList.add(transaction);
 	}
@@ -28,7 +28,7 @@ public class ServicesImpl extends AbstractOperations implements Services {
 		boolean bOccured = this.accountRef.subBalance(amount);
 		if(bOccured) {
 			//istanzio nuova transazione
-			TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Services");
+			TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Servizio");
 			//aggiungo la transazione alla lista
 			this.transactionList.add(transaction);
 		}
