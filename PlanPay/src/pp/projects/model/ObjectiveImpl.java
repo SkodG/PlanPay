@@ -21,7 +21,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		this.description = desc;
 		this.savedBalance = 0.0;
 		this.savingTarget = savingTarget;
-		this.date = date; // conviene modificare date per generarla 
+		this.date = LocalDate.now(); // conviene modificare date per generarla 
 		//al momento  dell'istanziazione senza prenderla dagli argomenti del costruttore
 	}
 	
@@ -39,6 +39,21 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	
 	public double getSavingTarget() {
 		return savingTarget;
+	}
+	
+	public void setSavingTarget(double newTarget) {
+		this.savingTarget = newTarget;
+	}
+	/**
+	 * 
+	 * @return true se il risparmio è uguale o superiore al valore fissato come obbiettivo,
+	 *  altrimenti false
+	 */
+	public boolean isTargetMet() {
+		boolean ret = false;
+		if(savedBalance >= savingTarget)
+			ret = true;		
+		return ret;
 	}
 	
 	@Override
@@ -102,4 +117,5 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		return this.date;
 	}
 	
+
 }

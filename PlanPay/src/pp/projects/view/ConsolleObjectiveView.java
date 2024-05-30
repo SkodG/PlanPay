@@ -36,18 +36,19 @@ public class ConsolleObjectiveView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	JPanel panelObjective;
-	
-	private Map<DescObjectiveView, ObjectiveView> objectiveList = new HashMap<DescObjectiveView, ObjectiveView>();//corrisp. tra DescObjectiveView e ObjectiveView
+	//TODO da eliminare
+	private Map<DescObjectiveView, ObjectiveView> objectiveViewMap = new HashMap<DescObjectiveView, ObjectiveView>();//corrisp. tra DescObjectiveView e ObjectiveView
 	//private DescObjectiveView descObjectiveView;
 	private List<ObjectiveImpl> list;
+	private ConsoleControllerImpl consoleController;
 	private int idCount;
 
 	/**
 	 * Create the frame.
 	 */
-	public ConsolleObjectiveView(ConsoleControllerImpl consoleController) {
+	public ConsolleObjectiveView(ConsoleControllerImpl controller) {
 		this.idCount = 0;
-		
+		this.consoleController = controller;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -79,10 +80,11 @@ public class ConsolleObjectiveView extends JFrame {
 	    JButton btnNewObjective = new JButton("Nuovo Obbiettivo");
 			btnNewObjective.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					idCount += 1;
-					ObjectiveView newObjective = new ObjectiveView(true, idCount, consoleController, ConsolleObjectiveView.this);
+					
+					ObjectiveView newObjective = new ObjectiveView(true, "", consoleController, ConsolleObjectiveView.this);
 					newObjective.setVisible(true);
 					
+					//provvisorio->  andrebbe nel testing della classe
 					list = consoleController.getObjectiveList();
 					list.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
 				}
@@ -102,14 +104,20 @@ public class ConsolleObjectiveView extends JFrame {
 	}
 	
     // Metodo per aggiornare l'interfaccia utente
-	public void updateUI() {
+	public void updateUI(ObjectiveView objectiveView) {
 
 		Optional<ObjectiveImpl> objective = list.stream().reduce((first, second) -> second);
 		if (objective.isPresent()) {
+			//test per verificare che l'obbiettivo inserito per ultimo sia quello appena creato
 			System.out.println(objective.get().getName());
-			DescObjectiveView descObjectiveView = new DescObjectiveView(objective.get().getName() /*TODO aggiunta param objectiveView*/); 
+			
+			
+			DescObjectiveView descObjectiveView = new DescObjectiveView(objective.get().getName(), consoleController, this); 
+			//inserisco il descObjectiveView come chiave nella Map insieme al valore corrisp. ObjectiveView
+			objectiveViewMap.put(descObjectiveView, objectiveView);//FORSE INUTILE
+			
 			// TODO aggiungere getImporto
-			//objectiveList.add(descObjectiveView);
+			//objectiveList.add(descObjectiveView);  ???
 	
 	        // Creare un nuovo componente da aggiungere
 	        // Aggiungi il nuovo componente al pannello principale

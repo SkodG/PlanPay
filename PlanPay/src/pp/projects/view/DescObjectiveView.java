@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.ObjectiveImpl;
 
 import javax.swing.JLabel;
@@ -22,16 +23,13 @@ import java.awt.event.ActionEvent;
 public class DescObjectiveView extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
-	private ObjectiveView parentObjView;
 
 	/**
 	 * Create the frame.
 	 * @param String name, TODO: ObjectiveView objView
 	 */
-	public DescObjectiveView(String name /* ,ObjectiveView objView*/) {
+	public DescObjectiveView(String name, ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
-		//this.parentObjView = objView;
 		
 		//JButton btnApri = new JButton("Apri");
 		//btnApri.setBounds(312, 23, 114, 21);
@@ -54,7 +52,8 @@ public class DescObjectiveView extends JPanel {
         JButton btnNewButton = new JButton("Apri");
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		//TODO  objView.setVisible(true);
+        		ObjectiveView newObjective = new ObjectiveView(false, name, controller, consolleObj);
+        		newObjective.setVisible(true);
         	}
         });
         btnNewButton.setBounds(273, 10, 85, 21);
@@ -63,7 +62,7 @@ public class DescObjectiveView extends JPanel {
         JButton btnNewButton_1 = new JButton("Elimina");
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		//TODO: da implementare eliminazione        		
+        		//TODO: Eliminazione oggetto e obbiettivo collegato (View e Impl)-> serve metodo del controller!      		
         	}
         });
         btnNewButton_1.setBounds(273, 56, 85, 21);

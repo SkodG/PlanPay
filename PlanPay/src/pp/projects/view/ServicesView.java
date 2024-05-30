@@ -72,27 +72,21 @@ public class ServicesView extends JFrame {
 		btnDeposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				double dAmount = Double.parseDouble(textAmount.getText());
 				if(tipo.equals("SERVIZIO: ")) {
-					//TODO effettua operazione tramite il controller
-					//se l'operazione non riesce fai apparire un messaggio di errore 
-					//(ottieni feedback dal controller tramite risultato di un metodo che ritorna false)
+					controller.updateConto(dAmount, false, tipo);
 					
 				}
 				else if(tipo.startsWith("OBBIETTIVO: ")) {
 					String objectiveName = tipo.substring(12);
+					//test
 					System.out.println(objectiveName);
 					//cerco nella lista degli obbiettivi 
 					List<ObjectiveImpl> objectiveList = controller.getObjectiveList();
-					//prova
-					//objectiveList.stream().map(o -> o.getName()+o.getId()).forEach(System.out::print);
-					//
-					Optional<ObjectiveImpl> optObjective = objectiveList.stream()
-																		.filter(o-> o.getName() == objectiveName)
-																		.findFirst();
+					Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
 					//se trovo l'obbiettivo posso eseguire l'operazione
 					if(optObjective.isPresent()) {
-						double dAmount = Double.parseDouble(textAmount.getText());
-						optObjective.get().deposit(dAmount);// TODO da  delegare al ConsoleController???
+						controller.updateConto(dAmount, false, tipo);
 						JOptionPane.showMessageDialog(null, "Operazione riuscita!", "Successo", JOptionPane.ERROR_MESSAGE);
 					}
 					else {
@@ -107,7 +101,7 @@ public class ServicesView extends JFrame {
 				
 			}
 		});
-		btnDeposit.setBounds(33, 124, 149, 35);
+		btnDeposit.setBounds(32, 140, 149, 35);
 		btnDeposit.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnDeposit);
 		
@@ -117,29 +111,20 @@ public class ServicesView extends JFrame {
 				boolean result = false;
 				//TODO effettuare l'operazione di prelievo
 				//Se questa view è stata chiamata dalla consoleView
-
+				double dAmount = Double.parseDouble(textAmount.getText());
 				if(tipo.equals("SERVIZIO:")) {
-					//TODO effettua operazione tramite il controller
-					//se l'operazione non riesce, far apparire un messaggio di errore 
-					//(ottieni feedback dal controller tramite risultato di un metodo che ritorna false)
 					
-					// 30/05/2024
-					// TODO Richiama la funzione del controller updateConto(importo, tipo boolean (withdraw(T) o deposit(F), 
-					// dipende dal tipo obbiettivi o Servizi (se stai facendo da servizi 'preleva', passi F, mentre da obbiettivi passi T)) che ti ritorna l'importo aggiornato.
+					result = controller.updateConto(dAmount, true, tipo);
 				}
 				else if(tipo.startsWith("OBBIETTIVO: ")) {
 					String objectiveName = tipo.substring(12);
 					System.out.println(objectiveName);
 					//cerco nella lista degli obbiettivi 
 					List<ObjectiveImpl> objectiveList = controller.getObjectiveList();
-					Optional<ObjectiveImpl> optObjective = objectiveList.stream()
-																		.filter(o-> o.getName() == objectiveName)
-																		.findFirst();
+					Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
 					//se trovo l'obbiettivo posso eseguire l'operazione
 					if(optObjective.isPresent()) {
-						double dAmount = Double.parseDouble(textAmount.getText());
-						optObjective.get().withdraw(dAmount);// TODO da  delegare al ConsoleController???
-						JOptionPane.showMessageDialog(null,	"Operazione riuscita!", "Successo", JOptionPane.ERROR_MESSAGE);
+						result = controller.updateConto(dAmount, true, tipo);
 					}
 					else {
 						//messaggio di errore 
@@ -148,30 +133,48 @@ public class ServicesView extends JFrame {
 								"Errore", JOptionPane.ERROR_MESSAGE);
 					}										
 				}
-				//Pulisci i campi una volta finito
-				textAmount.setText("");
+				//Controllo che l'operazione sia avvenuta
+				if(result) {
+					JOptionPane.showMessageDialog(null,	"Operazione riuscita!", "Successo", JOptionPane.ERROR_MESSAGE);
+					//Pulisci i campi una volta finito
+					textAmount.setText("");
+				} else {
+					JOptionPane.showMessageDialog(null, 
+							"Operazione non riuscita! Fondi non sufficienti per prelievo",
+							"Errore", JOptionPane.ERROR_MESSAGE);
+				}
 			} //TODO Si può riutilizzare il codice con un singolo actionListener?
 		});
 		
-		btnWithdraw.setBounds(242, 124, 149, 35);
+		btnWithdraw.setBounds(241, 140, 149, 35);
 		btnWithdraw.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnWithdraw);
 		
 				
 		JLabel lblCurrency = new JLabel("EUR");
-		lblCurrency.setBounds(262, 74, 37, 14);
+		lblCurrency.setBounds(262, 84, 37, 14);
 		lblCurrency.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(lblCurrency);
 		
 		JLabel lblAmount = new JLabel("Importo:");
-		lblAmount.setBounds(78, 74, 62, 14);
+		lblAmount.setBounds(78, 84, 62, 14);
 		lblAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(lblAmount);
 		
 		textAmount = new JTextField();
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
-		textAmount.setBounds(166, 71, 86, 20);
+		textAmount.setBounds(166, 81, 86, 20);
 		contentPane.add(textAmount);
+		
+		JLabel lblTitle = new JLabel("Causale");
+		lblTitle.setFont(new Font("Calibri", Font.PLAIN, 14));
+		lblTitle.setBounds(78, 51, 62, 14);
+		contentPane.add(lblTitle);
+		
+		JLabel lblDisplayTitle = new JLabel(tipo);
+		lblDisplayTitle.setFont(new Font("Calibri", Font.PLAIN, 14));
+		lblDisplayTitle.setBounds(182, 49, 70, 14);
+		contentPane.add(lblDisplayTitle);
 	}
 }

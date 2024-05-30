@@ -28,6 +28,22 @@ public class ObjectiveView extends JFrame {
 	private boolean	bNew;
 
 	/**
+	 * Launch the application.
+	 */
+	/*public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ObjectiveView frame = new ObjectiveView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}*/
+
+	/**
 	 * Create the frame.
 	 */
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
@@ -36,7 +52,7 @@ public class ObjectiveView extends JFrame {
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", 
 	//oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
 	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
-	public ObjectiveView(boolean bNew, int idCount, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
+	public ObjectiveView(boolean bNew, String nomeObbiettivo, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
 		this.bNew = bNew;
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -67,10 +83,6 @@ public class ObjectiveView extends JFrame {
 		btnOperation.setBounds(239, 213, 139, 37);
 		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnOperation);
-		// TODO: al click creo il servizio e rendo visibile servicesView
-		// avrai quindi new ServicesView("OBBIETTIVO: {nomeobbiettivo}"), il cui nome obbiettivo lo prendi dalla text box del nome obbiettivo
-		// rendo visibile ServicessView
-		
 		
 		JButton btnProjection = new JButton("Proiezione risparmio");
 		btnProjection.addActionListener(new ActionListener() {
@@ -116,7 +128,7 @@ public class ObjectiveView extends JFrame {
 		
 		// da qui non si può dare una data a obbiettivo,
 		//l'ideale sarebbe che la acquisisse da solo una volta istanziato!
-		JButton btnSave = new JButton("Save changes");
+		JButton btnSave = new JButton("Salva modifiche");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//if(bNew) { 
@@ -125,9 +137,9 @@ public class ObjectiveView extends JFrame {
 				if(textAmount.getText().isEmpty())
 					JOptionPane.showMessageDialog(null, "Soglia di risparmio non definita!", "Errore", JOptionPane.ERROR_MESSAGE);
 				else {					
-					controller.saveObjective(bNew, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
+					controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
 					setVisible(false);
-					contObj.updateUI();
+					contObj.updateUI(ObjectiveView.this);
 				}
 				
 			}
