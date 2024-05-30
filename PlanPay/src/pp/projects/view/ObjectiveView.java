@@ -28,22 +28,6 @@ public class ObjectiveView extends JFrame {
 	private boolean	bNew;
 
 	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ObjectiveView frame = new ObjectiveView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
-
-	/**
 	 * Create the frame.
 	 */
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
@@ -141,7 +125,7 @@ public class ObjectiveView extends JFrame {
 				if(textAmount.getText().isEmpty())
 					JOptionPane.showMessageDialog(null, "Soglia di risparmio non definita!", "Errore", JOptionPane.ERROR_MESSAGE);
 				else {					
-					controller.saveObjective(bNew, idCount, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
+					controller.saveObjective(bNew, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
 					setVisible(false);
 					contObj.updateUI();
 				}

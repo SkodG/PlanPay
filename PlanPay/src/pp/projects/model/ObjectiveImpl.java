@@ -12,14 +12,12 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private double savedBalance;
 	private double savingTarget;
 	private LocalDate date; //type?
-	private int id;
 	//TODO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
-	public ObjectiveImpl(Account c, int id, String n, String desc, double savingTarget) {
+	public ObjectiveImpl(Account c, String n, String desc, double savingTarget) {
 		transactionList = new ArrayList<>();
 		super.accountRef = c;
 		this.name = n;
-		this.id = id;
 		this.description = desc;
 		this.savedBalance = 0.0;
 		this.savingTarget = savingTarget;
@@ -104,9 +102,4 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		return this.date;
 	}
 	
-	public int getId() {
-		return this.id;
-	}
-
-
 }

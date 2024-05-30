@@ -4,10 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import pp.projects.model.Event;
-import pp.projects.model.EventImpl;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.State;
-import pp.projects.model.Transaction;
 import pp.projects.model.TransactionImpl;
 
 public interface ConsoleController {
@@ -40,7 +38,7 @@ public interface ConsoleController {
 	 * @param newAora = a ora dell'evento in modifica
 	 * @param newS = stato dell'evento in modifica
 	 */
-	EventImpl saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
+	Event saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
 					    String newName, String newdesc, String newDaOra, String newAora);
 	
 	/**
@@ -48,5 +46,5 @@ public interface ConsoleController {
 	 * 
 	 * @param o = obbiettivo da eliminare
 	 */
-	void removeEvent(Event e);
+	boolean removeEvent(String name, LocalDate date, String daOra);
 }

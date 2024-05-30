@@ -6,6 +6,8 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.model.Account;
+
 import javax.swing.JLabel;
 import javax.swing.JList;
 
@@ -42,18 +44,20 @@ public class ConsolleView extends JFrame {
 	private CalendarView calendarView;
 	private ServicesView servicesView;
 	private ConsolleObjectiveView consolleObjectiveView;
+	private Account account;
 	
 	/**
 	 * Create the frame.
 	 * @throws IOException 
 	 */
-	public ConsolleView(ConsoleControllerImpl c) throws IOException {
+	public ConsolleView(ConsoleControllerImpl c, Account account) throws IOException {
 		setTitle("CONSOLLE");
 		this.controller = c;
 		this.count = 0;
 		this.calendarView = new CalendarView(c);
 		this.servicesView = new ServicesView("SERVIZIO: ", c);//modificato costruttore
-		this.consolleObjectiveView = new ConsolleObjectiveView(c);												
+		this.consolleObjectiveView = new ConsolleObjectiveView(c);		
+		this.account = account;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 736, 490);
@@ -178,5 +182,9 @@ public class ConsolleView extends JFrame {
 		}
 		
 		return false;
+	}
+	
+	public void updateUIconto() {
+		lblmporto.setText(account.getBalance().toString());
 	}
 }

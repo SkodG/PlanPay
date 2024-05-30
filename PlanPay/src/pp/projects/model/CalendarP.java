@@ -1,8 +1,13 @@
 package pp.projects.model;
 
+import java.time.LocalDate;
+
 public interface CalendarP {
 
-	void newEvent(EventImpl e);
+	EventImpl newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora);
 	
-	void removeEvent(EventImpl e);
+	EventImpl modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
+			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora);
+	
+	boolean removeEvent(String name, LocalDate date, String daOra);
 }

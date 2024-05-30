@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.swing.JTextField;
@@ -160,9 +159,6 @@ public class EventView extends JDialog {
 				EventImpl event = c.saveEvent(bNew, name, desc, localDateDa, localDateA, daOra, aOra, s, 
 										 		edTitolo.getText(), txtDescrizione.getText(), edDaOra.getText(), edAOra.getText());
 
-				//if (!msg.trim().equals("")) {
-				//	JOptionPane.showMessageDialog(EventView.this, msg, "Errore", JOptionPane.ERROR_MESSAGE);
-				//}
 				// Aggiungi sul calendario la scritta!
 				if(event == null) {
 					System.err.println("NULL");
@@ -181,6 +177,19 @@ public class EventView extends JDialog {
 		contentPanel.add(btnSalva);
 		
 		JButton btnCancella = new JButton("Cancella");
+		btnCancella.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean result = false;
+				LocalDate currentDay = calendar.selectDate();
+				
+				System.out.println(currentDay);
+				
+				result = c.removeEvent(edTitolo.getText(), currentDay, edDaOra.getText());
+				if(!result) {
+					
+				}
+			}
+		});
 		btnCancella.setFont(new Font("Calibri", Font.PLAIN, 16));
 		btnCancella.setActionCommand("Cancel");
 		btnCancella.setBounds(331, 423, 95, 36);

@@ -23,10 +23,10 @@ public class LoginControllerImpl implements LoginController{
 		this.signupView = new SignupView(this);
 		this.userName = "";
 		this.controller = new ConsoleControllerImpl(this);
-		this.consolleView = new ConsolleView(controller);
+		this.consolleView = new ConsolleView(controller, controller.getAccount());
 	}
 	
-	public void loginButtonClick(String user, String passw) {
+	public boolean loginButtonClick(String user, String passw) {
 		boolean isAuthenticated = false;
 		
 		// controllo che i dati siano stati inseriti
@@ -37,13 +37,15 @@ public class LoginControllerImpl implements LoginController{
 			if(isAuthenticated) {
 				this.userName = loginModel.getAccountName();
 				consolleView.setVisible(true);
-				loginView.setVisible(false);
+				return true;
 			}else {
 				// Autenticazione fallita, mostra un messaggio di errore
 				JOptionPane.showMessageDialog(null, "Credenziali non valide. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
+				return false;
 			}
 		}else {
 			JOptionPane.showMessageDialog(null, "Credenziali mancanti. Riprovare.", "Errore", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 	}
 	

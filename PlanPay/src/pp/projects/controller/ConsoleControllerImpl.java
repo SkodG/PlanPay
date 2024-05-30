@@ -2,26 +2,22 @@ package pp.projects.controller;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
 
 import pp.projects.model.Account;
 import pp.projects.model.AccountImpl;
 import pp.projects.model.CalendarImpl;
-import pp.projects.model.Event;
 import pp.projects.model.EventImpl;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.ServicesImpl;
 import pp.projects.model.State;
-import pp.projects.model.Transaction;
 import pp.projects.model.TransactionImpl;
 import pp.projects.view.CalendarView;
-import pp.projects.view.EventView;
 import pp.projects.view.ObjectiveView;
 
 public class ConsoleControllerImpl implements ConsoleController{
@@ -30,11 +26,9 @@ public class ConsoleControllerImpl implements ConsoleController{
 	private ServicesImpl services;					// Non uso interfaccia perchè ho dei metodi nella classe astratta, che devo richiamare.
 	private List<ObjectiveImpl> listObjectives;		// Non uso interfaccia perchè ho dei metodi nella classe astratta, che devo richiamare.
 	private List<TransactionImpl> listTransactions;
-	private List<EventImpl> listEvents;
 	private CalendarImpl calendario;
 	private CalendarView calendarView;
 	private Account account;
-	private EventView eventView;
 	private ObjectiveView objectiveView;
 	
 	private List<String> datiTransazione;
@@ -47,10 +41,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.calendario = new CalendarImpl(0);
 		this.listObjectives = new ArrayList<ObjectiveImpl>();
 		this.listTransactions = new ArrayList<TransactionImpl>();
-		this.listEvents = new ArrayList<EventImpl>();
 	}
-	//TODO: aggiungere metodi per il deposito e il prelievo di denaro dall'account per conto di ServicesView,
-	//il controller farà quindi da tramite tra ServiceView e ServiceImpl
 	
 	/**
 	 * @return la lista di tutte le transazioni da mostrare nell view
@@ -86,7 +77,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	 */
 	@Override
 	public List<ObjectiveImpl> getObjectiveList() {
-		return listObjectives;
+		return listObjectives == null ? null : Collections.unmodifiableList(listObjectives);
 	}
 	
 	@Override
@@ -95,96 +86,48 @@ public class ConsoleControllerImpl implements ConsoleController{
 		
 	}
 	@Override
-	public EventImpl saveEvent(boolean bNew, String name, String desc, LocalDate daData, 
-								LocalDate aData, String daOra, String aOra, State s, 
+	public EventImpl saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
 								String newName, String newdesc, String newDaOra, String newAora) {
 		int daysEvents = 0;
+		EventImpl events = new EventImpl(newName, newdesc, aData, newDaOra, newAora);
 		LocalDate currentDate = daData;
-		boolean bExist = false;
-		EventImpl event = null;
 		
-		// Controllo se l'evento è già presente nella data/orario definita.
-		// Se non è presente lo creo. In caso contrario mostro messaggio di errore.
+		// Controllo se l'evento è già presente nella data/orario definita. Se non è presente lo creo. In caso contrario mostro messaggio di errore.
 		if(bNew) {
+			// creazione dell'evento in più date.
 			if(!daData.equals(aData)) {
-				System.err.println("confronto data");
 				daysEvents = aData.getDayOfMonth() - daData.getDayOfMonth();
 				for(int i = 0; i <= daysEvents; i++) {
 					if(i > 0) {
 						currentDate = currentDate.plusDays(i);
 					}
-	
-					// controllo se esiste un evento con la stessa data/ora prima di aggiungerlo
-					bExist = eventExist(name, currentDate, daOra);
-					
-					if(bExist) {
-						// Autenticazione fallita, mostra un messaggio di errore
-						JOptionPane.showMessageDialog(null, "Evento già esistente", "Errore", JOptionPane.ERROR_MESSAGE);
+					events = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
+					if(events == null) {
+						JOptionPane.showMessageDialog(null, "Evento già esistente, impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
 						return null;
-						//resultCreation += "Non è stato creato l'evento '" + name + "' per il giorno " + currentDate.toString() + " nell'orario: " + daOra + "-" + aOra + ", in quanto nella fascia oraria specificata è già presente un altro evento!\n";
-					} else {
-						event = new EventImpl(newName, newdesc, currentDate, newDaOra, newAora);
-						listEvents.add(event);
 					}
 				}
+			// creazione dell'evento nella data singola.
 			} else {
-				// controllo se esiste un evento con la stessa data/ora prima di aggiungerlo
-				bExist = eventExist(name, currentDate, daOra);
-				
-				if(bExist) {
-					// Autenticazione fallita, mostra un messaggio di errore
-					JOptionPane.showMessageDialog(null, "Evento già esistente", "Errore", JOptionPane.ERROR_MESSAGE);
-					return null;
-					//resultCreation += "Non è stato creato l'evento '" + name + "' per il giorno " + currentDate.toString() + " nell'orario: " + daOra + "-" + aOra + ", in quanto nella fascia oraria specificata è già presente un altro evento!\n";
-				} else {
-					event = new EventImpl(newName, newdesc, currentDate, newDaOra, newAora);
-					listEvents.add(event);
-				}
+					events = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
+					if(events == null) {
+						JOptionPane.showMessageDialog(null, "Evento già esistente, impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+						return null;
+					}
 			}
 		} else {
-			// Nel caso di modifica, prendo l'obbiettivo da modificare e setto i campi.
-			bExist = eventExist(name, daData, daOra);
-			if(bExist) {
-				event = listEvents.stream()
-								   .filter(e -> 
-									   e.getName().equals(name) &&
-									   e.getDate().equals(daOra) &&
-									   e.getDaOra().equals(daOra))
-								   .findFirst()
-								   .orElse(null);
-				if (event != null) {
-	                if (newName != null && !newName.trim().isEmpty()) {
-	                    event.setName(newName);
-	                }
-	                if (newdesc != null && !newdesc.trim().isEmpty()) {
-	                    event.setDescription(newdesc);
-	                }
-	                if (newDaOra != null && !newDaOra.trim().isEmpty()) {
-	                    event.setDaOra(newDaOra);
-	                }
-	                if (newAora != null && !newAora.trim().isEmpty()) {
-	                    event.setAOra(newAora);
-	                }
+				events = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora);	
+				if(events == null) {
+					JOptionPane.showMessageDialog(null, "Evento inesistente, impossibile modificarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+					return null;
 				}
-			}
-						   
 		}		
-		return event;
+		return events;
 	}
 	
-	public boolean eventExist(String name, LocalDate currentDate, String daOra) {
-		return listEvents.stream()
-						 .anyMatch(e ->
-							e.getName().equals(name) &&
-							e.getDate().equals(currentDate) &&
-							e.getDaOra().equals(daOra) 
-						);
-	}
-
 	@Override
-	public void removeEvent(Event e) {
-		// TODO Auto-generated method stub
-		
+	public boolean removeEvent(String name, LocalDate date, String daOra) {
+		return calendario.removeEvent(name, date, daOra);		
 	}
 	
 	public String setNameController() {
@@ -195,14 +138,14 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.calendarView = new CalendarView(this);
 	}
 	
-	public void saveObjective(boolean bNew, int id, String nameObjective, String descObjective, double savingTarget) {
+	public void saveObjective(boolean bNew, String nameObjective, String descObjective, double savingTarget) {
 		// Se sono su nuovo creo un nuovo obbiettivo > tanto l'id lo incremento alla creazione, quindi non può già esistere.
 		if(bNew) {
-			listObjectives.add(new ObjectiveImpl(account, id, nameObjective, descObjective, savingTarget));//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
+			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, savingTarget));//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
 		} else {
 			// Nel caso di modifica, controllo che l'obbiettivo esista e in caso positivo modifico i campi passati.
 			listObjectives.stream()
-						  .filter(o -> o.getId() == id)
+						  .filter(o -> o.getName().equals(nameObjective))
 						  .findFirst()
 						  .ifPresent(o -> {
 							  o.setDescription(descObjective);
@@ -211,8 +154,26 @@ public class ConsoleControllerImpl implements ConsoleController{
 		}		
 	}
 	
-	// TODO inserire un metodo per controllare che se serviceview.bGetNegative() è false > do messaggio di errore.
-	//public void testOperation() {
-	//	if(services.withdraw())
-	//}
+	//TODO: aggiungere metodi per il deposito e il prelievo di denaro dall'account per conto di ServicesView,
+	//il controller farà quindi da tramite tra ServiceView e ServiceImpl
+	public void updateConto(double importo, boolean tipo, String nome) {
+		ObjectiveImpl objective = null;
+		
+		//tutto rispetto al tipo booleano passato.
+		services.deposit(importo);
+		
+		if(nome.toUpperCase().startsWith("OBBIETTIVO")) {
+			objective = getObjective(nome.substring(12));
+			objective.deposit(importo);
+		}
+	}
+	
+	//TODO ricerca obbiettivo (nome)
+	public ObjectiveImpl getObjective(String name) {
+		return new ObjectiveImpl(account, name, name, 0);
+	}
+	
+	public Account getAccount() {
+		return this.account;
+	}
 }

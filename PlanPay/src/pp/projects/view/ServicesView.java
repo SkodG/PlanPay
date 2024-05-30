@@ -122,6 +122,10 @@ public class ServicesView extends JFrame {
 					//TODO effettua operazione tramite il controller
 					//se l'operazione non riesce, far apparire un messaggio di errore 
 					//(ottieni feedback dal controller tramite risultato di un metodo che ritorna false)
+					
+					// 30/05/2024
+					// TODO Richiama la funzione del controller updateConto(importo, tipo boolean (withdraw(T) o deposit(F), 
+					// dipende dal tipo obbiettivi o Servizi (se stai facendo da servizi 'preleva', passi F, mentre da obbiettivi passi T)) che ti ritorna l'importo aggiornato.
 				}
 				else if(tipo.startsWith("OBBIETTIVO: ")) {
 					String objectiveName = tipo.substring(12);
@@ -170,6 +174,4 @@ public class ServicesView extends JFrame {
 		textAmount.setBounds(166, 71, 86, 20);
 		contentPane.add(textAmount);
 	}
-	
-
 }

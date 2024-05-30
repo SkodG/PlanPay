@@ -2,28 +2,16 @@ package pp.projects.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.swing.table.AbstractTableModel;
+import java.util.Optional;
 
 public class CalendarImpl implements CalendarP{
 
-	// Lista di eventi che accadono in quella specifica data
-	private Map<LocalDate, List<EventImpl>> eventsMap;
-	private List<EventImpl> listToDate;
+	private List<EventImpl> listEvents;
 	private int day;
 		
 	public CalendarImpl(int day) {
-		// ordino le date in ordine cronologico.
-		// quindi quando inserisco un elemento nella mappa, le date saranno subito ordinate dal meno recente al più recente.
-		this.eventsMap = new TreeMap<>(LocalDate::compareTo);
-		this.listToDate = new ArrayList<>();
+		this.listEvents = new ArrayList<>();
 		this.day = day;
 	}
 	
@@ -32,29 +20,77 @@ public class CalendarImpl implements CalendarP{
 	 * 
 	 * @param e = nuovo evento da creare
 	 */
-	public void newEvent(EventImpl e) {
-		// Normalizzo la data per togliere orario, minuti, sec...
-		LocalDate dateNoOrario = e.getDate();
-		// recupero la lista degli eventi associati alla data
-		List<EventImpl> events = eventsMap.get(dateNoOrario);
-		if(events == null) {
-			events = new ArrayList<>();
-		}
-		events.add(e);
-		// aggiungo la lista di eventi alla mappa
-		eventsMap.put(dateNoOrario, events);
+	public EventImpl newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) {
+		Optional<EventImpl> existingEvent = getEvent(name, currentDate, daOra);
+		if (existingEvent.isPresent()) {
+	        throw new IllegalStateException("Evento già esistente! Impossibile crearlo!");
+	    }
+	    
+	    EventImpl newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora);
+	    listEvents.add(newEvent);
+	    
+	    return newEvent;
 	}
 	
 	/**
 	 * 
-	 * @param d = data utilizzata come chiave di ricerca.
-	 * @return la lista degli eventi in base alla data passata.
+	 * @param name
+	 * @param currentDate
+	 * @param daOra
+	 * @return
 	 */
-	public List<EventImpl> getEventsForDate(LocalDate d) {
-		LocalDate date = d;
-		LocalDate dateNoOrario = date;
-		// recupero la lista degli eventi associati alla data
-		return eventsMap.get(dateNoOrario);
+	public Optional<EventImpl> getEvent(String name, LocalDate currentDate, String daOra) {
+		return listEvents.stream()
+						 .filter(e ->
+							e.getName().equals(name) &&
+							e.getDate().equals(currentDate) &&
+							e.getDaOra().equals(daOra))
+						 .findFirst();
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @param desc
+	 * @param daData
+	 * @param aData
+	 * @param daOra
+	 * @param aOra
+	 * @param newName
+	 * @param newDesc
+	 * @param currentDate
+	 * @param newDaOra
+	 * @param newAora
+	 * @return
+	 */
+	public EventImpl modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
+							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora) {
+		EventImpl event = null;
+		
+		event = listEvents.stream()
+				   .filter(e -> 
+					   e.getName().equals(name) &&
+					   e.getDaOra().equals(daOra) &&
+					   e.getAOra().equals(daOra))
+				   .findFirst()
+				   .orElse(null);
+		
+		if (event != null) {
+			 if (newName != null && !newName.trim().isEmpty()) {
+			     event.setName(newName);
+			 }
+			 if (newDesc != null && !newDesc.trim().isEmpty()) {
+			     event.setDescription(newDesc);
+			 }
+			 if (newDaOra != null && !newDaOra.trim().isEmpty()) {
+			     event.setDaOra(newDaOra);
+			 }
+			 if (newAora != null && !newAora.trim().isEmpty()) {
+			     event.setAOra(newAora);
+			 }
+		}
+		
+		return event;
 	}
 	
 	/**
@@ -63,28 +99,18 @@ public class CalendarImpl implements CalendarP{
 	 * @param o = evento da eliminare.
 	 */
 	@Override
-	public void removeEvent(EventImpl e) {
-		// Normalizzo la data
-		LocalDate dateNoOrario = e.getDate();
-		// recupero la lista degli eventi associati alla data
-		List<EventImpl> events = eventsMap.get(dateNoOrario);
+	public boolean removeEvent(String name, LocalDate date, String daOra) {
+		Optional<EventImpl> existingEvent = getEvent(name, date, daOra);
 		
-		if (events != null) {
-			// per eliminazione meglio usare iterator
-			Iterator<EventImpl> it = events.iterator();
-			while(it.hasNext()) {
-				EventImpl ev = it.next();
-				if (ev.getName().equals(e.getName())) {
-					it.remove();
-					break;
-				}
-			}
-		}
+		System.out.println(name + "-" + date + "-" + daOra);
 		
-		// se ho eliminato tutti gli eventi associati alla data, rimuovo la data dalla mappa
-		if (events.isEmpty()) {
-			eventsMap.remove(dateNoOrario);
-		}
+		if (!existingEvent.isPresent()) {
+	        throw new IllegalStateException("Evento inesistente! Impossibile cancellarlo.");
+	    }
+	   
+		listEvents.remove(existingEvent.get());
+		
+		return true;
 	}
 	
 	public int getDay() {

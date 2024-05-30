@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.CalendarModel;
 import pp.projects.model.DayCellRenderer;
+import pp.projects.model.Event;
 import pp.projects.model.EventImpl;
 
 import javax.swing.JTable;
@@ -36,7 +37,6 @@ public class CalendarView extends JFrame {
     
     private LocalDate today = LocalDate.now();
     private int actualMonth;
-    private LocalDate dateSelected;
     
     private EventView eventView;
 
@@ -95,7 +95,7 @@ public class CalendarView extends JFrame {
 		btnNewevent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// creo un nuovo evento
-				eventView = new EventView(true, dateSelected, controller, CalendarView.this);
+				eventView = new EventView(true, selectDate(), controller, CalendarView.this);
 				eventView.setVisible(true);
 			}
 		});
@@ -203,11 +203,11 @@ public class CalendarView extends JFrame {
 		 lbMese.setText(calendar.getMonth(calendar.getMonthValue()).name().toUpperCase());
     }
 	
-	private void updateSelectDate() {
+	public LocalDate selectDate() {
 		int indexRow = tblCalendario.getSelectedRow();
 		int indexColumn = tblCalendario.getSelectedColumn();
 		
-		dateSelected = (LocalDate) calendar.getValueAt(indexRow, indexColumn);
+		return calendar.getDateAt(indexRow, indexColumn);
 	}
 	
 	public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, EventImpl event) {
@@ -221,9 +221,5 @@ public class CalendarView extends JFrame {
 				calendar.setValueAddEvent(currentDay, event);
 			}
 		}		
-                
-        // Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
-    	//contentPane.revalidate();
-    	//contentPane.repaint();
 	}
 }

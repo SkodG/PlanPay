@@ -84,7 +84,7 @@ public class ConsolleObjectiveView extends JFrame {
 					newObjective.setVisible(true);
 					
 					list = consoleController.getObjectiveList();
-					list.stream().map(o ->"Obbiettivo: "+ o.getName()+" ID: "+o.getId()).forEach(System.out::println);
+					list.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
 				}
 			});
 		btnNewObjective.setBounds(155, 218, 135, 32);

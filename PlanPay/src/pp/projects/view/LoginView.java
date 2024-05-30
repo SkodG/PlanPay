@@ -77,7 +77,9 @@ public class LoginView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				username = edUser.getText();
 				password = edPassword.getText();
-				controller.loginButtonClick(username, password);
+				if(controller.loginButtonClick(username, password)) {
+					LoginView.this.setVisible(false);
+				}
 			}
 		});
 		btnLogin.setBounds(99, 219, 207, 52);
