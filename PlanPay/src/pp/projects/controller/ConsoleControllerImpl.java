@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,19 +73,6 @@ public class ConsoleControllerImpl implements ConsoleController{
 		return this.datiTransazione;
 	}
 
-	/**
-	 * @return la lista degli obbiettivi inseriti dall'utente
-	 */
-	@Override
-	public List<ObjectiveImpl> getObjectiveList() {
-		return listObjectives == null ? null : Collections.unmodifiableList(listObjectives);
-	}
-	
-	@Override
-	public void removeObjective(ObjectiveImpl o) {
-		// TODO Auto-generated method stub
-		
-	}
 	@Override
 	public EventImpl saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
 								String newName, String newdesc, String newDaOra, String newAora) {
@@ -103,8 +91,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 					}
 					events = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
 					if(events == null) {
-						JOptionPane.showMessageDialog(null, "Evento già esistente, impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
-						return null;
+						throw new IllegalStateException("Evento già esistente! Impossibile crearlo.");
 					}
 				}
 			// creazione dell'evento nella data singola.
@@ -118,8 +105,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		} else {
 				events = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora);	
 				if(events == null) {
-					JOptionPane.showMessageDialog(null, "Evento inesistente, impossibile modificarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
-					return null;
+					throw new IllegalStateException("Evento inesistente! Impossibile modificarlo.");
 				}
 		}		
 		return events;
@@ -138,39 +124,93 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.calendarView = new CalendarView(this);
 	}
 	
-	public void saveObjective(boolean bNew, String nameObjective, String descObjective, double savingTarget) {
+	public void saveObjective(boolean bNew, String nameObjective, String newNameOb, String newDescrOb, double savingTarget) {
+		Optional<ObjectiveImpl> objective = getObjective(nameObjective);
+	
 		// Se sono su nuovo creo un nuovo obbiettivo > tanto l'id lo incremento alla creazione, quindi non può già esistere.
 		if(bNew) {
-			listObjectives.add(new ObjectiveImpl(account, nameObjective, descObjective, savingTarget));//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
+			if(objective.isPresent()) {
+				throw new IllegalStateException("Obbiettivo esistente! Impossibile crearlo.");
+			}
+			listObjectives.add(new ObjectiveImpl(account, newNameOb, newDescrOb, savingTarget));//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
 		} else {
-			// Nel caso di modifica, controllo che l'obbiettivo esista e in caso positivo modifico i campi passati.
-			listObjectives.stream()
-						  .filter(o -> o.getName().equals(nameObjective))
-						  .findFirst()
-						  .ifPresent(o -> {
-							  o.setDescription(descObjective);
-						  	  o.setName(nameObjective);
-						  });
+			if(!objective.isPresent()) {
+				throw new IllegalStateException("Obbiettivo inesistente! Impossibile modificarlo.");
+			}
+			modifyObjective(objective.get(), newNameOb, newDescrOb, savingTarget);
 		}		
 	}
 	
-	//TODO: aggiungere metodi per il deposito e il prelievo di denaro dall'account per conto di ServicesView,
-	//il controller farà quindi da tramite tra ServiceView e ServiceImpl
-	public void updateConto(double importo, boolean tipo, String nome) {
-		ObjectiveImpl objective = null;
+	private void modifyObjective(ObjectiveImpl objective, String newNameOb, String newDescrOb, double savingTarget) {
+		objective.setDescription(newDescrOb);
+		objective.setName(newNameOb);
+		objective.setSavingTarget(savingTarget);
+	}
+
+	/**
+	 * 
+	 * @param importo
+	 * @param tipo
+	 * @param nome
+	 * @return
+	 */
+	// T = withdraw, F = deposit
+	public boolean updateConto(double importo, boolean tipo, String nome) {
+		Optional<ObjectiveImpl> objective = null;
 		
-		//tutto rispetto al tipo booleano passato.
-		services.deposit(importo);
-		
-		if(nome.toUpperCase().startsWith("OBBIETTIVO")) {
-			objective = getObjective(nome.substring(12));
-			objective.deposit(importo);
-		}
+		if(tipo) {
+			if(nome.toUpperCase().startsWith("OBBIETTIVO")) {
+				objective = getObjective(nome.substring(12));
+				if(!objective.isPresent()) {
+					throw new IllegalStateException("Obbiettivo inesistente! Impossibile eseguire l'operazione.");
+				}
+				objective.get().deposit(importo);	// obbiettivo con WithDraw mi deposita i soldi sul conto.
+			} else {
+				return services.withdraw(importo);
+			}
+		} else {
+			if(nome.toUpperCase().startsWith("OBBIETTIVO")) {
+				objective = getObjective(nome.substring(12));
+				if(!objective.isPresent()) {
+					throw new IllegalStateException("Obbiettivo inesistente! Impossibile eseguire l'operazione.");
+				}
+				return objective.get().withdraw(importo);	// obbiettivo con WithDraw mi deposita i soldi sul conto.
+			} else {
+				services.deposit(importo);
+			}
+		}			
+		return true;
 	}
 	
-	//TODO ricerca obbiettivo (nome)
-	public ObjectiveImpl getObjective(String name) {
-		return new ObjectiveImpl(account, name, name, 0);
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	@Override
+	public Optional<ObjectiveImpl> getObjective(String name) {
+		return listObjectives.stream()
+				.filter(o -> o.getName().equals(name))
+				.findFirst();
+	}
+	
+	/**
+	 * @return la lista degli obbiettivi inseriti dall'utente
+	 */
+	@Override
+	public List<ObjectiveImpl> getObjectiveList() {
+		return listObjectives == null ? null : Collections.unmodifiableList(listObjectives);
+	}
+	
+	@Override
+	public void removeObjective(String name) {
+		Optional<ObjectiveImpl> objective = getObjective(name);
+		
+		if(objective.isPresent()) {
+			listObjectives.remove(objective.get());
+		} else {
+			throw new IllegalStateException("Obbiettivo inesistente! Impossibile cancellarlo.");
+		}
 	}
 	
 	public Account getAccount() {
