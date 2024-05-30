@@ -183,12 +183,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		controllerLogin.getConsolleView().updateUIconto();
 		return true;
 	}
-	
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
+
 	@Override
 	public Optional<ObjectiveImpl> getObjective(String name) {
 		return listObjectives.stream()
