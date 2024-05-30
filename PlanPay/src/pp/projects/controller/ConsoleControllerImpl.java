@@ -178,7 +178,9 @@ public class ConsoleControllerImpl implements ConsoleController{
 			} else {
 				services.deposit(importo);
 			}
-		}			
+		}	
+		
+		controllerLogin.getConsolleView().updateUIconto();
 		return true;
 	}
 	

@@ -103,10 +103,6 @@ public class EventView extends JDialog {
             if (selectedDate != null) {
                 // Converti Date a LocalDate
                 localDateDa = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                
-             // Formatta LocalDate come stringa
-                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                //formattedDateDa = localDateDa.format(formatter);
             }
         });
         
@@ -123,10 +119,6 @@ public class EventView extends JDialog {
             if (selectedDate != null) {
                 // Converti Date a LocalDate
                 localDateA = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                
-             // Formatta LocalDate come stringa
-                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                //formattedDateA = localDateA.format(formatter);
             }
         });
 		

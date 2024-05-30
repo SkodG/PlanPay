@@ -85,4 +85,8 @@ public class LoginControllerImpl implements LoginController{
 		return this.userName;
 	}
 	
+	public ConsolleView getConsolleView() {
+		return this.consolleView;
+	}
+	
 }
