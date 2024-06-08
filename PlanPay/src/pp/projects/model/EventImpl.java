@@ -3,49 +3,48 @@ package pp.projects.model;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class EventImpl implements Data, Event{
+public class EventImpl implements Event, Data{
 	
-	private String eventName;
-	private String eventDescr;
-	private LocalDate eventData;
+	private String name;
+    private String description;
+    private LocalDate date;
 	private State eventState;
 	private String daOra;
 	private String aOra;
 	
 	public EventImpl(String name, String desc, LocalDate data, String daOra, String aOra) {
-		this.eventName = name;
-		this.eventDescr = desc;
-		this.eventData = data;
+		this.name = name;
+		this.description = desc;
+		this.date = data;
 		this.daOra = daOra;
 		this.aOra = aOra;
 		//this.eventState = s;
 	}
 	
 	@Override
-	public String getName() {
-		return this.eventName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public void setName(String name) {
-		this.eventName = name;
-		
-	}
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String getDescription() {
-		return this.eventDescr;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public void setDescription(String d) {
-		this.eventDescr = d;
-	}
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Override
-	public LocalDate getDate() {
-		return this.eventData;
-	}
+    @Override
+    public LocalDate getDate() {
+        return date;
+    }
 	
 	@Override
 	public State getState() {
@@ -62,28 +61,21 @@ public class EventImpl implements Data, Event{
 		return this.getDaOra() + " - " + this.getAOra() + " : '" + this.getName() + "'";
 	}
 	
-	/**
-	 * 
-	 * @return orario modificato
-	 */
-	public LocalDate setDateTime() {
-		return this.eventData;
-	}
-	
+	@Override
 	public String getDaOra() {
 		return this.daOra;
+	}
+	
+	@Override
+	public String getAOra() {
+		return this.aOra;
 	}
 	
 	public void setDaOra(String da) {
 		this.daOra = da;
 	}
 	
-	public String getAOra() {
-		return this.aOra;
-	}
-	
 	public void setAOra(String a) {
-		this.daOra = a;
+		this.aOra = a;
 	}
-
 }

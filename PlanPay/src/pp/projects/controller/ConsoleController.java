@@ -3,15 +3,40 @@ package pp.projects.controller;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import pp.projects.model.Account;
 import pp.projects.model.Event;
+import pp.projects.model.EventImpl;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.State;
-import pp.projects.model.TransactionImpl;
+import pp.projects.model.Transaction;
+import pp.projects.view.CalendarView;
 
 public interface ConsoleController {
 	
-	List<TransactionImpl> getAllTransactions();
+	boolean updateConto(double importo, boolean tipo, String nome);
+	
+	List<ObjectiveImpl> getObjectiveList();
+	Optional<ObjectiveImpl> getObjective(String name);
+	void saveObjective(boolean bNew, String nameObjective, String newNameOb, String newDescrOb, double savingTarget);
+	
+	/**
+	 * elimina l'obbiettivo che gli viene passato 
+	 * 
+	 * @param o = obbiettivo da eliminare
+	 */
+	void removeObjective(String name);
+	
+	
+	List<Transaction> getAllTransactions();
+	List<String> getDatiTransazione();
+	
+	Account getAccount();
+	String setNameController();
+	
+	// gestione calendario
+	CalendarView drawCalendar();
 	
 	/**
 	 * @return l'evento che è stato aggiunto/modificato
@@ -30,7 +55,7 @@ public interface ConsoleController {
 	 * @param newAora = a ora dell'evento in modifica
 	 * @param newS = stato dell'evento in modifica
 	 */
-	Event saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
+	 Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
 					    String newName, String newdesc, String newDaOra, String newAora);
 	
 	/**
@@ -38,18 +63,5 @@ public interface ConsoleController {
 	 * 
 	 * @param o = obbiettivo da eliminare
 	 */
-	boolean removeEvent(String name, LocalDate date, String daOra);
-	
-	boolean updateConto(double importo, boolean tipo, String nome);
-	
-	List<ObjectiveImpl> getObjectiveList();
-	
-	/**
-	 * elimina l'obbiettivo che gli viene passato 
-	 * 
-	 * @param o = obbiettivo da eliminare
-	 */
-	void removeObjective(String name);
-	
-	Optional<ObjectiveImpl> getObjective(String name);
+	Event removeEvent(String name, LocalDate date, String daOra);
 }

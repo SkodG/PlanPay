@@ -4,15 +4,16 @@ import java.util.List;
 
 public abstract class AbstractOperations {
 	
-	protected List<TransactionImpl> transactionList;
+	protected List<Transaction> transactionList;
 	
 	protected Account accountRef;
+	
 	
 	public abstract void deposit(double amount);
 	
 	public abstract boolean withdraw(double amount);
 	
-	public List<TransactionImpl> getList(){
+	public List<Transaction> getList(){
 		return transactionList;
 	}
 }

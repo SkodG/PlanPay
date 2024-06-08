@@ -26,6 +26,7 @@ public class LoginControllerImpl implements LoginController{
 		this.consolleView = new ConsolleView(controller, controller.getAccount());
 	}
 	
+	@Override
 	public boolean loginButtonClick(String user, String passw) {
 		boolean isAuthenticated = false;
 		
@@ -39,23 +40,22 @@ public class LoginControllerImpl implements LoginController{
 				consolleView.setVisible(true);
 				return true;
 			}else {
-				// Autenticazione fallita, mostra un messaggio di errore
-				JOptionPane.showMessageDialog(null, "Credenziali non valide. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 		}else {
-			JOptionPane.showMessageDialog(null, "Credenziali mancanti. Riprovare.", "Errore", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 	}
 	
+	@Override
 	public void newSignupButtonClick() {
         // Rendi la vista di signup visibile
         signupView.setVisible(true);
         loginView.setVisible(false);
 	}
 	
-	public void signupButtonClick(String user, String passw, String name) {
+	@Override
+	public boolean signupButtonClick(String user, String passw, String name) {
 		boolean isRegistred = false;
 		
 		if(!user.trim().equals("") && 
@@ -64,27 +64,21 @@ public class LoginControllerImpl implements LoginController{
 			  // richiamo la funzione per sapere se i dati sono corretti
 			  isRegistred = loginModel.registration(user, passw, name);
 			  if(isRegistred) {
-				  JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Info", JOptionPane.INFORMATION_MESSAGE);
-				  signupView.setVisible(false);
+				  return true;
 			  }else {
-				  // Autenticazione fallita, mostra un messaggio di errore
-				  JOptionPane.showMessageDialog(null, "Utente già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
+				  return false;
 			  }
 		}else {
-			JOptionPane.showMessageDialog(null, "Credenziali mancanti. Riprovare.", "Errore", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 	}
 	
-	public void loginButtonClickToSignup() {
-        // Rendi la vista di signup visibile
-        signupView.setVisible(false);
-        loginView.setVisible(true);
-	}
-	
+	@Override
 	public String getUserName() {
 		return this.userName;
 	}
 	
+	@Override
 	public ConsolleView getConsolleView() {
 		return this.consolleView;
 	}

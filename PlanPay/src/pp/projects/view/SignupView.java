@@ -3,6 +3,7 @@ package pp.projects.view;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -89,7 +90,13 @@ public class SignupView extends JFrame {
 				userName = edName.getText();
 				user = edNewUser.getText();
 				password = edNewPassword.getText();
-				controller.signupButtonClick(user, password, userName);
+				if(controller.signupButtonClick(user, password, userName)) {
+					JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Info", JOptionPane.INFORMATION_MESSAGE);
+					SignupView.this.setVisible(false);
+				} else {
+					 // Autenticazione fallita, mostra un messaggio di errore
+					  JOptionPane.showMessageDialog(null, "ERRORE!. Credenziali mancanti o utente già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnSignup.setForeground(new Color(255, 255, 255));

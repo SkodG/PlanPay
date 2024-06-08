@@ -14,4 +14,8 @@ public interface Event {
 	void setState(State s);
 	
 	String getInfoEventToString();
+	
+	String getDaOra();
+	
+	String getAOra();
 }

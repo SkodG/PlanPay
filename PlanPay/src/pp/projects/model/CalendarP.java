@@ -9,5 +9,5 @@ public interface CalendarP {
 	EventImpl modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
 			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora);
 	
-	boolean removeEvent(String name, LocalDate date, String daOra);
+	EventImpl removeEvent(String name, LocalDate date, String daOra);
 }

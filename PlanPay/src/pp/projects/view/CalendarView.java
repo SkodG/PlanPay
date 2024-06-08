@@ -4,10 +4,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.controller.ConsoleController;
 import pp.projects.model.CalendarModel;
 import pp.projects.model.DayCellRenderer;
 import pp.projects.model.Event;
+import pp.projects.model.EventAdapter;
+import pp.projects.model.Data;
 import pp.projects.model.EventImpl;
 
 import javax.swing.JTable;
@@ -15,7 +17,10 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,7 +36,7 @@ public class CalendarView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;    
-    private CalendarModel calendar;
+    private CalendarModel calendarModel;
     private JTable tblCalendario;
     private JLabel lbMese;
     
@@ -39,15 +44,18 @@ public class CalendarView extends JFrame {
     private int actualMonth;
     
     private EventView eventView;
+    private SelectedEventView selectedEventView;
+    private boolean isSelectingEvent = false;
+
 
 	/**
 	 * Create the frame.
 	 */
-	public CalendarView(ConsoleControllerImpl controller) {
-		this.calendar = new CalendarModel(today.getYear(), today.getMonthValue());
+	public CalendarView(ConsoleController controller, CalendarModel model) {
+		setTitle("CALENDARIO");
+		this.calendarModel = model;
 		this.actualMonth = today.getMonthValue();
 		
-		setTitle("CALENDARIO");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 763, 641);
 		contentPane = new JPanel();
@@ -61,7 +69,7 @@ public class CalendarView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// carica nuovo mese + carica nuovi eventi
 				actualMonth -= 1;
-				calendar.setYearMonth(today.getYear(), actualMonth);		
+				calendarModel.setYearMonth(today.getYear(), actualMonth);		
 				updateMonthLable();
 			}
 		});
@@ -75,7 +83,7 @@ public class CalendarView extends JFrame {
 				// carica nuovo mese + carica nuovi eventi
 				actualMonth += 1;
 				//calendar = new CalendarModel(today.getYear(), actualMonth);
-				calendar.setYearMonth(today.getYear(), actualMonth);				
+				calendarModel.setYearMonth(today.getYear(), actualMonth);				
 				
 				updateMonthLable();
 			}
@@ -84,7 +92,7 @@ public class CalendarView extends JFrame {
 		btnAvanti.setBounds(672, 10, 67, 29);
 		contentPane.add(btnAvanti);
 		
-		lbMese = new JLabel(calendar.getMonth(calendar.getMonthValue()).name().toUpperCase());
+		lbMese = new JLabel(calendarModel.getMonth(calendarModel.getMonthValue()).name().toUpperCase());
 		lbMese.setHorizontalAlignment(SwingConstants.CENTER);
 		lbMese.setBackground(new Color(255, 255, 255));
 		lbMese.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -95,7 +103,7 @@ public class CalendarView extends JFrame {
 		btnNewevent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// creo un nuovo evento
-				eventView = new EventView(true, selectDate(), controller, CalendarView.this);
+				eventView = new EventView(true, LocalDate.now(), controller, CalendarView.this);
 				eventView.setVisible(true);
 			}
 		});
@@ -103,7 +111,7 @@ public class CalendarView extends JFrame {
 		btnNewevent.setBounds(297, 545, 157, 49);
 		contentPane.add(btnNewevent);
 		
-		tblCalendario = new JTable(calendar);
+		tblCalendario = new JTable(calendarModel);
 		tblCalendario.setBounds(10, 150, 734, 375);		
 		// imposto la dimensione delle colonne e delle righe
 		tblCalendario.setRowHeight(75);
@@ -118,24 +126,31 @@ public class CalendarView extends JFrame {
                     int row = tblCalendario.rowAtPoint(e.getPoint());
                     int column = tblCalendario.columnAtPoint(e.getPoint());                    
                     
-                    LocalDate dateLocal = calendar.getDateAt(row, column);
-                    System.out.println(dateLocal);
+                    LocalDate dateLocal = calendarModel.getDateAt(row, column);
                     
-                    List<EventImpl> events = calendar.getEventsAt(row, column);
-                    System.err.println("entra quo!");
-                    System.err.println(events.size());
-                    // se l'evento esiste, passo i dati per visualizzarli sulla schermata
-                    // altrimenti apro una nuova schermata vuota.
-                    if(events.size() > 0) {
-                    	// mostro tutti gli eventi che ci sono
-                    	for(EventImpl event : events) {
-                    		eventView = new EventView(false, dateLocal, controller, CalendarView.this);
-                    		eventView.setEventDetail(event.getName(), event.getDate(), event.getDaOra(), event.getAOra(), event.getDescription());
-                    	}
+                    Set<Event> events = calendarModel.getEventsInDate(dateLocal);
+                    
+                    if(events != null) {
+                    	// se ci sono più di un evento li visualizzo sulla finestra selectedEventView
+	                    if(events.size() > 1) {
+	                    	isSelectingEvent = false;
+	                    	selectedEventView = new SelectedEventView(controller, CalendarView.this, dateLocal, events);
+	                    	selectedEventView.setVisible(true);
+	                    } else if(events.size() == 1) {
+	                    	// se c'è un evento lo visualizzo su eventView
+	                    	for(Event event : events) {
+	                    		EventAdapter eventAdapter = new EventAdapter(event);
+	                    		isSelectingEvent = true; 
+	                    		eventView = new EventView(false, dateLocal, controller, CalendarView.this);
+	                    		eventView.setEventDetail(eventAdapter.getName(), dateLocal, ((EventImpl) event).getDaOra(), ((EventImpl) event).getAOra(), eventAdapter.getDescription());
+	                    		eventView.setVisible(true);
+	                    		isSelectingEvent = false;
+	                    	}
+	                    }   
                     } else {
                     	eventView = new EventView(true, dateLocal, controller, CalendarView.this);
-                    }   
-                    eventView.setVisible(true);
+                    	eventView.setVisible(true);
+                    }
 				}
 			}
 		});
@@ -200,26 +215,47 @@ public class CalendarView extends JFrame {
 	}
 	
 	private void updateMonthLable() {
-		 lbMese.setText(calendar.getMonth(calendar.getMonthValue()).name().toUpperCase());
+		lbMese.setText(calendarModel.getMonth(calendarModel.getMonthValue()).name().toUpperCase());
     }
 	
 	public LocalDate selectDate() {
 		int indexRow = tblCalendario.getSelectedRow();
 		int indexColumn = tblCalendario.getSelectedColumn();
 		
-		return calendar.getDateAt(indexRow, indexColumn);
+		return calendarModel.getDateAt(indexRow, indexColumn);
 	}
 	
-	public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, EventImpl event) {
-		int daysEvent = 0;
-		LocalDate currentDay = daData;
+	public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
+		if(!bDelete) {
+			for(Event ev : events) {
+				Data data = new EventAdapter(ev);
+				if(eventView.isbNew()) {
+					if(!(daData.equals(aData))) {
+						calendarModel.setValueAddEvent(data.getDate(), ev);
+					} else {
+						calendarModel.setValueAddEvent(daData, ev);
+					}
+				}else {
+					calendarModel.setValueModifyEvent(daData, ev);
+				}
+			}			
+		} else {
+			eventView.setVisible(false);
+			calendarModel.setValueAddEvent(aData, null);
+		}
+
+	    contentPane.revalidate();
+	    contentPane.repaint();		
+	}
+	
+	public void updateUIRemoveEvent(LocalDate date, Event event) {
+		calendarModel.removeEvent(date, event);
 		
-		if(!aData.equals(daData)) {
-			daysEvent = aData.getDayOfMonth() - daData.getDayOfMonth();
-			for(int i = 0; i <= daysEvent; i++) {
-				currentDay = daData.plusDays(i);
-				calendar.setValueAddEvent(currentDay, event);
-			}
-		}		
+	    contentPane.revalidate();
+	    contentPane.repaint();	
+	}
+	
+	public boolean getSelectingEvent() {
+		return isSelectingEvent;
 	}
 }

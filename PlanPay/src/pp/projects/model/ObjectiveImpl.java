@@ -61,7 +61,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		//operazione sul conto(-)
 		this.accountRef.subBalance(amount);
 		//istanzio nuova transazione
-		TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
+		Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Objective");
 		//aggiungo la transazione alla lista
 		transactionList.add(transaction);
 		//se la transazione è avvenuta posso modificare il bilancio(+)
@@ -77,7 +77,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 			//operazione sul conto(-)
 			this.accountRef.addBalance(amount);
 			//istanzio nuova transazione
-			TransactionImpl transaction = new TransactionImpl(/*parametri di info per la transazione*/ "Objective");
+			Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Objective");
 			//aggiungo la transazione alla lista
 			transactionList.add(transaction);
 			//se la transazione è avvenuta posso modificare il bilancio(-)

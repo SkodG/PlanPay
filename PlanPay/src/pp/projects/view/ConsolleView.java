@@ -1,22 +1,15 @@
 package pp.projects.view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.Account;
 
-import javax.swing.JLabel;
-import javax.swing.JList;
-
 import java.awt.Font;
 import java.awt.Color;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -36,7 +29,8 @@ public class ConsolleView extends JFrame {
 	private JLabel lblmporto;
 	private ImageIcon icon;
 	private JButton btnObjectives;
-	private JList<String> listTransactions;
+	private DefaultListModel<String> transactionListModel;
+	private JList<String> transactionList;
 	private JScrollPane scrollPane;
 	private int count;
 	
@@ -53,8 +47,6 @@ public class ConsolleView extends JFrame {
 	public ConsolleView(ConsoleControllerImpl c, Account account) throws IOException {
 		setTitle("CONSOLLE");
 		this.controller = c;
-		this.count = 0;
-		this.calendarView = new CalendarView(c);
 		this.servicesView = new ServicesView("SERVIZIO: ", c);//modificato costruttore
 		this.consolleObjectiveView = new ConsolleObjectiveView(c);		
 		this.account = account;
@@ -99,16 +91,17 @@ public class ConsolleView extends JFrame {
 		contentPane.add(lbTransactions);
 		
 		btnCalendar = new JButton();
-		btnCalendar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				calendarView.setVisible(true);
-			}
-		});
 		try {
 			btnCalendar.setIcon(new ImageIcon(this.getClass().getResource("/images/calendar.png")));
 		} catch (Exception ex) {
 		    System.out.println(ex);
 		}
+		btnCalendar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				calendarView = c.drawCalendar();
+				calendarView.setVisible(true);
+			}
+		});
 		btnCalendar.setBounds(558, 24, 134, 94);	
 		contentPane.add(btnCalendar);
 		
@@ -123,13 +116,13 @@ public class ConsolleView extends JFrame {
 				count += 1;
 				if (count % 2 == 0) {
 					if(updateUI()) {
-				        listTransactions.setVisible(false);
+						transactionList.setVisible(false);
 				        scrollPane.setVisible(false);
 						setBounds(100, 100, 736, 490);
 					}
 				} else {
 					if(updateUI()) {
-				        listTransactions.setVisible(true);
+						transactionList.setVisible(true);
 				        scrollPane.setVisible(true);
 						setBounds(100, 100, 736, 722);
 					}
@@ -150,6 +143,20 @@ public class ConsolleView extends JFrame {
 			}
 		});
 		
+        // Inizializza la JList e lo JScrollPane
+        transactionListModel = new DefaultListModel<>();
+        transactionList = new JList<>(transactionListModel);
+        transactionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        scrollPane = new JScrollPane(transactionList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBounds(31, 433, 661, 249);
+        contentPane.add(scrollPane);
+
+        // Nascondi la JList e lo JScrollPane all'inizio
+        transactionList.setVisible(false);
+        scrollPane.setVisible(false);
+		
 		// WindowListener per gestire l'evento "windowOpened"
         addWindowListener(new WindowAdapter() {
             @Override
@@ -160,26 +167,17 @@ public class ConsolleView extends JFrame {
 	}
 	
 	public boolean updateUI() {
-		List<String> transactions = controller.getTransactionToString();	
+		List<String> transactions = controller.getDatiTransazione();	
 		
 		if(transactions != null) {
-		
-			String[] transactionArray = transactions.toArray(new String[0]);
-	            
-			System.out.println(transactionArray.length);
-			if(transactionArray.length > 0) {
-				listTransactions = new JList<>(transactionArray);
-				listTransactions.setBounds(31, 433, 661, 249);
-						
-			    // Aggiungi il JList ad uno JScrollPane
-		        scrollPane = new JScrollPane(listTransactions);
-		        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		        scrollPane.setBounds(31, 433, 661, 249);
-		        contentPane.add(scrollPane);
-		        
-		        return true; // devo aggiornare la GUI.
-			}
-		}
+	        
+            transactionListModel.clear(); 	// Pulisce il modello prima di aggiungere nuovi elementi
+            for (String transaction : transactions) {
+                transactionListModel.addElement(transaction);
+            }
+
+            return !transactions.isEmpty(); // Restituisce true se ci sono transazioni
+        }
 		
 		return false;
 	}
@@ -187,4 +185,5 @@ public class ConsolleView extends JFrame {
 	public void updateUIconto() {
 		lblmporto.setText(account.getBalance().toString());
 	}
+
 }

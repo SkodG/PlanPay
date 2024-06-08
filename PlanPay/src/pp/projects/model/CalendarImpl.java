@@ -68,10 +68,7 @@ public class CalendarImpl implements CalendarP{
 		EventImpl event = null;
 		
 		event = listEvents.stream()
-				   .filter(e -> 
-					   e.getName().equals(name) &&
-					   e.getDaOra().equals(daOra) &&
-					   e.getAOra().equals(daOra))
+				   .filter(e -> e.getName().equals(name))
 				   .findFirst()
 				   .orElse(null);
 		
@@ -99,7 +96,7 @@ public class CalendarImpl implements CalendarP{
 	 * @param o = evento da eliminare.
 	 */
 	@Override
-	public boolean removeEvent(String name, LocalDate date, String daOra) {
+	public EventImpl removeEvent(String name, LocalDate date, String daOra) {
 		Optional<EventImpl> existingEvent = getEvent(name, date, daOra);
 		
 		System.out.println(name + "-" + date + "-" + daOra);
@@ -110,7 +107,7 @@ public class CalendarImpl implements CalendarP{
 	   
 		listEvents.remove(existingEvent.get());
 		
-		return true;
+		return existingEvent.get();
 	}
 	
 	public int getDay() {

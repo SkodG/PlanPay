@@ -3,6 +3,7 @@ package pp.projects.view;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -79,6 +80,9 @@ public class LoginView extends JFrame {
 				password = edPassword.getText();
 				if(controller.loginButtonClick(username, password)) {
 					LoginView.this.setVisible(false);
+				} else {
+					// Autenticazione fallita, mostra un messaggio di errore
+					JOptionPane.showMessageDialog(null, "Credenziali non valide o mancanti. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
