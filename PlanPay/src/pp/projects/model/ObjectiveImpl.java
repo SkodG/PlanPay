@@ -12,17 +12,36 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private double savedBalance;
 	private double savingTarget;
 	private LocalDate date; //type?
-	//TODO aggiungere l'importo double per le funzione get e set(inizializzato a 0)
 	
-	public ObjectiveImpl(Account c, String n, String desc, double savingTarget) {
-		transactionList = new ArrayList<>();
-		super.accountRef = c;
-		this.name = n;
-		this.description = desc;
-		this.savedBalance = 0.0;
-		this.savingTarget = savingTarget;
-		this.date = LocalDate.now(); // conviene modificare date per generarla 
-		//al momento  dell'istanziazione senza prenderla dagli argomenti del costruttore
+    public ObjectiveImpl(Account accountRef, String name, String description, double savingTarget) {
+        super(accountRef);
+        this.name = name;
+        this.description = description;
+        this.savedBalance = 0.0;
+        this.savingTarget = savingTarget;
+        this.date = LocalDate.now();
+    }
+    
+	@Override
+	protected void doDeposit(double amount) {
+		if(accountRef.subBalance(amount))
+			savedBalance += amount;
+	}
+	
+	@Override
+	protected boolean doWithdraw(double amount) {
+		if (isTargetMet() && savedBalance >= amount) {
+			savedBalance -= amount;
+			accountRef.addBalance(amount);
+			return true;
+		} 
+		else
+			return false;
+	}
+	
+	@Override
+	protected String getTransactionType() {
+		return "Obbiettivo";
 	}
 	
 	public Double projection(double inflationRate, double interestRate, double monthlySaving, int years) {
@@ -33,63 +52,29 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		return monthlySaving*12*years*savedBalance*Math.pow((1+interestRate-inflationRate), years);
 	}
 	
+	@Override
 	public Double getBalance() {
 		return this.savedBalance;
 	}
-	
+	@Override
 	public double getSavingTarget() {
 		return savingTarget;
 	}
-	
+	@Override
 	public void setSavingTarget(double newTarget) {
 		this.savingTarget = newTarget;
 	}
+	
 	/**
 	 * 
 	 * @return true se il risparmio è uguale o superiore al valore fissato come obbiettivo,
 	 *  altrimenti false
 	 */
 	public boolean isTargetMet() {
-		boolean ret = false;
 		if(savedBalance >= savingTarget)
-			ret = true;		
-		return ret;
-	}
-	
-	@Override
-	public void deposit(double amount) {
-		//operazione sul conto(-)
-		this.accountRef.subBalance(amount);
-		//istanzio nuova transazione
-		Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Objective");
-		//aggiungo la transazione alla lista
-		transactionList.add(transaction);
-		//se la transazione è avvenuta posso modificare il bilancio(+)
-		savedBalance += amount;
-	}
-
-	@Override
-	public boolean withdraw(double amount) {
-		boolean bOccured = false;
-		//controllo che sia presente la somma sufficiente
-		if(savedBalance >= amount) {
-			bOccured = true;
-			//operazione sul conto(-)
-			this.accountRef.addBalance(amount);
-			//istanzio nuova transazione
-			Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Objective");
-			//aggiungo la transazione alla lista
-			transactionList.add(transaction);
-			//se la transazione è avvenuta posso modificare il bilancio(-)
-			savedBalance -= amount;
-		}
-		return bOccured;
-	}
-	
-	@Override
-	public Transaction getTransaction() {
-		// TODO Auto-generated method stub
-		return null;
+			return true;		
+		else
+			return false;
 	}
 	
 	@Override
@@ -116,6 +101,4 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	public LocalDate getDate() {
 		return this.date;
 	}
-	
-
 }

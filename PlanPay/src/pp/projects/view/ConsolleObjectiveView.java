@@ -47,6 +47,7 @@ public class ConsolleObjectiveView extends JFrame {
 	 * Create the frame.
 	 */
 	public ConsolleObjectiveView(ConsoleControllerImpl controller) {
+		setTitle("OBBIETTIVI CREATI");
 		this.idCount = 0;
 		this.consoleController = controller;
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

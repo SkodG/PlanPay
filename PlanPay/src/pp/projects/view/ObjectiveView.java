@@ -27,33 +27,21 @@ public class ObjectiveView extends JFrame {
 	private LocalDate date;
 	private boolean	bNew;
 
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ObjectiveView frame = new ObjectiveView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 
-	/**
-	 * Create the frame.
-	 */
+	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
 	// al click del bottone instanzierai una nuova istanza di ObjectiveView, passandogli True, definendo quindi la creazione di una nuova istanza.
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", 
 	//oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
 	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
+	/**
+	 * Create the frame.
+	 */
 	public ObjectiveView(boolean bNew, String nomeObbiettivo, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
-		this.bNew = bNew;
+		setTitle("OBBIETTIVO");
+		
+		date = LocalDate.now();
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -94,12 +82,12 @@ public class ObjectiveView extends JFrame {
 		btnProjection.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnProjection);
 		
-		JLabel lblDisplayDate = new JLabel(/*date.toString()*/);
+		JLabel lblDisplayDate = new JLabel(date.toString());
 		lblDisplayDate.setFont(new Font("Calibri", Font.PLAIN, 14));
 		lblDisplayDate.setBounds(324, 11, 82, 14);
 		contentPane.add(lblDisplayDate);
 		
-		textName = new JTextField();
+		textName = new JTextField(nomeObbiettivo);
 		textName.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textName.setBounds(151, 6, 99, 20);
 		contentPane.add(textName);
@@ -126,22 +114,16 @@ public class ObjectiveView extends JFrame {
 		textDescr.setBounds(151, 53, 208, 53);
 		contentPane.add(textDescr);
 		
-		// da qui non si può dare una data a obbiettivo,
-		//l'ideale sarebbe che la acquisisse da solo una volta istanziato!
 		JButton btnSave = new JButton("Salva modifiche");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//if(bNew) { 
-					
-				//}
-				if(textAmount.getText().isEmpty())
+				if(textAmount.getText().isBlank() || textName.getText().isBlank())
 					JOptionPane.showMessageDialog(null, "Soglia di risparmio non definita!", "Errore", JOptionPane.ERROR_MESSAGE);
 				else {					
 					controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
 					setVisible(false);
 					contObj.updateUI(ObjectiveView.this);
-				}
-				
+				}				
 			}
 		});
 		btnSave.setFont(new Font("Calibri", Font.PLAIN, 14));
@@ -153,7 +135,9 @@ public class ObjectiveView extends JFrame {
 		lblCurrentAmount.setBounds(275, 131, 46, 14);
 		contentPane.add(lblCurrentAmount);
 		
-		JLabel lblDisplayAmount = new JLabel("...");
+		Double accBalance = controller.getAccount().getBalance();
+		
+		JLabel lblDisplayAmount = new JLabel(accBalance.toString()+ " €");
 		lblDisplayAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		lblDisplayAmount.setBounds(324, 131, 82, 14);
 		contentPane.add(lblDisplayAmount);

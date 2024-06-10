@@ -4,44 +4,30 @@ import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class ServicesImpl extends AbstractOperations implements Services {
+public class ServicesImpl extends AbstractOperations {
 	
-	private List<Transaction> transactionList;
 
-	public ServicesImpl(Account c) {
-		this.transactionList = new ArrayList<>();
-		super.accountRef = c;
+	public ServicesImpl(Account account) {
+		super(account);
 	}
 
 	// void creaTransazione(	//LocalDate date, String name, double amount, String type) > richiamata da 'deposita' o 'preleva'
-	
+
 	@Override
-	public void deposit(double amount) {
+	protected void doDeposit(double amount) {
 		//operazione sul conto(+)
-		this.accountRef.addBalance(amount);
-		//istanzio nuova transazione
+		accountRef.addBalance(amount);		
+	}
 		
-		// crea transazione fa questo:
-		Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Servizio");
-		//aggiungo la transazione alla lista
-		this.transactionList.add(transaction);
+	@Override
+	protected boolean doWithdraw(double amount) {
+		return accountRef.subBalance(amount);
 	}
 
 	@Override
-	public boolean withdraw(double amount) {
-		//operazione sul conto(-)
-		boolean bOccured = this.accountRef.subBalance(amount);
-		if(bOccured) {
-			//istanzio nuova transazione
-			Transaction transaction = new Transaction(/*parametri di info per la transazione*/ "Servizio");
-			//aggiungo la transazione alla lista
-			this.transactionList.add(transaction);
-		}
-		return bOccured;
+	protected String getTransactionType() {
+		return "Servizio";
 	}
 
-	@Override
-	public List<Transaction> getList() {
-		return this.transactionList;
-	}
+
 }
