@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class ObjectiveView extends JFrame {
 
@@ -38,11 +39,9 @@ public class ObjectiveView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ObjectiveView(boolean bNew, String nomeObbiettivo, ConsoleControllerImpl controller, ConsolleObjectiveView contObj) {
-		setTitle("OBBIETTIVO");
+	public ObjectiveView(boolean bNew, String nomeObbiettivo, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consObj) {
 		
-		date = LocalDate.now();
-		
+		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data:"+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -51,51 +50,46 @@ public class ObjectiveView extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblName = new JLabel("Nome:");
-		lblName.setBounds(22, 11, 46, 14);
+		lblName.setBounds(22, 25, 46, 14);
 		lblName.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(lblName);
-		
-		JLabel lblDate = new JLabel("Data:");
-		lblDate.setBounds(275, 11, 58, 14);
-		lblDate.setFont(new Font("Calibri", Font.PLAIN, 14));
-		contentPane.add(lblDate);
 		
 		JButton btnOperation = new JButton("Deposita/Preleva");
 		btnOperation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(textName.getText().isBlank())
+					;
+				else {
+					ServicesView serviceView = new ServicesView("OBBIETTIVO: "+ textName.getText(), controller);
+					serviceView.setVisible(true);
+				}
+					
 				System.out.println("Deposita/preleva da: "+ textName.getText());
-				ServicesView serviceView = new ServicesView("OBBIETTIVO: "+ textName.getText(), controller);
-				serviceView.setVisible(true);
 			}
 		});
-		btnOperation.setBounds(239, 213, 139, 37);
+		btnOperation.setBounds(285, 218, 139, 27);
 		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnOperation);
 		
-		JButton btnProjection = new JButton("Proiezione risparmio");
+		JButton btnProjection = new JButton("Previsione");
 		btnProjection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO da implementare
 			}
 		});
-		btnProjection.setBounds(39, 213, 154, 37);
+		btnProjection.setBounds(7, 218, 123, 27);
 		btnProjection.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnProjection);
 		
-		JLabel lblDisplayDate = new JLabel(date.toString());
-		lblDisplayDate.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDisplayDate.setBounds(324, 11, 82, 14);
-		contentPane.add(lblDisplayDate);
-		
 		textName = new JTextField(nomeObbiettivo);
 		textName.setFont(new Font("Calibri", Font.PLAIN, 14));
-		textName.setBounds(151, 6, 99, 20);
+		textName.setBounds(151, 22, 208, 20);
 		contentPane.add(textName);
 		textName.setColumns(10);
 		
 		JLabel lblDescr = new JLabel("Descrizione:");
 		lblDescr.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDescr.setBounds(22, 57, 69, 14);
+		lblDescr.setBounds(22, 57, 92, 14);
 		contentPane.add(lblDescr);
 		
 		JLabel lblThreshold = new JLabel("Soglia risparmio");
@@ -103,7 +97,16 @@ public class ObjectiveView extends JFrame {
 		lblThreshold.setBounds(22, 133, 101, 14);
 		contentPane.add(lblThreshold);
 		
-		textAmount = new JTextField();
+		double savingAmount;
+		if(bNew) 
+			savingAmount = 0.0;
+		else 
+			savingAmount = controller.getObjective(nomeObbiettivo).get().getSavingTarget();
+		
+		System.out.println("NOME VIEW APPENA CREATA: "+nomeObbiettivo);
+		
+		
+		textAmount = new JTextField(Double.toString(savingAmount));
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
 		textAmount.setBounds(151, 130, 99, 20);
@@ -117,17 +120,36 @@ public class ObjectiveView extends JFrame {
 		JButton btnSave = new JButton("Salva modifiche");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(textAmount.getText().isBlank() || textName.getText().isBlank())
-					JOptionPane.showMessageDialog(null, "Soglia di risparmio non definita!", "Errore", JOptionPane.ERROR_MESSAGE);
-				else {					
-					controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
-					setVisible(false);
-					contObj.updateUI(ObjectiveView.this);
-				}				
+				try {
+					Double.parseDouble(textAmount.getText());
+					
+					if(textAmount.getText().isBlank() || textName.getText().isBlank())
+						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
+								" e ammontare da risparmiare", "Errore", JOptionPane.ERROR_MESSAGE);					
+					else if(controller.getObjective(textName.getText()).isEmpty()){//TODO  MODIFICARE DIRETTAMENTE METODI IN CONSOLE CONTROLLER
+						//controllo che il nome non sia già preso
+						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
+						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
+						controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
+						setVisible(false);
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Obbiettivo già presente!", "Errore", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				catch(NumberFormatException n) {
+					JOptionPane.showMessageDialog(null, "Inserire cifra numerica per la soglia di risparmio", "Errore", JOptionPane.ERROR_MESSAGE);
+				}
+				catch(IllegalStateException l) {
+					JOptionPane.showMessageDialog(null, l.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+				}
+				finally {
+					consObj.updateUI(ObjectiveView.this);
+				}
 			}
 		});
 		btnSave.setFont(new Font("Calibri", Font.PLAIN, 14));
-		btnSave.setBounds(151, 176, 135, 27);
+		btnSave.setBounds(140, 218, 135, 27);
 		contentPane.add(btnSave);
 		
 		JLabel lblCurrentAmount = new JLabel("Saldo:");

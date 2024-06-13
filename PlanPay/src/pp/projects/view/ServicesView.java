@@ -34,29 +34,47 @@ public class ServicesView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView(String tipo, ConsoleControllerImpl controller /*TODO Gestire la data!*/) {
-		setTitle("SERVIZI");
-		name = "";
-		date = LocalDate.now();
+	public ServicesView(String tipo, ConsoleControllerImpl controller) {
 		
+		date = LocalDate.now();
+		if(tipo.contains("OBBIETTIVO"))
+			setTitle(tipo +" - Data: " + date);
+		else
+			setTitle("SERVIZIO CONTO - Data: " + date);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 250);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblLocalDate = new JLabel("Data:");
-		lblLocalDate.setBounds(78, 21, 81, 14);
-		lblLocalDate.setFont(new Font("Calibri", Font.PLAIN, 14));
-		contentPane.add(lblLocalDate);
+		JLabel lblCurrency = new JLabel("€");
+		lblCurrency.setBounds(174, 84, 37, 14);
+		lblCurrency.setFont(new Font("Calibri", Font.PLAIN, 14));
+		contentPane.add(lblCurrency);
 		
-		JLabel lblDisplayLocalDate = new JLabel(date.toString());
-		lblDisplayLocalDate.setBounds(182, 21, 101, 14);
-		lblDisplayLocalDate.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDisplayLocalDate.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(lblDisplayLocalDate);
+		JLabel lblAmount = new JLabel("Importo:");
+		lblAmount.setBounds(10, 84, 62, 14);
+		lblAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
+		contentPane.add(lblAmount);
+		
+		textAmount = new JTextField("0.00");
+		textAmount.setHorizontalAlignment(SwingConstants.TRAILING);
+		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
+		textAmount.setColumns(10);
+		textAmount.setBounds(82, 81, 86, 20);
+		contentPane.add(textAmount);
+		
+		JLabel lblTitle = new JLabel("Causale");
+		lblTitle.setFont(new Font("Calibri", Font.PLAIN, 14));
+		lblTitle.setBounds(10, 39, 62, 14);
+		contentPane.add(lblTitle);
+		
+		textName = new JTextField();
+		textName.setFont(new Font("Calibri", Font.PLAIN, 13));
+		textName.setBounds(82, 36, 165, 20);
+		contentPane.add(textName);
+		textName.setColumns(10);	
 		
 		JButton btnDeposit = new JButton("Deposita");
 		btnDeposit.addActionListener(new ActionListener() {
@@ -67,6 +85,7 @@ public class ServicesView extends JFrame {
 				try {
 					dAmount = Double.parseDouble(textAmount.getText());
 					if(tipo.startsWith("SERVIZIO")) {
+						tipo.concat(" "+textName.getText());
 					controller.updateConto(dAmount, false, tipo);					
 					}
 					else if(tipo.startsWith("OBBIETTIVO")) {
@@ -89,13 +108,12 @@ public class ServicesView extends JFrame {
 						}				
 					} 
 				}catch(NumberFormatException n) {
-					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Inserire cifra numerica  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
 					
 				} finally {
 					//Pulisci i campi una volta finito
-				textAmount.setText("");
+				textAmount.setText("0.00");
 				}			
-				
 			}
 		});
 		btnDeposit.setBounds(32, 140, 149, 35);
@@ -141,7 +159,7 @@ public class ServicesView extends JFrame {
 					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
 				} finally {
 					//Pulisci i campi una volta finito
-				textAmount.setText("");
+				textAmount.setText("0.00");
 				}	
 				
 			} //TODO Si può riutilizzare il codice con un singolo actionListener?
@@ -152,42 +170,6 @@ public class ServicesView extends JFrame {
 		contentPane.add(btnWithdraw);
 		
 				
-		JLabel lblCurrency = new JLabel("EUR");
-		lblCurrency.setBounds(262, 84, 37, 14);
-		lblCurrency.setFont(new Font("Calibri", Font.PLAIN, 14));
-		contentPane.add(lblCurrency);
-		
-		JLabel lblAmount = new JLabel("Importo:");
-		lblAmount.setBounds(78, 84, 62, 14);
-		lblAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		contentPane.add(lblAmount);
-		
-		textAmount = new JTextField("0.00");
-		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		textAmount.setColumns(10);
-		textAmount.setBounds(166, 81, 86, 20);
-		contentPane.add(textAmount);
-		
-		JLabel lblTitle = new JLabel("Causale");
-		lblTitle.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblTitle.setBounds(78, 51, 62, 14);
-		contentPane.add(lblTitle);
-		
-		if(tipo.contains("SERVIZIO"))
-			name = tipo.substring(10);
-		else if(tipo.contains("OBBIETTIVO"))
-			name = tipo.substring(12);
-		
-		JLabel lblDisplayTitle = new JLabel(tipo);
-		lblDisplayTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDisplayTitle.setFont(new Font("Calibri", Font.PLAIN, 13));
-		lblDisplayTitle.setBounds(166, 46, 92, 19);
-		contentPane.add(lblDisplayTitle);
-		
-		textName = new JTextField(name);
-		textName.setFont(new Font("Calibri", Font.PLAIN, 13));
-		textName.setBounds(274, 46, 86, 20);
-		contentPane.add(textName);
-		textName.setColumns(10);
+
 	}
 }
