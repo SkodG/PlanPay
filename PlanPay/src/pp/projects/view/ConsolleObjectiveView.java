@@ -91,7 +91,7 @@ public class ConsolleObjectiveView extends JFrame {
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setBounds(10, 11, 412, 219);
 		scrollPane.setViewportView(panel);
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		// 	TODO metterlo in verticale e sistemare la dimensione di panelObjective.
 			
 	}

@@ -41,7 +41,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	
 	@Override
 	protected String getTransactionType() {
-		return "Obbiettivo";
+		return "Obbiettivo "+ getDescription();
 	}
 	
 	public Double projection(double inflationRate, double interestRate, double monthlySaving, int years) {

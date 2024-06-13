@@ -1,21 +1,12 @@
 package pp.projects.view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
-
 import javax.swing.JLabel;
 import java.awt.Font;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -23,6 +14,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
+import java.awt.Component;
+import javax.swing.SwingConstants;
 
 public class ListObjectiveView extends JPanel {
 	
@@ -38,19 +31,15 @@ public class ListObjectiveView extends JPanel {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		
-		Dimension preferredSize = new Dimension(100, 100);
-        setPreferredSize(new Dimension(267, 47));
+		Dimension preferredSize = new Dimension(400, 40);
         setMinimumSize(preferredSize);
         setMaximumSize(preferredSize);
-        
-        JLabel label = new JLabel("");
-        add(label);
-        
-        JLabel label_1 = new JLabel("");
-        add(label_1);
+        setLayout(new GridLayout(0, 2, 0, 0));
         
         JLabel lblnome = new JLabel(name);
-        lblnome.setFont(new Font("Calibri", Font.PLAIN, 13));
+        lblnome.setHorizontalAlignment(SwingConstants.CENTER);
+        lblnome.setVerticalAlignment(SwingConstants.BOTTOM);
+        lblnome.setFont(new Font("Calibri", Font.PLAIN, 14));
         add(lblnome);
         
         JButton btnNewButton = new JButton("Apri");
@@ -62,17 +51,17 @@ public class ListObjectiveView extends JPanel {
         
         });
         
-        JLabel lblBalance = new JLabel("0.00");
-        lblBalance.setFont(new Font("Calibri", Font.PLAIN, 13));
-        add(lblBalance);
-        
         add(btnNewButton);
         
-        JLabel label_2 = new JLabel("");
-        add(label_2);
+        JLabel lblBalance = new JLabel("0.00");
+        lblBalance.setHorizontalAlignment(SwingConstants.CENTER);
+        lblBalance.setVerticalAlignment(SwingConstants.BOTTOM);
+        lblBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
+        add(lblBalance);
         
         
         JButton btnNewButton_1 = new JButton("Elimina");
+        btnNewButton_1.setAlignmentY(Component.TOP_ALIGNMENT);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//TODO: Eliminazione oggetto e obbiettivo collegato (View e Impl)-> serve metodo del controller!
@@ -81,13 +70,6 @@ public class ListObjectiveView extends JPanel {
         	}
         });
         add(btnNewButton_1);
-        
-        JLabel label_3 = new JLabel("");
-        add(label_3);
-        
-        JLabel lblDate = new JLabel();
-        lblDate.setFont(new Font("Calibri", Font.PLAIN, 13));
-        add(lblDate);
         
 	}
 }

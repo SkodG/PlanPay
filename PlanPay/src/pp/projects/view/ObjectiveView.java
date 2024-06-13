@@ -43,7 +43,7 @@ public class ObjectiveView extends JFrame {
 		
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data:"+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 450, 225);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -54,30 +54,13 @@ public class ObjectiveView extends JFrame {
 		lblName.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(lblName);
 		
-		JButton btnOperation = new JButton("Deposita/Preleva");
-		btnOperation.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(textName.getText().isBlank())
-					;
-				else {
-					ServicesView serviceView = new ServicesView("OBBIETTIVO: "+ textName.getText(), controller);
-					serviceView.setVisible(true);
-				}
-					
-				System.out.println("Deposita/preleva da: "+ textName.getText());
-			}
-		});
-		btnOperation.setBounds(285, 218, 139, 27);
-		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
-		contentPane.add(btnOperation);
-		
 		JButton btnProjection = new JButton("Previsione");
 		btnProjection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO da implementare
 			}
 		});
-		btnProjection.setBounds(7, 218, 123, 27);
+		btnProjection.setBounds(10, 154, 123, 27);
 		btnProjection.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnProjection);
 		
@@ -86,6 +69,7 @@ public class ObjectiveView extends JFrame {
 		textName.setBounds(151, 22, 208, 20);
 		contentPane.add(textName);
 		textName.setColumns(10);
+		textName.setEditable(bNew);
 		
 		JLabel lblDescr = new JLabel("Descrizione:");
 		lblDescr.setFont(new Font("Calibri", Font.PLAIN, 14));
@@ -94,7 +78,7 @@ public class ObjectiveView extends JFrame {
 		
 		JLabel lblThreshold = new JLabel("Soglia risparmio");
 		lblThreshold.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblThreshold.setBounds(22, 133, 101, 14);
+		lblThreshold.setBounds(22, 120, 101, 14);
 		contentPane.add(lblThreshold);
 		
 		double savingAmount;
@@ -109,7 +93,7 @@ public class ObjectiveView extends JFrame {
 		textAmount = new JTextField(Double.toString(savingAmount));
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
-		textAmount.setBounds(151, 130, 99, 20);
+		textAmount.setBounds(151, 117, 99, 20);
 		contentPane.add(textAmount);
 		
 		JTextArea textDescr = new JTextArea();
@@ -122,15 +106,15 @@ public class ObjectiveView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Double.parseDouble(textAmount.getText());
-					
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
 						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
 								" e ammontare da risparmiare", "Errore", JOptionPane.ERROR_MESSAGE);					
-					else if(controller.getObjective(textName.getText()).isEmpty()){//TODO  MODIFICARE DIRETTAMENTE METODI IN CONSOLE CONTROLLER
+					else if(controller.getObjective(textName.getText()).isEmpty()){
 						//controllo che il nome non sia già preso
 						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
 						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
 						controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
+						textName.setEditable(false);
 						setVisible(false);
 					}
 					else {
@@ -144,24 +128,39 @@ public class ObjectiveView extends JFrame {
 					JOptionPane.showMessageDialog(null, l.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
+					textAmount.setText("0.00");
 					consObj.updateUI(ObjectiveView.this);
 				}
 			}
 		});
 		btnSave.setFont(new Font("Calibri", Font.PLAIN, 14));
-		btnSave.setBounds(140, 218, 135, 27);
+		btnSave.setBounds(143, 154, 135, 27);
 		contentPane.add(btnSave);
+		
+		JButton btnOperation = new JButton("Deposita/Preleva");
+		btnOperation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnSave.doClick();
+				ServicesView serviceView = new ServicesView("OBBIETTIVO: "+ textName.getText(), controller);	
+				serviceView.setVisible(true);
+				System.out.println("Deposita/preleva da: "+ textName.getText());
+			}		
+		});
+		btnOperation.setBounds(283, 154, 139, 27);
+		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
+		contentPane.add(btnOperation);
 		
 		JLabel lblCurrentAmount = new JLabel("Saldo:");
 		lblCurrentAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblCurrentAmount.setBounds(275, 131, 46, 14);
+		lblCurrentAmount.setBounds(275, 118, 46, 14);
 		contentPane.add(lblCurrentAmount);
 		
-		Double accBalance = controller.getAccount().getBalance();
+		Double accBalance = (controller.getObjective(textName.getText()).isPresent()) ?
+				controller.getObjective(textName.getText()).get().getBalance() : 0.00;
 		
 		JLabel lblDisplayAmount = new JLabel(accBalance.toString()+ " €");
 		lblDisplayAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDisplayAmount.setBounds(324, 131, 82, 14);
+		lblDisplayAmount.setBounds(324, 118, 82, 14);
 		contentPane.add(lblDisplayAmount);
 	}
 }

@@ -14,15 +14,15 @@ public abstract class AbstractOperations {
         this.transactionList = new ArrayList<>();
     }
 
-    public void deposit(double amount) {
+    public void deposit(double amount, String desc) {
         doDeposit(amount);
-        transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito", amount));
+        transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito "+desc, amount));
     }
 
-    public boolean withdraw(double amount) {
+    public boolean withdraw(double amount, String desc) {
         boolean success = doWithdraw(amount);
         if (success) {
-            transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Prelievo", amount));
+            transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Prelievo "+desc, amount));
         }
         return success;
     }
