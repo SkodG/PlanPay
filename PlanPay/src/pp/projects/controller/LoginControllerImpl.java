@@ -2,9 +2,9 @@ package pp.projects.controller;
 
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-
+import pp.projects.model.AuthenticationException;
 import pp.projects.model.LoginImpl;
+import pp.projects.model.RegistrationException;
 import pp.projects.view.ConsolleView;
 import pp.projects.view.LoginView;
 import pp.projects.view.SignupView;
@@ -27,7 +27,7 @@ public class LoginControllerImpl implements LoginController{
 	}
 	
 	@Override
-	public boolean loginButtonClick(String user, String passw) {
+	public boolean loginButtonClick(String user, String passw) throws IllegalArgumentException, AuthenticationException{
 		boolean isAuthenticated = false;
 		
 		// controllo che i dati siano stati inseriti
@@ -39,12 +39,12 @@ public class LoginControllerImpl implements LoginController{
 				this.userName = loginModel.getAccountName();
 				consolleView.setVisible(true);
 				return true;
-			}else {
-				return false;
-			}
-		}else {
-			return false;
-		}
+			 } else {
+	                throw new AuthenticationException("Credenziali non valide.");
+	         }
+	     } else {
+	         throw new IllegalArgumentException("Nome utente e password non possono essere vuoti.");
+	     }
 	}
 	
 	@Override
@@ -55,7 +55,7 @@ public class LoginControllerImpl implements LoginController{
 	}
 	
 	@Override
-	public boolean signupButtonClick(String user, String passw, String name) {
+	public boolean signupButtonClick(String user, String passw, String name) throws IllegalArgumentException, RegistrationException {
 		boolean isRegistred = false;
 		
 		if(!user.trim().equals("") && 
@@ -65,12 +65,12 @@ public class LoginControllerImpl implements LoginController{
 			  isRegistred = loginModel.registration(user, passw, name);
 			  if(isRegistred) {
 				  return true;
-			  }else {
-				  return false;
-			  }
-		}else {
-			return false;
-		}
+	          } else {
+	                throw new RegistrationException("Registrazione non riuscita.");
+	          }
+	     } else {
+	         throw new IllegalArgumentException("Nome utente, password e nome non possono essere vuoti.");
+	     }
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.LoginControllerImpl;
+import pp.projects.model.AuthenticationException;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
@@ -28,7 +29,6 @@ public class LoginView extends JFrame {
 	private JTextField edPassword;
 	private JButton btnNew;
 	private JLabel lbNew; 
-	private LoginControllerImpl controller;
 	private String username;
 	private String password;
 
@@ -39,7 +39,6 @@ public class LoginView extends JFrame {
 		setForeground(UIManager.getColor("activeCaption"));
 		this.username = "";
 		this.password = "";	
-		this.controller = controller;
 		
 		setTitle("LOGIN");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,12 +77,15 @@ public class LoginView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				username = edUser.getText();
 				password = edPassword.getText();
-				if(controller.loginButtonClick(username, password)) {
-					LoginView.this.setVisible(false);
-				} else {
-					// Autenticazione fallita, mostra un messaggio di errore
-					JOptionPane.showMessageDialog(null, "Credenziali non valide o mancanti. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
-				}
+				try {
+					if(controller.loginButtonClick(username, password)) {
+						LoginView.this.setVisible(false);
+					} 
+				} catch (IllegalArgumentException e1) {
+					JOptionPane.showMessageDialog(null, "Nome utente e password non possono essere vuoti.", "Errore", JOptionPane.ERROR_MESSAGE);
+				} catch (AuthenticationException e1) {
+					JOptionPane.showMessageDialog(null, "Autenticazione fallita. Credenziali non valide. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
+				} 
 			}
 		});
 		btnLogin.setBounds(99, 219, 207, 52);

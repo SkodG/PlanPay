@@ -9,11 +9,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.LoginControllerImpl;
+import pp.projects.model.RegistrationException;
 
-import java.awt.TextField;
-import java.awt.Label;
 import java.awt.Font;
-import java.awt.Button;
 import java.awt.SystemColor;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -32,7 +30,6 @@ public class SignupView extends JFrame {
 	private JLabel lbLoginY; 
 	private JLabel lbName;
 	private JTextField edName;
-	private LoginControllerImpl controller;
 	private String userName;
 	private String user;
 	private String password;
@@ -41,8 +38,6 @@ public class SignupView extends JFrame {
 	 * Create the frame.
 	 */
 	public SignupView(LoginControllerImpl controller) {
-		this.controller = controller;
-		
 		setTitle("SIGN UP");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 402, 443);
@@ -90,12 +85,15 @@ public class SignupView extends JFrame {
 				userName = edName.getText();
 				user = edNewUser.getText();
 				password = edNewPassword.getText();
-				if(controller.signupButtonClick(user, password, userName)) {
-					JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Info", JOptionPane.INFORMATION_MESSAGE);
-					SignupView.this.setVisible(false);
-				} else {
-					 // Autenticazione fallita, mostra un messaggio di errore
-					  JOptionPane.showMessageDialog(null, "ERRORE!. Credenziali mancanti o utente già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
+				try {
+					if(controller.signupButtonClick(user, password, userName)) {
+						JOptionPane.showMessageDialog(null, "Registrazione avvenuta con successo!", "Info", JOptionPane.INFORMATION_MESSAGE);
+						SignupView.this.setVisible(false);
+					} 
+				} catch (IllegalArgumentException e1) {
+					JOptionPane.showMessageDialog(null, "ERRORE! Credenziali mancanti!", "Errore", JOptionPane.ERROR_MESSAGE);
+				} catch (RegistrationException e1) {
+					JOptionPane.showMessageDialog(null, "ERRORE! Utente già registrato!", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});

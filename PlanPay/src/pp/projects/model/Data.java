@@ -1,7 +1,6 @@
 package pp.projects.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public interface Data {
 	/**

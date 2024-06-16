@@ -7,14 +7,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.ModuleLayer.Controller;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -23,18 +20,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import pp.projects.controller.ConsoleController;
-import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.CalendarModel;
 import pp.projects.model.Event;
 import pp.projects.model.EventAdapter;
-import pp.projects.model.EventImpl;
 
 public class SelectedEventView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panelEvents;
-	private Set<Event> setEvents;
 	
 	private JButton buttonEvent;
 
@@ -42,7 +35,6 @@ public class SelectedEventView extends JFrame {
 	 * Create the frame.
 	 */
 	public SelectedEventView(ConsoleController controller, CalendarView calendar, LocalDate day, Set<Event> setEvents) {
-		this.setEvents = setEvents;
 		
 		setTitle("EVENTI DI " + day.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getDayOfMonth() + " " + day.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getYear());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,3 +83,4 @@ public class SelectedEventView extends JFrame {
         contentPane.add(scrollPane);
 	}
 }
+

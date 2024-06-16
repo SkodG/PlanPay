@@ -55,6 +55,30 @@ public class CalendarModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 	
+    public int getYear() {
+    	return this.yearMonth.getYear();
+    }
+    
+    public int getMonthValue() {
+    	return this.yearMonth.getMonthValue();
+    }
+    
+    public Month getMonth(int monthValue) {
+    	return Month.values()[monthValue - 1];
+    }
+	
+	public void nextMonth() {
+        yearMonth = yearMonth.plusMonths(1);
+        initializeDays();
+        fireTableDataChanged();
+    }
+
+    public void previousMonth() {
+        yearMonth = yearMonth.minusMonths(1);
+        initializeDays();
+        fireTableDataChanged();
+    }
+	
 	@Override
 	public int getRowCount() {
 		return days.size() / 7;
@@ -128,18 +152,6 @@ public class CalendarModel extends AbstractTableModel {
     		case 6 : return "Domenica";
     		default : return "";    	
     	}
-    }
-    
-    public int getYear() {
-    	return this.yearMonth.getYear();
-    }
-    
-    public int getMonthValue() {
-    	return this.yearMonth.getMonthValue();
-    }
-    
-    public Month getMonth(int monthValue) {
-    	return Month.values()[monthValue - 1];
     }
 
     private int[] findDateIndices(LocalDate date) {

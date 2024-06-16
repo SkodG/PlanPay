@@ -7,13 +7,15 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.MaskFormatter;
+import javax.swing.text.DateFormatter;
 
 import com.toedter.calendar.JDateChooser;
 
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
-import pp.projects.model.EventImpl;
+import pp.projects.model.EventAlreadyExistsException;
+import pp.projects.model.EventNotFoundException;
+import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
 
 import javax.swing.JLabel;
@@ -30,6 +32,7 @@ import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.awt.event.ActionEvent;
 
 /**
@@ -52,7 +55,6 @@ public class EventView extends JDialog {
 	private LocalDate selectedDateDa;
 	private LocalDate selectedDateA;
 	private boolean bNew;
-	private SimpleDateFormat timeFormat;
 
 	/**
 	 * Create the dialog.
@@ -61,7 +63,6 @@ public class EventView extends JDialog {
 		this.name = new String();
 		this.desc = new String();
 		this.bNew = bNew;
-		this.timeFormat = new SimpleDateFormat("HH:mm");
 		
 		setTitle("EVENTO");
 		setBounds(100, 100, 450, 506);
@@ -103,24 +104,31 @@ public class EventView extends JDialog {
 		lbDaOra.setBounds(255, 20, 41, 27);
 		contentPanel.add(lbDaOra);
 		
-		// Configurazione del JFormattedTextField per l'orario
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		DateFormatter timeFormatter = new DateFormatter(timeFormat);
+        timeFormatter.setAllowsInvalid(false);  // Non permette valori invalidi
+        timeFormatter.setOverwriteMode(true);   // Sovrascrive il testo durante la digitazione
+                
+        timeFieldDaOra = new JFormattedTextField(timeFormatter);
+		timeFieldDaOra.setFont(new Font("Calibri", Font.PLAIN, 16));
+		timeFieldDaOra.setBounds(306, 20, 120, 30);
+		timeFieldDaOra.setColumns(5);
+	    contentPanel.add(timeFieldDaOra);  
+	        
+		timeFieldAora = new JFormattedTextField(timeFormatter);
+		timeFieldAora.setFont(new Font("Calibri", Font.PLAIN, 16));
+		timeFieldAora.setBounds(306, 53, 120, 30);
+		timeFieldAora.setColumns(5);
+	    contentPanel.add(timeFieldAora);     
+
         try {
-	        MaskFormatter timeFormatter = new MaskFormatter("##:##");
-	        timeFormatter.setPlaceholderCharacter('_');
-	        
-			timeFieldDaOra = new JFormattedTextField(timeFormatter);
-			timeFieldDaOra.setFont(new Font("Calibri", Font.PLAIN, 16));
-			timeFieldDaOra.setBounds(306, 20, 120, 30);
-			contentPanel.add(timeFieldDaOra);  
-	        
-			timeFieldAora = new JFormattedTextField(timeFormatter);
-			timeFieldAora.setFont(new Font("Calibri", Font.PLAIN, 16));
-			timeFieldAora.setBounds(306, 53, 120, 30);
-			contentPanel.add(timeFieldAora);     
+            Date midnight = timeFormat.parse("00:00");
+            timeFieldAora.setValue(midnight);  // Imposta mezzanotte come valore predefinito
+            timeFieldDaOra.setValue(midnight);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        
+		
 		JLabel lbDaGiorno = new JLabel("Da giorno:");
 		lbDaGiorno.setFont(new Font("Calibri", Font.PLAIN, 20));
 		lbDaGiorno.setBounds(10, 20, 95, 27);
@@ -206,17 +214,21 @@ public class EventView extends JDialog {
 
 	                name = edTitolo.getText();
 	                desc = txtDescrizione.getText();
-
-	                Set<Event> events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora, s,
-	                        						edTitolo.getText(), txtDescrizione.getText(), newDaOra, newAora);
-	
-					// TODO TOGLIERE DEBUG.
-					for(Event ev : events) {
-						mostraDettagliEvento((EventImpl) ev);
+	                
+					try {
+		                Set<Event> events;
+						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora, s,
+						        						edTitolo.getText(), txtDescrizione.getText(), newDaOra, newAora);
+						
+						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
+						EventView.this.setVisible(false);
+					} catch (EventAlreadyExistsException e1) {
+						JOptionPane.showMessageDialog(null, "Evento già esistente! Impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+					} catch (EventNotFoundException e1) {
+						JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile modificarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+					} catch (InvalidParameterException e1) {
+						JOptionPane.showMessageDialog(null, "Parametro non valido! Controlla i dati inseriti.", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
-	
-					calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);					
-					EventView.this.setVisible(false);
 				} catch (ParseException ex) {
 					Date daOraDate = (Date) timeFieldAora.getValue();
 		            Date aOraDate = (Date) timeFieldDaOra.getValue();
@@ -237,7 +249,12 @@ public class EventView extends JDialog {
 				Event event = null;
 				LocalDate currentDay = calendar.selectDate();
 				
-				event = c.removeEvent(edTitolo.getText(), currentDay, timeFieldDaOra.getText());
+				try {
+					event = c.removeEvent(edTitolo.getText(), currentDay, timeFieldDaOra.getText());
+				} catch (EventNotFoundException e1) {
+					JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile cancellarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+				}
+				
 				EventView.this.setVisible(false);
 				if(event != null) {
 					calendar.updateUIRemoveEvent(currentDay, event);
@@ -265,16 +282,5 @@ public class EventView extends JDialog {
 	
 	public boolean isbNew() {
 		return this.bNew;
-	}
-	
-	private void mostraDettagliEvento(EventImpl event) {
-	    StringBuilder dettagliEvento = new StringBuilder();
-	    dettagliEvento.append("Titolo: ").append(event.getName()).append("\n");
-	    dettagliEvento.append("Descrizione: ").append(event.getDescription()).append("\n");
-	    dettagliEvento.append("Data Inizio: ").append(event.getDate().toString()).append("\n");
-	    dettagliEvento.append("Ora Inizio: ").append(event.getDaOra()).append("\n");
-	    dettagliEvento.append("Ora Fine: ").append(event.getAOra()).append("\n");
-	    
-	    JOptionPane.showMessageDialog(this, dettagliEvento.toString(), "Dettagli Evento Salvato", JOptionPane.INFORMATION_MESSAGE);
 	}
 }

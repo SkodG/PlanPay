@@ -28,7 +28,35 @@ public class Transaction implements Data {
 	// potrebbe diventare il toString
 	@Override
 	public String getDescription() {
-		return "";
+		String segno = "";
+    	String nameT = "";
+    	
+    	if(this.name.toLowerCase().contains("obbiettivo")) {
+    		if(this.name.toLowerCase().contains("deposito")) {
+    			segno = "-";
+    			nameT = this.name.replaceFirst("Deposito", "");
+    		} else if(this.name.toLowerCase().contains("prelievo")) {
+    			segno = "+";
+    			nameT = this.name.replaceFirst("Prelievo", "");
+    		}
+    	} else if(this.name.toLowerCase().contains("servizio")) {
+    		if(this.name.toLowerCase().contains("deposito")) {
+    			segno = "+";
+    			nameT = this.name.replaceFirst("Deposito", "");
+    		} else if(this.name.toLowerCase().contains("prelievo")) {
+    			segno = "-";
+    			nameT = this.name.replaceFirst("Prelievo", "");
+    		}
+    	}
+    	return String.format(
+    			"<html><table width='100%%'><tr>" +
+    			"<td style='width: 26px;'><font color='%s' size='6'>&nbsp;%s&nbsp;</font></td>" +
+    			"<td>%s&nbsp;&nbsp;</td>" +
+    			"<td style='width: 260px;'>%s&nbsp;&nbsp;</td>" +
+    			"<td align='right' style='width: 100px;'>&nbsp;&nbsp;%s €</td>" +
+    			"</tr></table></html>",
+    			segno.equals("+") ? "green" : "red", segno, this.date, nameT, amount
+    	);
 	}
 
 	@Override

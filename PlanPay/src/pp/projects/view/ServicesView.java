@@ -35,7 +35,6 @@ public class ServicesView extends JFrame {
 	 * Create the frame.
 	 */
 	public ServicesView(OperationType operationType, String tipo, ConsoleControllerImpl controller) {
-		
 		date = LocalDate.now();
 		if(operationType == OperationType.OBIETTIVO)
 			setTitle("OBBIETTIVO - Data: " + date);

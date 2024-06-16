@@ -5,6 +5,7 @@ import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.Account;
+import pp.projects.model.OperationType;
 
 import java.awt.Font;
 import java.awt.Color;
@@ -27,7 +28,6 @@ public class ConsolleView extends JFrame {
 	private JLabel lbUsername;
 	private JLabel lbImp;
 	private JLabel lblmporto;
-	private ImageIcon icon;
 	private JButton btnObjectives;
 	private DefaultListModel<String> transactionListModel;
 	private JList<String> transactionList;
@@ -47,7 +47,7 @@ public class ConsolleView extends JFrame {
 	public ConsolleView(ConsoleControllerImpl c, Account account) throws IOException {
 		setTitle("CONSOLLE");
 		this.controller = c;
-		this.servicesView = new ServicesView("SERVIZIO: ", c);//modificato costruttore
+		this.servicesView = new ServicesView(OperationType.SERVIZIO, "", c);//modificato costruttore
 		this.consolleObjectiveView = new ConsolleObjectiveView(c);		
 		this.account = account;
 		
@@ -82,7 +82,7 @@ public class ConsolleView extends JFrame {
 		
 		lblmporto = new JLabel("0,00 €");
 		lblmporto.setFont(new Font("Calibri", Font.PLAIN, 34));
-		lblmporto.setBounds(228, 76, 122, 42);
+		lblmporto.setBounds(175, 76, 178, 42);
 		contentPane.add(lblmporto);
 		       
 		lbTransactions = new JLabel("Transazioni");
@@ -146,6 +146,7 @@ public class ConsolleView extends JFrame {
         // Inizializza la JList e lo JScrollPane
         transactionListModel = new DefaultListModel<>();
         transactionList = new JList<>(transactionListModel);
+        transactionList.setFont(new Font("Calibri", Font.PLAIN, 19));
         transactionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         scrollPane = new JScrollPane(transactionList);
@@ -169,9 +170,10 @@ public class ConsolleView extends JFrame {
 	public boolean updateUI() {
 		List<String> transactions = controller.getDatiTransazione();	
 		
-		if(transactions != null) {
-	        
+		if(transactions != null) {	        
             transactionListModel.clear(); 	// Pulisce il modello prima di aggiungere nuovi elementi
+            transactionListModel.addElement("<html><div style='height:1px;'></div></html>"); 
+            
             for (String transaction : transactions) {
                 transactionListModel.addElement(transaction);
             }
@@ -184,6 +186,7 @@ public class ConsolleView extends JFrame {
 	
 	public void updateUIconto() {
 		lblmporto.setText(account.getBalance().toString());
+		consolleObjectiveView.updateUI();
 	}
 
 }

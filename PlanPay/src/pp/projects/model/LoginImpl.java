@@ -33,9 +33,6 @@ public class LoginImpl implements Login{
 		loadCredential();
 	}
 	
-	/**
-	 *  metodo usato per caricare le credenziali da un file
-	 */
 	@Override
 	public void loadCredential() {
 		try {
@@ -63,9 +60,6 @@ public class LoginImpl implements Login{
         }
 	}
 	
-	/**
-	 * ritorna un booleano per sapere se le credenziali sono valide
-	 */
 	@Override
 	public boolean valideAuthenticate(String utente, String password) {
 		// Controlla che la chiave sia contenuta in "credentials".
@@ -81,9 +75,6 @@ public class LoginImpl implements Login{
 		return false;
 	}
 	
-	/**
-	 * ritorna un booleano per sapere se l'utente è stato registrato. Il metodo viene usato anche per la registrazione dello stesso.
-	 */
 	@Override
 	public boolean registration(String utente, String password, String nomeUser) {
 		if(credentials.containsKey(utente)) {
@@ -94,9 +85,6 @@ public class LoginImpl implements Login{
 		return true;
 	}
 	
-	/**
-	 * metodo per salvare le credenziali su un file. Richiamato ad ogni nuova registrazione.
-	 */
 	@Override
 	public void saveCredential(String utente, String password, String nomeUer) {
 		// Percorso relativo al file nel progetto

@@ -15,16 +15,16 @@ public class CalendarImpl implements CalendarP{
 		this.day = day;
 	}
 	
-	/**
-	 * Associo l'evento all'ora. (creazione di un nuovo evento)
-	 * 
-	 * @param e = nuovo evento da creare
-	 */
-	public EventImpl newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) {
+	public EventImpl newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) throws EventAlreadyExistsException, InvalidParameterException{
 		Optional<EventImpl> existingEvent = getEvent(name, currentDate, daOra);
 		if (existingEvent.isPresent()) {
-	        throw new IllegalStateException("Evento già esistente! Impossibile crearlo!");
-	    }
+			 throw new EventAlreadyExistsException("Evento già esistente! Impossibile crearlo!");
+        }
+
+        if (newName == null || newName.trim().isEmpty() || newDesc == null || newDesc.trim().isEmpty() ||
+            newDaOra == null || newDaOra.trim().isEmpty() || newAora == null || newAora.trim().isEmpty()) {
+            throw new InvalidParameterException("I parametri dell'evento non possono essere nulli o vuoti.");
+        }
 	    
 	    EventImpl newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora);
 	    listEvents.add(newEvent);
@@ -32,13 +32,6 @@ public class CalendarImpl implements CalendarP{
 	    return newEvent;
 	}
 	
-	/**
-	 * 
-	 * @param name
-	 * @param currentDate
-	 * @param daOra
-	 * @return
-	 */
 	public Optional<EventImpl> getEvent(String name, LocalDate currentDate, String daOra) {
 		return listEvents.stream()
 						 .filter(e ->
@@ -48,29 +41,14 @@ public class CalendarImpl implements CalendarP{
 						 .findFirst();
 	}
 	
-	/**
-	 * 
-	 * @param name
-	 * @param desc
-	 * @param daData
-	 * @param aData
-	 * @param daOra
-	 * @param aOra
-	 * @param newName
-	 * @param newDesc
-	 * @param currentDate
-	 * @param newDaOra
-	 * @param newAora
-	 * @return
-	 */
 	public EventImpl modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora) {
+							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora) throws EventNotFoundException {
 		EventImpl event = null;
 		
 		event = listEvents.stream()
 				   .filter(e -> e.getName().equals(name))
 				   .findFirst()
-				   .orElse(null);
+				   .orElseThrow(() -> new EventNotFoundException("Evento inesistente! Impossibile modificarlo."));
 		
 		if (event != null) {
 			 if (newName != null && !newName.trim().isEmpty()) {
@@ -90,19 +68,14 @@ public class CalendarImpl implements CalendarP{
 		return event;
 	}
 	
-	/**
-	 * elimino l'evento selezionato.
-	 * 
-	 * @param o = evento da eliminare.
-	 */
 	@Override
-	public EventImpl removeEvent(String name, LocalDate date, String daOra) {
+	public EventImpl removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException {
 		Optional<EventImpl> existingEvent = getEvent(name, date, daOra);
 		
 		System.out.println(name + "-" + date + "-" + daOra);
 		
 		if (!existingEvent.isPresent()) {
-	        throw new IllegalStateException("Evento inesistente! Impossibile cancellarlo.");
+	        throw new EventNotFoundException("Evento inesistente! Impossibile cancellarlo.");
 	    }
 	   
 		listEvents.remove(existingEvent.get());
@@ -111,6 +84,6 @@ public class CalendarImpl implements CalendarP{
 	}
 	
 	public int getDay() {
-		return this.getDay();
+		return this.day;
 	}
 }

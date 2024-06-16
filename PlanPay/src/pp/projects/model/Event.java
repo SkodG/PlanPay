@@ -13,9 +13,21 @@ public interface Event {
 	 */
 	void setState(State s);
 	
+	/**
+	 * 
+	 * @return l'evento in stringa da visualizzare sul calendario.
+	 */
 	String getInfoEventToString();
 	
+	/**
+	 * 
+	 * @return l'orario impostato sull'evento.
+	 */
 	String getDaOra();
 	
+	/**
+	 * 
+	 * @return l'orario impostato sull'evento.
+	 */
 	String getAOra();
 }
