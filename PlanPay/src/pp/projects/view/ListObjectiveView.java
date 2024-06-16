@@ -53,7 +53,7 @@ public class ListObjectiveView extends JPanel {
         
         add(btnNewButton);
         
-        JLabel lblBalance = new JLabel("0.00");
+        JLabel lblBalance = new JLabel(Double.toString(balance));
         lblBalance.setHorizontalAlignment(SwingConstants.CENTER);
         lblBalance.setVerticalAlignment(SwingConstants.BOTTOM);
         lblBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
@@ -64,12 +64,13 @@ public class ListObjectiveView extends JPanel {
         btnNewButton_1.setAlignmentY(Component.TOP_ALIGNMENT);
         btnNewButton_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		//TODO: Eliminazione oggetto e obbiettivo collegato (View e Impl)-> serve metodo del controller!
         		controller.removeObjective(name);
-        		consolleObj.updateUI(null);
+        		consolleObj.updateUI();
         	}
         });
         add(btnNewButton_1);
         
+        
+        setVisible(true);
 	}
 }

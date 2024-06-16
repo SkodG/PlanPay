@@ -17,10 +17,12 @@ import javax.swing.JList;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
@@ -46,11 +48,10 @@ public class ConsolleObjectiveView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panel;
-	//TODO da eliminare
-	//private DescObjectiveView descObjectiveView;
+	//private List<ListObjectiveView> listView;TODO DA ELIMINARE
 	private List<ObjectiveImpl> objectiveList;
 	private ConsoleControllerImpl consoleController;
-	private int idCount;
+	//private int idCount; ?????
 	private LocalDate date;
 	private JScrollPane scrollPane;
 
@@ -59,9 +60,14 @@ public class ConsolleObjectiveView extends JFrame {
 	 */
 	public ConsolleObjectiveView(ConsoleControllerImpl controller) {
 		setTitle("OBBIETTIVI");
-		this.idCount = 0;
+		//this.idCount = 0; ?????
 		this.consoleController = controller;
 		this.date = LocalDate.now();
+		objectiveList = consoleController.getObjectiveList();
+		//provvisorio->  andrebbe nel testing della classe		
+		System.out.println("LISTA OBBIETTIVI:");
+		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
+		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 448, 318);
 		contentPane = new JPanel();
@@ -69,15 +75,11 @@ public class ConsolleObjectiveView extends JFrame {
 		setContentPane(contentPane);
 		
 		JButton btnNewObjective = new JButton("Nuovo Obbiettivo");
-		btnNewObjective.setBounds(139, 241, 156, 27);
+		btnNewObjective.setBounds(10, 241, 198, 27);
 		btnNewObjective.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ObjectiveView newObjective = new ObjectiveView(true, "", date, consoleController, ConsolleObjectiveView.this);
 				newObjective.setVisible(true);
-				
-				//provvisorio->  andrebbe nel testing della classe
-				objectiveList = consoleController.getObjectiveList();
-				objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
 			}
 		});
 		contentPane.setLayout(null);
@@ -92,42 +94,36 @@ public class ConsolleObjectiveView extends JFrame {
 		panel.setBounds(10, 11, 412, 219);
 		scrollPane.setViewportView(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		// 	TODO metterlo in verticale e sistemare la dimensione di panelObjective.
-			
+		
+		JButton btnDeleteAll = new JButton("Elimina Tutti");
+		btnDeleteAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//reset del panel e della lista
+				panel.removeAll();
+				for(ObjectiveImpl o : objectiveList)
+					controller.removeObjective(o.getName());
+				updateUI();
+			}
+		});
+		btnDeleteAll.setFont(new Font("Calibri", Font.PLAIN, 14));
+		btnDeleteAll.setBounds(224, 241, 198, 27);
+		contentPane.add(btnDeleteAll);
 	}
 	
     // Metodo per aggiornare l'interfaccia utente
-	
-	//fornire l'intera lista obbiettivi
-	//per ogni obbiettivo, creare un pulsante che funzioni come un descObjectiveView
-	//in un pane scrollabile
-	//al doppio click si apre la view dell'objective view
-	public void updateUI(ObjectiveView objectiveView) {
-
-		Optional<ObjectiveImpl> objective = objectiveList.stream().reduce((first, second) -> second);
-		if (objective.isPresent()) {
-			//test per verificare che l'obbiettivo inserito per ultimo sia quello appena creato
-			System.out.println("update UI: "+objective.get().getName());
-			
-			
-			ListObjectiveView descObjectiveView = new ListObjectiveView(objective.get().getName(), objective.get().getBalance(),
-													date, objectiveList, consoleController, this); 
-			//inserisco il descObjectiveView come chiave nella Map insieme al valore corrisp. ObjectiveView
-			//objectiveViewMap.put(descObjectiveView, objectiveView);//FORSE INUTILE
-			
-			// TODO aggiungere getImporto
-			//objectiveList.add(descObjectiveView);  ???
-	
-	        // Creare un nuovo componente da aggiungere
-	        // Aggiungi il nuovo componente al pannello principale
-			panel.add(descObjectiveView);
-
-	    	descObjectiveView.setVisible(true);
-	    	System.out.println(contentPane.getComponentCount());
-	    	// Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
-	    	contentPane.revalidate();
-	    	contentPane.repaint();
-		}
-		
+	public void updateUI() {
+		//reset del panel (elimino tutti i ListObjective)
+		panel.removeAll();
+		//aggiorno la lista degli obbiettivi
+		objectiveList = consoleController.getObjectiveList();
+		//test
+		System.out.println("LISTA OBBIETTIVI AGGIORNATA:");
+		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
+		//reinserisco nel panel tutti gli elementi della lista obbiettivi
+		objectiveList.stream().forEach(o -> panel.add(new ListObjectiveView(o.getName(), o.getBalance(),
+						date, objectiveList, consoleController, this)));
+	    // Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
+	    contentPane.revalidate();
+	    contentPane.repaint();		
     }
 }

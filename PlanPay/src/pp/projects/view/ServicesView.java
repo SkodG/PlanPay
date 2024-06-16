@@ -34,11 +34,11 @@ public class ServicesView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView(String tipo, ConsoleControllerImpl controller) {
+	public ServicesView(OperationType operationType, String tipo, ConsoleControllerImpl controller) {
 		
 		date = LocalDate.now();
-		if(tipo.contains("OBBIETTIVO"))
-			setTitle(tipo +" - Data: " + date);
+		if(operationType == OperationType.OBIETTIVO)
+			setTitle("OBBIETTIVO - Data: " + date);
 		else
 			setTitle("SERVIZIO CONTO - Data: " + date);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,8 +73,8 @@ public class ServicesView extends JFrame {
 		textName = new JTextField();
 		textName.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textName.setBounds(83, 60, 331, 20);
-		contentPane.add(textName);
 		textName.setColumns(10);	
+		contentPane.add(textName);
 		
 		JButton btnDeposit = new JButton("Deposita");
 		btnDeposit.addActionListener(new ActionListener() {
@@ -84,11 +84,10 @@ public class ServicesView extends JFrame {
 				//do messaggio di errore
 				try {
 					dAmount = Double.parseDouble(textAmount.getText());
-					if(tipo.startsWith("SERVIZIO")) {
-						tipo.concat(" "+textName.getText());
-					controller.updateConto(dAmount, false, textName.getText());					
+					if(operationType == OperationType.SERVIZIO) {
+						controller.updateConto(dAmount, true, textName.getText());
 					}
-					else if(tipo.startsWith("OBBIETTIVO")) {
+					else if(operationType == OperationType.OBIETTIVO) {
 						String objectiveName = tipo.substring(12);
 						//test
 						System.out.println(objectiveName);
@@ -97,7 +96,7 @@ public class ServicesView extends JFrame {
 						Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							controller.updateConto(dAmount, false, "");
+							controller.updateConto(dAmount, true, "");
 							setVisible(false);
 						}
 						else {
@@ -113,6 +112,7 @@ public class ServicesView extends JFrame {
 				} finally {
 					//Pulisci i campi una volta finito
 				textAmount.setText("0.00");
+				textName.setText("");
 				}			
 			}
 		});
@@ -129,18 +129,18 @@ public class ServicesView extends JFrame {
 				//Se questa view è stata chiamata dalla consoleView
 				try {
 					double dAmount = Double.parseDouble(textAmount.getText());
-					if(tipo.startsWith("SERVIZIO")) {
-						result = controller.updateConto(dAmount, true, textName.getText());
+					if(operationType == OperationType.SERVIZIO) {
+						result = controller.updateConto(dAmount, false, textName.getText());
 						System.out.println(""+result);
 					}
-					else if(tipo.startsWith("OBBIETTIVO")) {
+					else if(operationType == OperationType.OBIETTIVO) {
 						String objectiveName = tipo.substring(12);
 						System.out.println("Nome Obbiettivo:"+objectiveName);
 						//cerco nella lista degli obbiettivi 
 						Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							result = controller.updateConto(dAmount, true, "");
+							result = controller.updateConto(dAmount, false, "");
 						}
 						else {
 							//messaggio di errore 
@@ -160,11 +160,11 @@ public class ServicesView extends JFrame {
 				} finally {
 					//Pulisci i campi una volta finito
 				textAmount.setText("0.00");
+				textName.setText("");
 				}	
 				
 			} //TODO Si può riutilizzare il codice con un singolo actionListener?
 		});
-		
 		btnWithdraw.setBounds(264, 101, 149, 35);
 		btnWithdraw.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnWithdraw);

@@ -25,10 +25,11 @@ public class ObjectiveView extends JFrame {
 	private JPanel contentPane;
 	private JTextField textName;
 	private JTextField textAmount;
+	private ConsoleControllerImpl controller;
 	private LocalDate date;
+	private double savingAmount;
 	private boolean	bNew;
-
-
+	private boolean	hasSaved;
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
 	// al click del bottone instanzierai una nuova istanza di ObjectiveView, passandogli True, definendo quindi la creazione di una nuova istanza.
@@ -41,9 +42,13 @@ public class ObjectiveView extends JFrame {
 	 */
 	public ObjectiveView(boolean bNew, String nomeObbiettivo, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consObj) {
 		
-		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data:"+date.toString());		
+		this.controller = controller;
+		savingAmount = updateSavingAmount(nomeObbiettivo);
+		System.out.println("soglia  risparmio =" +savingAmount);
+		hasSaved = false;
+		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 225);
+		setBounds(100, 100, 455, 225);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -81,13 +86,6 @@ public class ObjectiveView extends JFrame {
 		lblThreshold.setBounds(22, 120, 101, 14);
 		contentPane.add(lblThreshold);
 		
-		double savingAmount;
-		if(bNew) 
-			savingAmount = 0.0;
-		else 
-			savingAmount = controller.getObjective(nomeObbiettivo).get().getSavingTarget();
-		
-		System.out.println("NOME VIEW APPENA CREATA: "+nomeObbiettivo);
 		
 		
 		textAmount = new JTextField(Double.toString(savingAmount));
@@ -114,53 +112,64 @@ public class ObjectiveView extends JFrame {
 						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
 						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
 						controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), textDescr.getText(), Double.parseDouble(textAmount.getText()));
+						savingAmount = updateSavingAmount(textName.getText());
+						hasSaved = true;
 						textName.setEditable(false);
 						setVisible(false);
 					}
-					else {
+					else if(bNew){
 						JOptionPane.showMessageDialog(null, "Obbiettivo già presente!", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica per la soglia di risparmio", "Errore", JOptionPane.ERROR_MESSAGE);
+					textAmount.setText("0.00");
 				}
 				catch(IllegalStateException l) {
 					JOptionPane.showMessageDialog(null, l.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 				finally {
-					textAmount.setText("0.00");
-					consObj.updateUI(ObjectiveView.this);
+					consObj.updateUI();
 				}
 			}
 		});
 		btnSave.setFont(new Font("Calibri", Font.PLAIN, 14));
-		btnSave.setBounds(143, 154, 135, 27);
+		btnSave.setBounds(143, 154, 139, 27);
 		contentPane.add(btnSave);
 		
 		JButton btnOperation = new JButton("Deposita/Preleva");
 		btnOperation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnSave.doClick();
-				ServicesView serviceView = new ServicesView("OBBIETTIVO: "+ textName.getText(), controller);	
-				serviceView.setVisible(true);
-				System.out.println("Deposita/preleva da: "+ textName.getText());
+				//apro il form di ServicesView solo se l'obbettivo è stato salvato e non sto creando un nuovo obbiettivo con lo stesso nome di un altro
+				if(!bNew || hasSaved) {
+					ServicesView serviceView = new ServicesView(OperationType.OBIETTIVO, controller, textName.getText());
+					serviceView.setVisible(true);
+					System.out.println("Deposita/preleva da: "+ textName.getText());
+				}
+				
 			}		
 		});
-		btnOperation.setBounds(283, 154, 139, 27);
+		btnOperation.setBounds(292, 154, 139, 27);
 		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnOperation);
 		
 		JLabel lblCurrentAmount = new JLabel("Saldo:");
 		lblCurrentAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblCurrentAmount.setBounds(275, 118, 46, 14);
+		lblCurrentAmount.setBounds(272, 120, 46, 14);
 		contentPane.add(lblCurrentAmount);
 		
-		Double accBalance = (controller.getObjective(textName.getText()).isPresent()) ?
+		Double accBalance = (controller.getObjective(textName.getText()).isPresent()) ?//TODO da mettere in metodo che aggiorna il saldo
 				controller.getObjective(textName.getText()).get().getBalance() : 0.00;
 		
-		JLabel lblDisplayAmount = new JLabel(accBalance.toString()+ " €");
+		JLabel lblDisplayAmount = new JLabel(Double.toString(accBalance)+" €");
 		lblDisplayAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDisplayAmount.setBounds(324, 118, 82, 14);
+		lblDisplayAmount.setBounds(331, 120, 82, 14);
 		contentPane.add(lblDisplayAmount);
+	}
+	
+	private double updateSavingAmount(String nomeObbiettivo) {
+			return controller.getObjective(nomeObbiettivo).isPresent()?
+					controller.getObjective(nomeObbiettivo).get().getSavingTarget(): 0.00;
 	}
 }

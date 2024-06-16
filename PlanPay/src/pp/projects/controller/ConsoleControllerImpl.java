@@ -32,7 +32,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	//private List<ObjectiveImpl> listObjectives;		// Non uso interfaccia perchè ho dei metodi nella classe astratta, che devo richiamare.
 	private List<Transaction> listTransactions;
 	private Account account;
-	private ObjectiveView objectiveView;	
+	private ObjectiveView objectiveView;
 	private List<String> datiTransazione;
 	private List<AbstractOperations> operationsList;
 	//private AbstractOperations serviceOperations;
