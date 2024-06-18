@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.ObjectiveImpl;
+import pp.projects.model.OperationType;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -29,16 +30,16 @@ public class ServicesView extends JFrame {
 	private JTextField textAmount;
 	private JTextField textName;
 	private LocalDate date;
-	private String name;
+	private String causale;
 
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView(OperationType operationType, String tipo, ConsoleControllerImpl controller) {
+	public ServicesView(OperationType operationType, String operationName, ConsoleControllerImpl controller) {
 		date = LocalDate.now();
-		if(operationType == OperationType.OBIETTIVO)
+		if(operationType == OperationType.OBIETTIVO) 
 			setTitle("OBBIETTIVO - Data: " + date);
-		else
+		else 
 			setTitle("SERVIZIO CONTO - Data: " + date);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 184);
@@ -69,7 +70,7 @@ public class ServicesView extends JFrame {
 		lblTitle.setBounds(10, 63, 62, 14);
 		contentPane.add(lblTitle);
 		
-		textName = new JTextField();
+		textName = new JTextField(operationName);
 		textName.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textName.setBounds(83, 60, 331, 20);
 		textName.setColumns(10);	
@@ -83,36 +84,36 @@ public class ServicesView extends JFrame {
 				//do messaggio di errore
 				try {
 					dAmount = Double.parseDouble(textAmount.getText());
-					if(operationType == OperationType.SERVIZIO) {
-						controller.updateConto(dAmount, true, textName.getText());
+					if(textName.getText().isEmpty() && operationType == OperationType.SERVIZIO) {
+						JOptionPane.showMessageDialog(null, "Inserire una causale ", "Errore", JOptionPane.ERROR_MESSAGE);
+					}
+					else if(operationType == OperationType.SERVIZIO) {
+						controller.updateConto(dAmount, true, textName.getText(), operationType);
+						setVisible(false);
+						textAmount.setText("0.00");
+						textName.setText("");
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
-						String objectiveName = tipo.substring(12);
-						//test
-						System.out.println(objectiveName);
 						//cerco nella lista degli obbiettivi 
 						List<ObjectiveImpl> objectiveList = controller.getObjectiveList();
-						Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
+						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							controller.updateConto(dAmount, true, "");
+							controller.updateConto(dAmount, true, "", operationType);
 							setVisible(false);
+							textAmount.setText("0.00");
+							textName.setText("");
 						}
 						else {
 							//messaggio di errore 
 							JOptionPane.showMessageDialog(null, 
-								"Obbiettivo non trovato! creare obbiettivo "+ objectiveName +" prima di effettuare un'operazione!",
+								"Obbiettivo non trovato! creare obbiettivo "+ operationName +" prima di effettuare un'operazione!",
 								"Errore", JOptionPane.ERROR_MESSAGE);
 						}				
 					} 
 				}catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
-					
-				} finally {
-					//Pulisci i campi una volta finito
-				textAmount.setText("0.00");
-				textName.setText("");
-				}			
+				}		
 			}
 		});
 		btnDeposit.setBounds(10, 101, 149, 35);
@@ -128,23 +129,24 @@ public class ServicesView extends JFrame {
 				//Se questa view è stata chiamata dalla consoleView
 				try {
 					double dAmount = Double.parseDouble(textAmount.getText());
-					if(operationType == OperationType.SERVIZIO) {
-						result = controller.updateConto(dAmount, false, textName.getText());
+					if(textName.getText().isEmpty() && operationType == OperationType.SERVIZIO) {
+						JOptionPane.showMessageDialog(null, "Inserire una causale ", "Errore", JOptionPane.ERROR_MESSAGE);
+					}
+					else if(operationType == OperationType.SERVIZIO) {
+						result = controller.updateConto(dAmount, false, textName.getText(), operationType);
 						System.out.println(""+result);
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
-						String objectiveName = tipo.substring(12);
-						System.out.println("Nome Obbiettivo:"+objectiveName);
 						//cerco nella lista degli obbiettivi 
-						Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
+						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							result = controller.updateConto(dAmount, false, "");
+							result = controller.updateConto(dAmount, false, "", operationType);
 						}
 						else {
 							//messaggio di errore 
 							JOptionPane.showMessageDialog(null, 
-									"Obbiettivo non trovato! creare obbiettivo "+ objectiveName +" prima di effettuare un'operazione!",
+									"Obbiettivo non trovato! creare obbiettivo "+ operationName +" prima di effettuare un'operazione!",
 									"Errore", JOptionPane.ERROR_MESSAGE);
 						}										
 					}
@@ -154,9 +156,14 @@ public class ServicesView extends JFrame {
 								"Errore", JOptionPane.ERROR_MESSAGE);
 					else
 						setVisible(false);
-				} catch(NumberFormatException n) {
+				} 
+				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
-				} finally {
+				} 
+				catch(IllegalArgumentException i){
+					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+				} 
+				finally {
 					//Pulisci i campi una volta finito
 				textAmount.setText("0.00");
 				textName.setText("");

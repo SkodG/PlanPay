@@ -1,19 +1,18 @@
 package pp.projects.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.Font;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -48,10 +47,8 @@ public class ConsolleObjectiveView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panel;
-	//private List<ListObjectiveView> listView;TODO DA ELIMINARE
 	private List<ObjectiveImpl> objectiveList;
 	private ConsoleControllerImpl consoleController;
-	//private int idCount; ?????
 	private LocalDate date;
 	private JScrollPane scrollPane;
 
@@ -60,14 +57,12 @@ public class ConsolleObjectiveView extends JFrame {
 	 */
 	public ConsolleObjectiveView(ConsoleControllerImpl controller) {
 		setTitle("OBBIETTIVI");
-		//this.idCount = 0; ?????
 		this.consoleController = controller;
 		this.date = LocalDate.now();
 		objectiveList = consoleController.getObjectiveList();
 		//provvisorio->  andrebbe nel testing della classe		
 		System.out.println("LISTA OBBIETTIVI:");
 		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
-		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 448, 318);
 		contentPane = new JPanel();
@@ -98,11 +93,16 @@ public class ConsolleObjectiveView extends JFrame {
 		JButton btnDeleteAll = new JButton("Elimina Tutti");
 		btnDeleteAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				objectiveList = consoleController.getObjectiveList();
 				//reset del panel e della lista
-				panel.removeAll();
-				for(ObjectiveImpl o : objectiveList)
-					controller.removeObjective(o.getName());
-				updateUI();
+				if(objectiveList.isEmpty())
+					JOptionPane.showMessageDialog(null, "Nessun elemento da eliminare", "Attenzione", JOptionPane.ERROR_MESSAGE);
+				else {
+					panel.removeAll();
+					for(ObjectiveImpl o : objectiveList)
+						controller.removeObjective(o.getName());
+					updateUI();
+				}					
 			}
 		});
 		btnDeleteAll.setFont(new Font("Calibri", Font.PLAIN, 14));
@@ -118,11 +118,10 @@ public class ConsolleObjectiveView extends JFrame {
 		objectiveList = consoleController.getObjectiveList();
 		//test
 		System.out.println("LISTA OBBIETTIVI AGGIORNATA:");
-		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
+		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()+" Saldo:"+o.getBalance()).forEach(System.out::println);
 		//reinserisco nel panel tutti gli elementi della lista obbiettivi
-		objectiveList.stream().forEach(o -> panel.add(new ListObjectiveView(o.getName(), o.getBalance(),
-						date, objectiveList, consoleController, this)));
-	    // Richiama il metodo revalidate() e repaint() per aggiornare l'interfaccia
+		objectiveList.stream().forEach(o -> panel.add(new ListObjectiveView(o.getName(), o.getBalance(), date, consoleController, this)));
+	    // Richiamo il metodo revalidate() e repaint() per aggiornare l'interfaccia
 	    contentPane.revalidate();
 	    contentPane.repaint();		
     }

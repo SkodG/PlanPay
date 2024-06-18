@@ -46,10 +46,10 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	
 	public Double projection(double inflationRate, double interestRate, double monthlySaving, int years) {
 		//metodo per il calcolo del risparmio per questo obbiettivo
-		//data inflazione annua, flusso giornaliero  di risparmio, interesse annuo
+		//data inflazione annua, flusso mensile di risparmio, interesse annuo
 		//e durata del periodo di risparmio
 		//TODO formula da rivedere
-		return monthlySaving*12*years*savedBalance*Math.pow((1+interestRate-inflationRate), years);
+		return monthlySaving*12*years*Math.pow((1+interestRate-inflationRate), years);
 	}
 	
 	@Override

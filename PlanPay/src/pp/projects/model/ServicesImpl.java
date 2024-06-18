@@ -11,8 +11,6 @@ public class ServicesImpl extends AbstractOperations {
 		super(account);
 	}
 
-	// void creaTransazione(	//LocalDate date, String name, double amount, String type) > richiamata da 'deposita' o 'preleva'
-
 	@Override
 	protected void doDeposit(double amount) {
 		//operazione sul conto(+)

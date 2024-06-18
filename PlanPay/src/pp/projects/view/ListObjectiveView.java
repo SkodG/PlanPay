@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.Component;
 import javax.swing.SwingConstants;
+import javax.swing.JProgressBar;
 
 public class ListObjectiveView extends JPanel {
 	
@@ -25,13 +28,11 @@ public class ListObjectiveView extends JPanel {
 	 * Create the frame.
 	 * @param String name
 	 */
-	public ListObjectiveView(String name, double balance, LocalDate date, List<ObjectiveImpl> objectiveList,
-								ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {
-		
+	public ListObjectiveView(String name, double balance, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		
-		Dimension preferredSize = new Dimension(400, 40);
+		Dimension preferredSize = new Dimension(800, 40);
         setMinimumSize(preferredSize);
         setMaximumSize(preferredSize);
         setLayout(new GridLayout(0, 2, 0, 0));
@@ -53,7 +54,7 @@ public class ListObjectiveView extends JPanel {
         
         add(btnNewButton);
         
-        JLabel lblBalance = new JLabel(Double.toString(balance));
+        JLabel lblBalance = new JLabel("Saldo: "+ Double.toString(balance)+"€");
         lblBalance.setHorizontalAlignment(SwingConstants.CENTER);
         lblBalance.setVerticalAlignment(SwingConstants.BOTTOM);
         lblBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
