@@ -30,4 +30,6 @@ public interface Event {
 	 * @return l'orario impostato sull'evento.
 	 */
 	String getAOra();
+	
+	String getInfoEventToFile();
 }

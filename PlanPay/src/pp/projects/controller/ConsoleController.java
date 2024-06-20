@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import pp.projects.model.Account;
+import pp.projects.model.CalendarModel;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
 import pp.projects.model.EventNotFoundException;
@@ -22,7 +23,7 @@ public interface ConsoleController {
 	
 	List<ObjectiveImpl> getObjectiveList();
 	Optional<ObjectiveImpl> getObjective(String name);
-	void saveObjective(boolean bNew, String nameObjective, String newNameOb, String newDescrOb, double savingTarget) throws IllegalStateException;
+	void saveObjective(boolean bNew, String nameObjective, String newDescrOb, double savingTarget) throws IllegalStateException;
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
@@ -39,7 +40,9 @@ public interface ConsoleController {
 	String setNameController();
 	
 	// gestione calendario
+	CalendarModel getCalendarModel();
 	CalendarView drawCalendar();
+	Set<Event> loadEvents();
 	
 	/**
 	 * @return l'evento che è stato aggiunto/modificato
@@ -71,4 +74,6 @@ public interface ConsoleController {
 	 * @throws EventNotFoundException 
 	 */
 	Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException;
+
+	void updateUIevents();
 }

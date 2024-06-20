@@ -221,6 +221,7 @@ public class EventView extends JDialog {
 						        						edTitolo.getText(), txtDescrizione.getText(), newDaOra, newAora);
 						
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
+						c.updateUIevents();
 						EventView.this.setVisible(false);
 					} catch (EventAlreadyExistsException e1) {
 						JOptionPane.showMessageDialog(null, "Evento già esistente! Impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -274,8 +275,19 @@ public class EventView extends JDialog {
 		dateChooserDa.setDate(dateD);
 		dateChooserA.setDate(dateD);
 
-	    timeFieldAora.setValue(aOra);
-	    timeFieldDaOra.setValue(daOra);
+	    //timeFieldAora.setValue(aOra);
+	    //timeFieldDaOra.setValue(daOra);
+		 try {
+		        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		        Date daOraDate = timeFormat.parse(daOra);
+		        Date aOraDate = timeFormat.parse(aOra);
+		        
+		        timeFieldDaOra.setValue(daOraDate);
+		        timeFieldAora.setValue(aOraDate);
+		    } catch (ParseException e) {
+		        e.printStackTrace();
+		        JOptionPane.showMessageDialog(this, "Errore nella formattazione dell'ora: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+		    }
 		
 		txtDescrizione.setText(desc);
 	}

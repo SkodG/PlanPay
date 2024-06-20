@@ -1,5 +1,14 @@
 package pp.projects.model;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 
 public class EventImpl implements Event, Data{
@@ -18,6 +27,8 @@ public class EventImpl implements Event, Data{
 		this.daOra = daOra;
 		this.aOra = aOra;
 		//this.eventState = s;
+		
+		//this.inputStream = this.getClass().getResourceAsStream("/resource/events.txt");
 	}
 	
 	@Override
@@ -68,6 +79,11 @@ public class EventImpl implements Event, Data{
 	@Override
 	public String getAOra() {
 		return this.aOra;
+	}
+	
+	@Override
+	public String getInfoEventToFile() {
+		return this.getDate() + "," + this.getDaOra() + "," + this.getAOra() + "," + this.getName() + "," + this.getDescription();
 	}
 	
 	public void setDaOra(String da) {

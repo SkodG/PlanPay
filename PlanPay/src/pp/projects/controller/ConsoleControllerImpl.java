@@ -35,7 +35,6 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	// gestione calendario
 	private CalendarImpl calendario;
-	private CalendarModel calendarModel;
 	
 	// costruttore
 	public ConsoleControllerImpl(LoginControllerImpl cl) {
@@ -51,21 +50,21 @@ public class ConsoleControllerImpl implements ConsoleController{
 	@Override
 	public boolean updateConto(double importo, boolean tipo, String nome, OperationType operType) throws IllegalArgumentException {
 		boolean bRes = false;
-		boolean isServiceOperation = (nome != null && !nome.trim().isEmpty());
-
 		
 		// Tipo: true indica un deposito (deposit)
 		// Tipo false indica un prelievo (withdraw)
 		if (operType == OperationType.OBIETTIVO) {
 		    for (AbstractOperations operation : operationsList) {
 		         if (operation instanceof ObjectiveImpl) {
-		              if (tipo) {
-		                  operation.deposit(importo, "");
-		                  bRes = true;
-		              } else {
-		                  bRes = operation.withdraw(importo, "");
+		        	 // prendo la lista di tutti gli obbiettivi
+		        	 if(operation.nome().equals(nome)) {
+			              if (tipo) {		            	  
+			            	  operation.deposit(importo, "");
+			                  bRes = true;
+			              } else {
+			                  bRes = operation.withdraw(importo, "");
+			              }
 		              }
-		              break;
 		          }
 		     }
 		  } else if (operType == OperationType.SERVIZIO) {
@@ -77,7 +76,6 @@ public class ConsoleControllerImpl implements ConsoleController{
 		                } else {
 		                    bRes = operation.withdraw(importo, nome);
 		                }
-		                break;
 		            }
 		        }
 		    }
@@ -114,20 +112,19 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public void saveObjective(boolean bNew, String nameObjective, String newNameOb, String newDescrOb, double savingTarget) throws IllegalStateException {
+	public void saveObjective(boolean bNew, String nameObjective, String newDescrOb, double savingTarget) throws IllegalStateException {
 		Optional<ObjectiveImpl> objective = getObjective(nameObjective);
-		Optional<ObjectiveImpl> objectiveNew = getObjective(newNameOb);
 		// Se sono su nuovo creo un nuovo obbiettivo > tanto l'id lo incremento alla creazione, quindi non può già esistere.
 		if(bNew) {
-			if(objective.isPresent() || objectiveNew.isPresent()) {
+			if(objective.isPresent()) {
 				throw new IllegalStateException("Obbiettivo esistente! Impossibile crearlo.");
 			}
-			addObjective(newNameOb, newDescrOb, savingTarget);//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
+			addObjective(nameObjective, newDescrOb, savingTarget);//MODIFICATO: aggiunto param target per la soglia di risparmio da raggiungere nell'obbiettivo
 		} else {
-			if(!objective.isPresent() || !objectiveNew.isPresent()) {
+			if(!objective.isPresent()) {
 				throw new IllegalStateException("Obbiettivo inesistente! Impossibile modificarlo.");
 			}
-			modifyObjective(objective.get(), newNameOb, newDescrOb, savingTarget);
+			modifyObjective(objective.get(), nameObjective, newDescrOb, savingTarget);
 		}		
 	}
 	
@@ -186,21 +183,34 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	// calendario
 	@Override
-	public CalendarView drawCalendar() {
-		// Inizializzazione calendario
+	public CalendarModel getCalendarModel() {
     	LocalDate today = LocalDate.now();
     	int anno = today.getYear();
     	int mese = today.getMonthValue();
 		
-		this.calendarModel = new CalendarModel(anno, mese);
-        return new CalendarView(this, calendarModel);
+		return new CalendarModel(anno, mese);
 	}
+	
+	@Override
+	public CalendarView drawCalendar() {
+    	/*LocalDate today = LocalDate.now();
+    	int anno = today.getYear();
+    	int mese = today.getMonthValue();*/
+		
+        return new CalendarView(this, getCalendarModel());
+    }
+	
+	@Override
+	public Set<Event> loadEvents() {
+        return calendario.loadEventsFromFile();
+    }
 	
 	@Override
 	public Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
 								String newName, String newdesc, String newDaOra, String newAora) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException {
 		int daysEvents = 0;
 		LocalDate currentDate = daData;
+		Event event = null;
 		Set<Event> events = new TreeSet<>(new ComparatorEvents());
 		
 		// Controllo se l'evento è già presente nella data/orario definita. Se non è presente lo creo. In caso contrario mostro messaggio di errore.
@@ -212,23 +222,36 @@ public class ConsoleControllerImpl implements ConsoleController{
 					if(i > 0) {
 						currentDate = currentDate.plusDays(1);
 					}
-					Event event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
-					events.add(event);
+					event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
 				}
 			// creazione dell'evento nella data singola.
 			} else {
-					Event event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora);
-					events.add(event);
+					event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora);
 			}
 		} else {
-				Event event = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora);	
-				events.add(event);
-		}		
+				event = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora);	
+		}
+
+	    // Salvataggio degli eventi su file
+	    if (!calendario.saveEventsToFile()) {
+	        return Collections.emptySet(); // Restituisce un insieme vuoto se il salvataggio fallisce
+	    }
+	    // se il salvataggio va a buon fine lo aggiungo al set
+		events.add(event);		
 		return events;
 	}
 	
 	@Override
 	public Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException  {
-	    return calendario.removeEvent(name, date, daOra);
+	    // Salvataggio degli eventi su file
+		return calendario.removeEvent(name, date, daOra);
+	}
+	
+	public void updateUIevents() {
+		controllerLogin.getConsolleView().updateEventsUI();
+	}
+	
+	public Set<Event> getAllEventToFile(){
+		return calendario.getAllEvents();
 	}
 }

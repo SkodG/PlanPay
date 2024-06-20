@@ -197,7 +197,8 @@ public class CalendarView extends JFrame {
             @Override
             public void windowOpened(WindowEvent e) {
                 // creazione di una nuova istanza di Calendario
-            	controller.drawCalendar();
+				controller.drawCalendar();
+                calendarModel.loadEvents(controller.loadEvents());
             }
         });
 	}

@@ -222,5 +222,14 @@ public class CalendarModel extends AbstractTableModel {
         setValueEvent(date);        
         return true;
     }
+    
+    public void loadEvents(Set<Event> events) {
+        for (Event event : events) {
+        	EventAdapter eventad = new EventAdapter(event);
+            LocalDate date = eventad.getDate();
+            setValueAddEvent(date, event);
+        }
+        fireTableDataChanged();
+    }
 
 }

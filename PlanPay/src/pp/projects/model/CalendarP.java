@@ -18,7 +18,7 @@ public interface CalendarP {
 	 * @throws InvalidParameterException 
 	 * @throws EventAlreadyExistsException 
 	 */
-	EventImpl newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) throws EventAlreadyExistsException, InvalidParameterException;
+	Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) throws EventAlreadyExistsException, InvalidParameterException;
 	
 	/**
 	 * Modifica di un evento già esistente.
@@ -37,7 +37,7 @@ public interface CalendarP {
 	 * @return l'evento modificato.
 	 * @throws EventNotFoundException 
 	 */
-	EventImpl modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
+	Event modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
 			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora) throws EventNotFoundException;
 	
 	/**
@@ -49,5 +49,5 @@ public interface CalendarP {
 	 * @return l'evento rimosso.
 	 * @throws EventNotFoundException 
 	 */
-	EventImpl removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException;
+	Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException;
 }
