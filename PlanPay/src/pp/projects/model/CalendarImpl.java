@@ -33,8 +33,8 @@ public class CalendarImpl implements CalendarP{
 			 throw new EventAlreadyExistsException("Evento già esistente! Impossibile crearlo!");
         }
 
-        if (newName == null || newName.trim().isEmpty() || 
-            newDaOra == null || newDaOra.trim().isEmpty() || newAora == null || newAora.trim().isEmpty()) {
+        if (newName == null || newName.trim().isEmpty() || newDaOra == null || newDaOra.trim().isEmpty() || 
+        	newAora == null || newAora.trim().isEmpty()) {
             throw new InvalidParameterException("I parametri dell'evento non possono essere nulli o vuoti.");
         }
 	    

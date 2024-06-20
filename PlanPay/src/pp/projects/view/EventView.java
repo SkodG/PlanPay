@@ -274,9 +274,6 @@ public class EventView extends JDialog {
 		edTitolo.setText(name);
 		dateChooserDa.setDate(dateD);
 		dateChooserA.setDate(dateD);
-
-	    //timeFieldAora.setValue(aOra);
-	    //timeFieldDaOra.setValue(daOra);
 		 try {
 		        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		        Date daOraDate = timeFormat.parse(daOra);

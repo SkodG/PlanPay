@@ -254,4 +254,5 @@ public class ConsoleControllerImpl implements ConsoleController{
 	public Set<Event> getAllEventToFile(){
 		return calendario.getAllEvents();
 	}
+	
 }

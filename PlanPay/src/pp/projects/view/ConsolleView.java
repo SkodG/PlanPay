@@ -215,7 +215,7 @@ public class ConsolleView extends JFrame {
             for (String transaction : transactions) {
                 transactionListModel.addElement(transaction);
             }
-
+            
             return !transactions.isEmpty(); // Restituisce true se ci sono transazioni
         }
 		

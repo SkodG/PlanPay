@@ -223,6 +223,7 @@ public class CalendarModel extends AbstractTableModel {
         return true;
     }
     
+    // carico gli aventi sul calendario
     public void loadEvents(Set<Event> events) {
         for (Event event : events) {
         	EventAdapter eventad = new EventAdapter(event);
@@ -231,5 +232,4 @@ public class CalendarModel extends AbstractTableModel {
         }
         fireTableDataChanged();
     }
-
 }

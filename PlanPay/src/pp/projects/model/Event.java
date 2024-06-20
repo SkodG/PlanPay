@@ -31,5 +31,9 @@ public interface Event {
 	 */
 	String getAOra();
 	
+	/**
+	 * 
+	 * @return il formato per la scrittura nel file
+	 */
 	String getInfoEventToFile();
 }

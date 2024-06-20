@@ -40,8 +40,7 @@ public class CalendarView extends JFrame {
     private EventView eventView;
     private SelectedEventView selectedEventView;
     private boolean isSelectingEvent = false;
-
-
+    
 	/**
 	 * Create the frame.
 	 */
