@@ -29,10 +29,4 @@ public class ServicesImpl extends AbstractOperations {
 	public String nome() {
 		return "";
 	}
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/main
-
-
 }
