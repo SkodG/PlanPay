@@ -1,7 +1,5 @@
 package pp.projects.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -12,14 +10,13 @@ import pp.projects.model.OperationType;
 
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 
@@ -30,17 +27,12 @@ public class ServicesView extends JFrame {
 	private JTextField textAmount;
 	private JTextField textName;
 	private LocalDate date;
-	private String causale;
 
 	/**
 	 * Create the frame.
 	 */
 	public ServicesView(OperationType operationType, String operationName, ConsoleControllerImpl controller) {
 		date = LocalDate.now();
-		if(operationType == OperationType.OBIETTIVO) 
-			setTitle("OBBIETTIVO - Data: " + date);
-		else 
-			setTitle("SERVIZIO CONTO - Data: " + date);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 184);
 		contentPane = new JPanel();
@@ -59,7 +51,6 @@ public class ServicesView extends JFrame {
 		contentPane.add(lblAmount);
 		
 		textAmount = new JTextField("0.00");
-		textAmount.setHorizontalAlignment(SwingConstants.TRAILING);
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
 		textAmount.setBounds(82, 32, 86, 20);
@@ -75,6 +66,14 @@ public class ServicesView extends JFrame {
 		textName.setBounds(83, 60, 331, 20);
 		textName.setColumns(10);	
 		contentPane.add(textName);
+		
+		if(operationType == OperationType.OBIETTIVO) {
+			setTitle("OBBIETTIVO - Data: " + date);
+			textName.setEditable(false);
+		}
+			
+		else 
+			setTitle("SERVIZIO CONTO - Data: " + date);
 		
 		JButton btnDeposit = new JButton("Deposita");
 		btnDeposit.addActionListener(new ActionListener() {
@@ -95,11 +94,11 @@ public class ServicesView extends JFrame {
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
 						//cerco nella lista degli obbiettivi 
-						List<ObjectiveImpl> objectiveList = controller.getObjectiveList();
 						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							controller.updateConto(dAmount, true, "", operationType);
+							System.out.println("deposito in "+optObjective.get().getName());
+							controller.updateConto(dAmount, true, operationName, operationType);
 							setVisible(false);
 							textAmount.setText("0.00");
 							textName.setText("");
@@ -113,6 +112,7 @@ public class ServicesView extends JFrame {
 					} 
 				}catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
+					textAmount.setText("0.00");
 				}		
 			}
 		});
@@ -130,18 +130,30 @@ public class ServicesView extends JFrame {
 				try {
 					double dAmount = Double.parseDouble(textAmount.getText());
 					if(textName.getText().isEmpty() && operationType == OperationType.SERVIZIO) {
-						JOptionPane.showMessageDialog(null, "Inserire una causale ", "Errore", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Inserire una causale", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 					else if(operationType == OperationType.SERVIZIO) {
 						result = controller.updateConto(dAmount, false, textName.getText(), operationType);
 						System.out.println(""+result);
+						//Controllo che l'operazione sia avvenuta
+						if(!result) 
+							JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
+									"Errore", JOptionPane.ERROR_MESSAGE);
+						else
+							setVisible(false);
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
 						//cerco nella lista degli obbiettivi 
 						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							result = controller.updateConto(dAmount, false, "", operationType);
+							result = controller.updateConto(dAmount, false, operationName, operationType);
+							//Controllo che l'operazione sia avvenuta
+							if(!result) 
+								JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
+										"Errore", JOptionPane.ERROR_MESSAGE);
+							else
+								setVisible(false);
 						}
 						else {
 							//messaggio di errore 
@@ -150,32 +162,27 @@ public class ServicesView extends JFrame {
 									"Errore", JOptionPane.ERROR_MESSAGE);
 						}										
 					}
-					//Controllo che l'operazione sia avvenuta
-					if(!result) 
-						JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
-								"Errore", JOptionPane.ERROR_MESSAGE);
-					else
-						setVisible(false);
 				} 
 				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
+					textAmount.setText("0.00");
 				} 
 				catch(IllegalArgumentException i){
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-				} 
-				finally {
-					//Pulisci i campi una volta finito
-				textAmount.setText("0.00");
-				textName.setText("");
-				}	
-				
+					textAmount.setText("0.00");
+				} 				
 			} //TODO Si può riutilizzare il codice con un singolo actionListener?
 		});
 		btnWithdraw.setBounds(264, 101, 149, 35);
 		btnWithdraw.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnWithdraw);
-		
-				
-
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				textAmount.setText("0.00");
+				textName.setText("");
+			}
+			
+		});
 	}
 }

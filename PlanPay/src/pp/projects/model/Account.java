@@ -1,7 +1,7 @@
 package pp.projects.model;
 
 public interface Account {
-	
+
 	public String getName();
 	
 	public Double getBalance();

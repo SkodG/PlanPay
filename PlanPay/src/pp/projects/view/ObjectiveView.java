@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
 
 import javax.swing.JLabel;
@@ -15,9 +16,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.JProgressBar;
+import java.awt.Color;
 
 public class ObjectiveView extends JFrame {
 
@@ -33,6 +36,7 @@ public class ObjectiveView extends JFrame {
 	private boolean	hasSaved;
 	private String description;
 	private String nomeObbiettivo;
+	private Optional<ObjectiveImpl> optObjective;
 	
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
@@ -49,6 +53,7 @@ public class ObjectiveView extends JFrame {
 		this.controller = controller;
 		this.nomeObbiettivo = nomeObbiettivo;
 		this.bNew  = bNew;
+		optObjective = controller.getObjective(nomeObbiettivo);
 		savingAmount = updateSavingAmount(nomeObbiettivo);
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
@@ -57,7 +62,7 @@ public class ObjectiveView extends JFrame {
 		hasSaved = false;
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 476, 225);
+		setBounds(100, 100, 484, 225);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -71,7 +76,13 @@ public class ObjectiveView extends JFrame {
 		JButton btnProjection = new JButton("Previsione");
 		btnProjection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO da implementare
+				if(optObjective.isPresent()) {
+					String name= optObjective.get().getName();
+					ForecastView forecast = new ForecastView(controller, name);
+				forecast.setVisible(true);
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Obbiettivo non creato", "Errore", JOptionPane.ERROR_MESSAGE);					
 			}
 		});
 		btnProjection.setBounds(10, 154, 123, 27);
@@ -106,29 +117,50 @@ public class ObjectiveView extends JFrame {
 		textDescr.setBounds(151, 53, 208, 53);
 		contentPane.add(textDescr);
 		
+		JLabel lblCurrentAmount = new JLabel("Saldo:");
+		lblCurrentAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
+		lblCurrentAmount.setBounds(272, 120, 46, 14);
+		contentPane.add(lblCurrentAmount);
+		
+		JLabel lblDisplayBalance = new JLabel(Double.toString(balance)+" €");
+		lblDisplayBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
+		lblDisplayBalance.setBounds(331, 120, 82, 14);
+		contentPane.add(lblDisplayBalance);
+		
+		JProgressBar progressBar = new JProgressBar(0, (int)savingAmount);
+		progressBar.setForeground(Color.BLUE);
+		progressBar.setFont(new Font("Calibri", Font.PLAIN, 12));
+		progressBar.setValue((int) balance);
+		progressBar.setOrientation(SwingConstants.VERTICAL);
+		progressBar.setBounds(414, 22, 17, 115);
+		contentPane.add(progressBar);
+		
 		JButton btnSave = new JButton("Salva modifiche");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					savingAmount = Double.parseDouble(textAmount.getText());
+					optObjective = controller.getObjective(textName.getText());
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
 						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
 								" e ammontare da risparmiare", "Errore", JOptionPane.ERROR_MESSAGE);					
-					else if(controller.getObjective(textName.getText()).isEmpty()){
+					else if(optObjective.isEmpty()){
 						//l'obbiettivo ha un nome nuovo
 						//controllo che il nome non sia già preso
 						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
 						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
 						System.out.println("nuova descrizione obbiettivo: "+description);
-						controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), description, savingAmount);
+						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
 						hasSaved = true;
 						textName.setEditable(false);
+						setVisible(false);
 					}//altrimenti se l'obbiettivo è già stato creato ma viene modificato
-					else if((controller.getObjective(textName.getText()).get().getSavingTarget() != savingAmount) ||
-							 (controller.getObjective(textName.getText()).get().getDescription().equals(description))) {
+					else if((optObjective.get().getSavingTarget() != savingAmount) ||
+							 (optObjective.get().getDescription().equals(description))) {
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
-						controller.saveObjective(bNew, nomeObbiettivo, textName.getText(), description, savingAmount);
+						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
+						setVisible(false);
 					}
 					else if(bNew && hasSaved == false){
 						JOptionPane.showMessageDialog(null, "Obbiettivo già presente!", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -143,6 +175,7 @@ public class ObjectiveView extends JFrame {
 				}
 				finally {
 					consObj.updateUI();
+					progressBar.setValue((int) balance);;
 				}
 			}
 		});
@@ -163,25 +196,10 @@ public class ObjectiveView extends JFrame {
 				}
 				
 			}		
-		});
+		});	
 		btnOperation.setBounds(292, 154, 139, 27);
 		btnOperation.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(btnOperation);
-		
-		JLabel lblCurrentAmount = new JLabel("Saldo:");
-		lblCurrentAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblCurrentAmount.setBounds(272, 120, 46, 14);
-		contentPane.add(lblCurrentAmount);
-		
-		JLabel lblDisplayBalance = new JLabel(Double.toString(balance)+" €");
-		lblDisplayBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
-		lblDisplayBalance.setBounds(331, 120, 82, 14);
-		contentPane.add(lblDisplayBalance);
-		
-		JProgressBar progressBar = new JProgressBar(0, (int)savingAmount);
-		progressBar.setOrientation(SwingConstants.VERTICAL);
-		progressBar.setBounds(414, 22, 17, 115);
-		contentPane.add(progressBar);
 	}
 	
 	public void updateUIObjective() {

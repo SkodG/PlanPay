@@ -34,4 +34,6 @@ public abstract class AbstractOperations {
     public List<Transaction> getList() {
         return transactionList;
     }
+    
+    abstract public String nome();
 }
