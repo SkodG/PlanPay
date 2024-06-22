@@ -1,7 +1,10 @@
 package pp.projects.model;
 
 public interface Objective {
+<<<<<<< HEAD
 	
+=======
+>>>>>>> refs/remotes/origin/main
 	/**
 	 * 
 	 * @param targetAmount = la cifra da raggiungere
@@ -16,4 +19,7 @@ public interface Objective {
 	public double getBalance();
 	public double getSavingTarget();	
 	public void setSavingTarget(double newTarget);
+	
+	
 }
+

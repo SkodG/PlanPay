@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package pp.projects.model;
 
 public class IllegalInputException extends Exception {
@@ -6,3 +7,14 @@ public class IllegalInputException extends Exception {
 		super(message);
 	}
 }
+=======
+package pp.projects.model;
+
+public class IllegalInputException extends Exception {
+	
+	
+	public IllegalInputException(String message){
+		super(message);
+	}
+}
+>>>>>>> refs/remotes/origin/main
