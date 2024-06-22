@@ -4,29 +4,27 @@ import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.ObjectiveImpl;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.Component;
 import javax.swing.SwingConstants;
-import javax.swing.JProgressBar;
 
 public class ListObjectiveView extends JPanel {
+	
 	
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create the frame.
-	 * @param String name
+	 *
+	 *
 	 */
 	public ListObjectiveView(String name, double balance, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));

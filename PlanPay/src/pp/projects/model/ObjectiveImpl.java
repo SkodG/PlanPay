@@ -1,11 +1,9 @@
 package pp.projects.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class ObjectiveImpl extends AbstractOperations implements Objective, Data {
+	
 	
 	private String name;
 	private String description;
@@ -44,16 +42,9 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		return "Obbiettivo "+ getDescription();
 	}
 	
-	public Double projection(double inflationRate, double interestRate, double monthlySaving, int years) {
-		//metodo per il calcolo del risparmio per questo obbiettivo
-		//data inflazione annua, flusso mensile di risparmio, interesse annuo
-		//e durata del periodo di risparmio
-		//TODO formula da rivedere
-		return monthlySaving*12*years*Math.pow((1+interestRate-inflationRate), years);
-	}
 	
 	@Override
-	public Double getBalance() {
+	public double getBalance() {
 		return this.savedBalance;
 	}
 	@Override
@@ -100,5 +91,30 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	@Override
 	public LocalDate getDate() {
 		return this.date;
+	}
+
+	@Override
+	public String nome() {
+		return this.getName();
+	}
+
+	@Override
+	public double savingForecast(double targetAmount, double frequency, int years, int months, boolean isBalanceAccounted)
+			throws IllegalInputException {
+		int time = years + months/12;
+		double result = 0.0;
+		if(frequency > time*12)
+			throw new IllegalInputException("Frequenza non corretta! Inserire un valore inferiore al periodo temporale totale");
+		System.out.println("tempo "+ time);
+		if(time*12 % frequency > 0)
+			frequency = Math.floor(time*12/frequency);
+		else
+			frequency = frequency*12;
+		System.out.println("arrotondo frequenza a "+ frequency);
+		if(isBalanceAccounted)
+			result = (targetAmount - this.getBalance())/frequency;
+		else
+			result = (targetAmount)/frequency;
+		return result;
 	}
 }

@@ -206,8 +206,8 @@ public class ConsoleControllerImpl implements ConsoleController{
     }
 	
 	@Override
-	public Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
-								String newName, String newdesc, String newDaOra, String newAora) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException {
+	public Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, 
+								String newName, String newdesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException {
 		int daysEvents = 0;
 		LocalDate currentDate = daData;
 		Event event = null;
@@ -222,22 +222,24 @@ public class ConsoleControllerImpl implements ConsoleController{
 					if(i > 0) {
 						currentDate = currentDate.plusDays(1);
 					}
-					event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora);
+					event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora, stato);
+					events.add(event);
 				}
 			// creazione dell'evento nella data singola.
 			} else {
-					event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora);
+					event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora, stato);
+					events.add(event);
 			}
 		} else {
-				event = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora);	
+				event = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora, stato);	
+				events.add(event);
 		}
 
 	    // Salvataggio degli eventi su file
 	    if (!calendario.saveEventsToFile()) {
 	        return Collections.emptySet(); // Restituisce un insieme vuoto se il salvataggio fallisce
 	    }
-	    // se il salvataggio va a buon fine lo aggiungo al set
-		events.add(event);		
+	    // se il salvataggio va a buon fine lo aggiungo al set		
 		return events;
 	}
 	

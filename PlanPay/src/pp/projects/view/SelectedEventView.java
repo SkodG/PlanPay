@@ -31,9 +31,6 @@ public class SelectedEventView extends JFrame {
 	
 	private JButton buttonEvent;
 
-	/**
-	 * Create the frame.
-	 */
 	public SelectedEventView(ConsoleController controller, CalendarView calendar, LocalDate day, Set<Event> setEvents) {
 		
 		setTitle("EVENTI DI " + day.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getDayOfMonth() + " " + day.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getYear());

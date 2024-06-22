@@ -64,8 +64,8 @@ public interface ConsoleController {
 	 * @throws EventAlreadyExistsException 
 	 * @throws InvalidParameterException 
 	 */
-	 Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, State s, 
-					    String newName, String newdesc, String newDaOra, String newAora) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException;
+	 Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, 
+					    String newName, String newdesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException;
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 

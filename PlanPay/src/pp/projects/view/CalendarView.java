@@ -11,12 +11,14 @@ import pp.projects.model.Event;
 import pp.projects.model.EventAdapter;
 import pp.projects.model.Data;
 import pp.projects.model.EventImpl;
+import pp.projects.model.State;
 
 import javax.swing.JTable;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -36,10 +38,16 @@ public class CalendarView extends JFrame {
     private CalendarModel calendarModel;
     private JTable tblCalendario;
     private JLabel lbMese;
+    private JLabel lbNeventi_concluso;
+    private JLabel lbNeventi_incorso;
+    private JLabel lbNeventi_daAvviare;
     
     private EventView eventView;
     private SelectedEventView selectedEventView;
     private boolean isSelectingEvent = false;
+	private int eventiDaAvviare = 0;
+	private int eventiIncorso = 0;
+	private int eventiConclusi = 0;
     
 	/**
 	 * Create the frame.
@@ -49,7 +57,7 @@ public class CalendarView extends JFrame {
 		this.calendarModel = model;
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1201, 750);
+		setBounds(100, 100, 1201, 790);
 		setResizable(false); // Impedisce l'ingrandimento della finestra
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -95,7 +103,7 @@ public class CalendarView extends JFrame {
 			}
 		});
 		btnNewevent.setFont(new Font("Calibri", Font.PLAIN, 14));
-		btnNewevent.setBounds(527, 654, 157, 49);
+		btnNewevent.setBounds(560, 675, 157, 49);
 		contentPane.add(btnNewevent);
 		
 		tblCalendario = new JTable(calendarModel);
@@ -190,6 +198,39 @@ public class CalendarView extends JFrame {
 		lbDomenica.setFont(new Font("Calibri", Font.PLAIN, 18));
 		lbDomenica.setBounds(1037, 111, 105, 29);
 		contentPane.add(lbDomenica);
+			
+		JPanel pnLegenda = new JPanel();
+		pnLegenda.setBounds(959, 652, 218, 99);
+		contentPane.add(pnLegenda);
+		pnLegenda.setLayout(null);
+		
+		JPanel pnState_inCorso = new JPanel();
+		pnState_inCorso.setBackground(new Color(255, 255, 51));
+		pnState_inCorso.setBounds(10, 38, 25, 25);
+		pnLegenda.add(pnState_inCorso);
+		
+		JPanel pnState_concluso = new JPanel();
+		pnState_concluso.setBackground(new Color(0, 204, 0));
+		pnState_concluso.setBounds(10, 66, 25, 25);
+		pnLegenda.add(pnState_concluso);
+		
+		JPanel pnState_daAvviare = new JPanel();
+		pnState_daAvviare.setBackground(new Color(255, 51, 0));
+		pnState_daAvviare.setBounds(10, 10, 25, 25);
+		pnLegenda.add(pnState_daAvviare);
+		
+		lbNeventi_concluso = new JLabel("0 attività concluse");
+		lbNeventi_concluso.setBounds(45, 66, 168, 25);
+		pnLegenda.add(lbNeventi_concluso);
+		
+		lbNeventi_incorso = new JLabel("0 attività in corso");
+		lbNeventi_incorso.setBounds(45, 38, 168, 25);
+		pnLegenda.add(lbNeventi_incorso);
+		
+		lbNeventi_daAvviare = new JLabel("0 attività da avviare");
+		lbNeventi_daAvviare.setBounds(45, 10, 168, 25);
+		pnLegenda.add(lbNeventi_daAvviare);
+        updateLegenda(controller.loadEvents());
 		
 		// WindowListener per gestire l'evento "windowOpened"
         addWindowListener(new WindowAdapter() {
@@ -219,6 +260,7 @@ public class CalendarView extends JFrame {
 				Data data = new EventAdapter(ev);
 				if(eventView.isbNew()) {
 					if(!(daData.equals(aData))) {
+						System.out.println(data.getDate());
 						calendarModel.setValueAddEvent(data.getDate(), ev);
 					} else {
 						calendarModel.setValueAddEvent(daData, ev);
@@ -241,6 +283,31 @@ public class CalendarView extends JFrame {
 		
 	    contentPane.revalidate();
 	    contentPane.repaint();	
+	}
+	
+	public void updateLegenda(Set<Event> events) {
+		Set<String> uniqueEvents = new HashSet<>();
+		
+	       for (Event event : events) {
+	    	   EventAdapter ev = new EventAdapter(event);
+	            String key = ev.getName() + event.getDaOra() + event.getAOra() + event.getState();
+
+	            if (!uniqueEvents.contains(key)) {
+	                uniqueEvents.add(key);
+
+	                if (event.getState().equals(State.DA_AVVIARE)) {
+	                    eventiDaAvviare++;
+	                } else if (event.getState().equals(State.IN_CORSO)) {
+	                    eventiIncorso++;
+	                } else if (event.getState().equals(State.CONCLUSO)) {
+	                    eventiConclusi++;
+	                }
+	            }
+	        }
+
+		lbNeventi_concluso.setText(eventiDaAvviare + " attività da avviare");
+		lbNeventi_incorso.setText(eventiIncorso + " attività in corso");
+		lbNeventi_daAvviare.setText(eventiConclusi + " attività conclus" + (eventiConclusi == 1 ? "a" : "e"));
 	}
 	
 	public boolean getSelectingEvent() {

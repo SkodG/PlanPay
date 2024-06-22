@@ -1,3 +1,2 @@
-2024-06-13,08:00,09:00,ooooooooooooo,o1o1o1o1o1o1
-2024-06-20,01:00,02:00,prova33,prova33	
-2024-06-20,17:00,18:00,prova,55555555	
+2024-06-21[,]00:00[,]00:00[,]prova[,]prova1[|]proca2[|]hhh[,]CONCLUSO
+2024-06-22[,]00:00[,]00:00[,]prova[,]prova1[|]proca2[|]hhh[,]CONCLUSO

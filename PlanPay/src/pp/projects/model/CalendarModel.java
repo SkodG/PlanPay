@@ -120,9 +120,10 @@ public class CalendarModel extends AbstractTableModel {
         StringBuilder cellContent = new StringBuilder();
 
         cellContent.append("<html>").append(date.getDayOfMonth());
-        for (Event event : events) {        	
+        for (Event event : events) {   
         	String eventText = event.getInfoEventToString().replace("\n", " ").replace("\r", " ");
-            cellContent.append("<br>").append(eventText);
+        	String eventHtml = toHtml(event) + eventText;        	
+            cellContent.append("<br>").append(eventHtml);
         }
         cellContent.append("</html>");
         
@@ -225,6 +226,7 @@ public class CalendarModel extends AbstractTableModel {
     
     // carico gli aventi sul calendario
     public void loadEvents(Set<Event> events) {
+    	System.out.println(events.size());
         for (Event event : events) {
         	EventAdapter eventad = new EventAdapter(event);
             LocalDate date = eventad.getDate();
@@ -232,4 +234,24 @@ public class CalendarModel extends AbstractTableModel {
         }
         fireTableDataChanged();
     }
+    
+	private String toHtml(Event event) {
+        String color;
+        switch (event.getState()) {
+            case DA_AVVIARE:
+                color = "red";
+                break;
+            case IN_CORSO:
+                color = "yellow";
+                break;
+            case CONCLUSO:
+                color = "green";
+                break;
+            default:
+                color = "transparent"; // Default color
+        }
+        return "<span style='color:" + color + "'>&#8226;</span> ";
+	}
+	
+    
 }

@@ -27,7 +27,7 @@ public class CalendarImpl implements CalendarP{
 		setEvents = loadEventsFromFile();
 	}
 	
-	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora) throws EventAlreadyExistsException, InvalidParameterException{
+	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, InvalidParameterException{
 		Optional<Event> existingEvent = getEvent(name, currentDate, daOra);
 		if (existingEvent.isPresent()) {
 			 throw new EventAlreadyExistsException("Evento già esistente! Impossibile crearlo!");
@@ -38,7 +38,7 @@ public class CalendarImpl implements CalendarP{
             throw new InvalidParameterException("I parametri dell'evento non possono essere nulli o vuoti.");
         }
 	    
-        Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora);
+        Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato);
         setEvents.add(newEvent);
 	    
 	    return newEvent;
@@ -59,7 +59,7 @@ public class CalendarImpl implements CalendarP{
 	}
 	
 	public Event modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora) throws EventNotFoundException {
+							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato) throws EventNotFoundException {
 		EventImpl event = null;
 		
 		event = setEvents.stream()
@@ -154,17 +154,18 @@ public class CalendarImpl implements CalendarP{
 	         reader = new BufferedReader(new FileReader(file));
 	         String line;
 	         while ((line = reader.readLine()) != null) {
-	                String[] parts = line.split(",");
-	                if (parts.length == 5) {
-	                    LocalDate date = LocalDate.parse(parts[0]);
-	                    String daOra = parts[1];
-	                    String aOra = parts[2];
-	                    String name = parts[3];
-	                    String description = parts[4];
+	             String[] parts = line.split("\\[,\\]");
+	             if (parts.length == 6) {
+	                 LocalDate date = LocalDate.parse(parts[0]);
+	                 String daOra = parts[1];
+	                 String aOra = parts[2];
+	                 String name = parts[3];
+	                 String description = parts[4];
+	                 String stato = parts[5];
 	                    
-	                    EventImpl event = new EventImpl(name, description, date, daOra, aOra);
-	                    eventToLoad.add(event);
-	                }
+	                 EventImpl event = new EventImpl(name, description, date, daOra, aOra, State.valueOf(stato));
+	                 eventToLoad.add(event);
+	             }
 	         }
 	     } catch (IOException e) {
 	         System.out.println("Errore nel caricamento degli eventi dal file: " + e.getMessage());

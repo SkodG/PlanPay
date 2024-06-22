@@ -1,5 +1,7 @@
 package pp.projects.model;
 
+import java.time.LocalDate;
+
 public interface Event {
 	/**
 	 * @return dello stato

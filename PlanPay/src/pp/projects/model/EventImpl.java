@@ -6,20 +6,18 @@ public class EventImpl implements Event, Data{
 	
 	private String name;
     private String description;
-    private LocalDate date;
+    private LocalDate daDate;
 	private State eventState;
 	private String daOra;
 	private String aOra;
 	
-	public EventImpl(String name, String desc, LocalDate data, String daOra, String aOra) {
+	public EventImpl(String name, String desc, LocalDate daData, String daOra, String aOra, State stato) {
 		this.name = name;
 		this.description = desc;
-		this.date = data;
+		this.daDate = daData;
 		this.daOra = daOra;
 		this.aOra = aOra;
-		//this.eventState = s;
-		
-		//this.inputStream = this.getClass().getResourceAsStream("/resource/events.txt");
+		this.eventState = stato;
 	}
 	
 	@Override
@@ -44,7 +42,7 @@ public class EventImpl implements Event, Data{
 
     @Override
     public LocalDate getDate() {
-        return date;
+        return daDate;
     }
 	
 	@Override
@@ -59,6 +57,7 @@ public class EventImpl implements Event, Data{
 	
 	@Override
 	public String getInfoEventToString() {
+		
 		return this.getDaOra() + " - " + this.getAOra() + " : '" + this.getName() + "'";
 	}
 	
@@ -74,7 +73,7 @@ public class EventImpl implements Event, Data{
 	
 	@Override
 	public String getInfoEventToFile() {
-		return this.getDate() + "," + this.getDaOra() + "," + this.getAOra() + "," + this.getName() + "," + this.getDescription();
+		return this.getDate() + "[,]" + this.getDaOra() + "[,]" + this.getAOra() + "[,]" + this.getName() + "[,]" + this.getDescription() + "[,]" + this.getState().toString();
 	}
 	
 	public void setDaOra(String da) {

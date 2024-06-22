@@ -12,6 +12,7 @@ import pp.projects.model.EventAdapter;
 import pp.projects.model.EventImpl;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
@@ -47,12 +48,12 @@ public class ConsolleView extends JFrame {
 	private DefaultListModel<String> transactionListModel;
 	private JList<String> transactionList;
 	private DefaultListModel<String> eventListModel;
-	private JList<String> eventListToday;
-	
-	private JTextArea eventTextArea;
-	
+	private JList<String> eventListToday;	
+	private JTextArea eventTextArea;	
 	private JScrollPane scrollPane;
+	
 	private int count;
+	private String headerText;
 	
 	private ConsoleControllerImpl controller;
 	private CalendarView calendarView;
@@ -72,7 +73,7 @@ public class ConsolleView extends JFrame {
 		this.account = account;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 736, 490);
+		setBounds(100, 100, 772, 490);
 		contentPane = new JPanel();
 		contentPane.setForeground(SystemColor.control);
 		contentPane.setBackground(new Color(245, 245, 245));
@@ -87,14 +88,20 @@ public class ConsolleView extends JFrame {
 		contentPane.add(lbUsername);
 		
 		btnServices = new JButton("SERVIZI");
-		btnServices.setBackground(new Color(102, 153, 204));
+		btnServices.setBackground(new Color(255, 255, 255));
+		setButtonIcon(btnServices, "/images/payment.png");
+		/*try {
+			btnServices.setIcon(new ImageIcon(this.getClass().getResource("/images/payment.png")));
+		} catch (Exception ex) {
+		    System.out.println(ex);
+		}*/
 		btnServices.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				servicesView.setVisible(true);
 			}
 		});
 		btnServices.setFont(new Font("Calibri", Font.PLAIN, 36));
-		btnServices.setBounds(380, 250, 312, 76);
+		btnServices.setBounds(414, 275, 320, 100);
 		contentPane.add(btnServices);
 		
 		lbImp = new JLabel("Importo:");
@@ -104,7 +111,7 @@ public class ConsolleView extends JFrame {
 		
 		lblmporto = new JLabel("0,00 €");
 		lblmporto.setFont(new Font("Calibri", Font.PLAIN, 34));
-		lblmporto.setBounds(175, 76, 178, 42);
+		lblmporto.setBounds(175, 76, 373, 42);
 		contentPane.add(lblmporto);
 		       
 		lbTransactions = new JLabel("Transazioni");
@@ -124,7 +131,7 @@ public class ConsolleView extends JFrame {
 				calendarView.setVisible(true);
 			}
 		});
-		btnCalendar.setBounds(558, 24, 134, 94);	
+		btnCalendar.setBounds(600, 25, 134, 108);	
 		contentPane.add(btnCalendar);
 		
 		btnTransactions = new JButton();
@@ -151,14 +158,20 @@ public class ConsolleView extends JFrame {
 				}
 			}
 		});
-		btnTransactions.setBounds(630, 385, 62, 42);
+		btnTransactions.setBounds(672, 385, 62, 42);
 		contentPane.add(btnTransactions);
 		
 		btnObjectives = new JButton("OBBIETTIVI");
-		btnObjectives.setBackground(new Color(102, 153, 204));
+		btnObjectives.setBackground(new Color(255, 255, 255));
 		btnObjectives.setFont(new Font("Calibri", Font.PLAIN, 36));
-		btnObjectives.setBounds(380, 164, 312, 76);
+		btnObjectives.setBounds(414, 155, 320, 100);
 		contentPane.add(btnObjectives);
+		setButtonIcon(btnObjectives, "/images/objective.png");
+		/*try {
+			btnObjectives.setIcon(new ImageIcon(this.getClass().getResource("/images/objective.png")));
+		} catch (Exception ex) {
+		    System.out.println(ex);
+		}*/
 		
 		btnObjectives.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -174,8 +187,10 @@ public class ConsolleView extends JFrame {
 
         scrollPane = new JScrollPane(transactionList);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setBounds(31, 433, 661, 249);
+        scrollPane.setBounds(31, 433, 703, 249);
         contentPane.add(scrollPane);
+        transactionList.setVisible(false);
+        scrollPane.setVisible(false);
         
         eventListModel = new DefaultListModel<>();
         eventListToday = new JList<>(eventListModel);
@@ -184,17 +199,19 @@ public class ConsolleView extends JFrame {
         eventListToday.setFont(new Font("Calibri", Font.PLAIN, 16));
         eventListToday.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         eventListToday.setBackground(new Color(245, 245, 245));
-        eventListModel.addElement("Eventi di oggi " + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " + LocalDate.now().getDayOfMonth() + " " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " + LocalDate.now().getYear());
+        
+        headerText =  "<html><body style='font-size: 16px;'>" +
+		                "<u>Eventi di oggi " + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
+		                LocalDate.now().getDayOfMonth() + " " +
+		                LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
+		                LocalDate.now().getYear() + "</u></body></html>";
+        eventListModel.addElement(headerText);
         
         JScrollPane scrollPaneEv = new JScrollPane(eventListToday);
         scrollPaneEv.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPaneEv.setBounds(31, 128, 339, 232);
+        scrollPaneEv.setBounds(31, 155, 373, 220);
         contentPane.add(scrollPaneEv);
-
-        // Nascondi la JList e lo JScrollPane all'inizio
-        transactionList.setVisible(false);
-        scrollPane.setVisible(false);
-		
+        		
 		// WindowListener per gestire l'evento "windowOpened"
         addWindowListener(new WindowAdapter() {
             @Override
@@ -234,9 +251,8 @@ public class ConsolleView extends JFrame {
 												})
 												.collect(Collectors.toSet());
 		if(eventsToday != null) {
-			eventListModel.clear();
-			eventListModel.addElement("Eventi di oggi " + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " + LocalDate.now().getDayOfMonth() + " " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " + LocalDate.now().getYear());
-			eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
+			eventListModel.clear();			
+			eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
 			for (Event event : eventsToday) {
 				eventListModel.addElement(event.getInfoEventToString());
             }
@@ -247,4 +263,22 @@ public class ConsolleView extends JFrame {
 		lblmporto.setText(account.getBalance().toString());
 		consolleObjectiveView.updateUI();
 	}
+	
+	private void setButtonIcon(JButton button, String path) {
+		Image scaledImg;
+        try {
+            ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
+            Image img = icon.getImage();
+            if(button.equals(btnObjectives))
+            	scaledImg = img.getScaledInstance(90, 90, Image.SCALE_SMOOTH); // Ridimensiona l'immagine
+            else
+            	scaledImg = img.getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Ridimensiona l'immagine            
+            icon = new ImageIcon(scaledImg);
+            button.setIcon(icon);
+            button.setHorizontalTextPosition(SwingConstants.RIGHT); // Posiziona il testo a destra dell'immagine
+            button.setIconTextGap(20); // Imposta lo spazio tra l'immagine e il testo
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
 }

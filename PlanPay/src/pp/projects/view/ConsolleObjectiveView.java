@@ -10,39 +10,17 @@ import pp.projects.model.ObjectiveImpl;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.Font;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
 import javax.swing.border.BevelBorder;
-import javax.swing.ListSelectionModel;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import javax.swing.border.LineBorder;
-import javax.swing.JTable;
-import javax.swing.Box;
-import javax.swing.JScrollBar;
-import java.awt.Scrollbar;
-import java.awt.GridBagLayout;
-import java.awt.FlowLayout;
-import javax.swing.ScrollPaneConstants;
-import java.awt.GridLayout;
 
 public class ConsolleObjectiveView extends JFrame {
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;

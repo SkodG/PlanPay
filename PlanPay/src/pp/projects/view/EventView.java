@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 /**
  * Creazione di una JDialog per la capacità di essere modale. Usata per interazioni secondarie.
@@ -48,10 +49,11 @@ public class EventView extends JDialog {
 	private JFormattedTextField timeFieldDaOra;
 	private JFormattedTextField timeFieldAora;
 	private JTextArea txtDescrizione;
+	private JComboBox<String> cmbStato;
 	
 	private String name;
 	private String desc;
-	private State s;
+	private State stato;
 	private LocalDate selectedDateDa;
 	private LocalDate selectedDateA;
 	private boolean bNew;
@@ -61,7 +63,6 @@ public class EventView extends JDialog {
 	 */
 	public EventView(boolean bNew, LocalDate date, ConsoleController c, CalendarView calendar) {		
 		this.name = new String();
-		this.desc = new String();
 		this.bNew = bNew;
 		
 		setTitle("EVENTO");
@@ -73,26 +74,27 @@ public class EventView extends JDialog {
 		
 		JLabel lbTitolo = new JLabel("Titolo:");
 		lbTitolo.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbTitolo.setBounds(10, 139, 84, 27);
+		lbTitolo.setBounds(10, 168, 84, 27);
 		contentPanel.add(lbTitolo);
 		
 		JLabel lbDescrizione = new JLabel("Descrizione:");
 		lbDescrizione.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbDescrizione.setBounds(10, 176, 120, 27);
+		lbDescrizione.setBounds(10, 205, 120, 27);
 		contentPanel.add(lbDescrizione);
 		
 		edTitolo = new JTextField();
 		edTitolo.setFont(new Font("Calibri", Font.PLAIN, 15));
-		edTitolo.setBounds(104, 129, 322, 36);
+		edTitolo.setBounds(104, 158, 322, 36);
 		contentPanel.add(edTitolo);
 		edTitolo.setColumns(10);
 		this.name = edTitolo.getText();
 		
 		txtDescrizione = new JTextArea();
 		txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
-		txtDescrizione.setBounds(10, 202, 416, 211);
-		contentPanel.add(txtDescrizione);
-		this.desc = txtDescrizione.getText();
+		txtDescrizione.setBounds(10, 242, 416, 171);
+		contentPanel.add(txtDescrizione);		
+		this.desc = saveDescription();
+		System.out.println("DESC SAVE: " + desc);
         
 		JLabel lbAOra = new JLabel("Ora:");
 		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -217,11 +219,12 @@ public class EventView extends JDialog {
 	                
 					try {
 		                Set<Event> events;
-						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora, s,
-						        						edTitolo.getText(), txtDescrizione.getText(), newDaOra, newAora);
+						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
+						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato);
 						
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						c.updateUIevents();
+		                calendar.updateLegenda(events);
 						EventView.this.setVisible(false);
 					} catch (EventAlreadyExistsException e1) {
 						JOptionPane.showMessageDialog(null, "Evento già esistente! Impossibile crearlo.", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -266,6 +269,37 @@ public class EventView extends JDialog {
 		btnCancella.setActionCommand("Cancel");
 		btnCancella.setBounds(331, 423, 95, 36);
 		contentPanel.add(btnCancella);
+		
+		JLabel lbStato = new JLabel("Stato:");
+		lbStato.setFont(new Font("Calibri", Font.PLAIN, 20));
+		lbStato.setBounds(10, 110, 95, 27);
+		contentPanel.add(lbStato);
+		
+		cmbStato = new JComboBox<>();
+		cmbStato.setBounds(104, 107, 120, 30);
+		cmbStato.addItem(" ");
+        cmbStato.addItem("Da avviare");
+        cmbStato.addItem("In corso");
+        cmbStato.addItem("Concluso");
+		contentPanel.add(cmbStato);
+		
+		// Imposto un valore di default
+		cmbStato.setSelectedItem(" ");
+		
+		cmbStato.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String statoString = (String) cmbStato.getSelectedItem();
+                if(statoString.equals("Da avviare"))
+                	stato = State.DA_AVVIARE;
+                else if(statoString.equals("In corso"))
+                	stato = State.IN_CORSO;
+                else if(statoString.equals("Concluso"))
+                	stato = State.CONCLUSO;
+                else
+                	stato = State.V;
+            }
+        });
 	}
 	
 	public void setEventDetail(String name, LocalDate date, String daOra, String aOra, String desc) {
@@ -286,10 +320,31 @@ public class EventView extends JDialog {
 		        JOptionPane.showMessageDialog(this, "Errore nella formattazione dell'ora: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 		    }
 		
-		txtDescrizione.setText(desc);
+		 loadDescription();
 	}
 	
 	public boolean isbNew() {
 		return this.bNew;
 	}
+	
+	private String saveDescription() {
+		StringBuilder sb = new StringBuilder();
+        String[] lines = txtDescrizione.getText().split("\n");
+
+        for (String line : lines) {
+            if (sb.length() > 0) {
+                sb.append("[|]");
+            }
+            sb.append(line);
+        }        
+        return sb.toString();
+	}
+	
+    private void loadDescription() {
+        if (desc != null) {
+            String loadedText = desc.replace("[|]", "\n");
+            txtDescrizione.setText(loadedText);
+            System.out.println("DESC LOAD: " + loadedText);
+        }
+    }
 }

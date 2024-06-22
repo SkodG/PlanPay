@@ -82,5 +82,4 @@ public class LoginControllerImpl implements LoginController{
 	public ConsolleView getConsolleView() {
 		return this.consolleView;
 	}
-	
 }
