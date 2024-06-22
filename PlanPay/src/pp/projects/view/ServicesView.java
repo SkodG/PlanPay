@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 
 public class ServicesView extends JFrame {
 
+	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textAmount;
@@ -32,6 +33,7 @@ public class ServicesView extends JFrame {
 	 * Create the frame.
 	 */
 	public ServicesView(OperationType operationType, String operationName, ConsoleControllerImpl controller) {
+		
 		date = LocalDate.now();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 184);

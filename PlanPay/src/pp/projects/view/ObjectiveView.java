@@ -23,6 +23,7 @@ import javax.swing.JProgressBar;
 import java.awt.Color;
 
 public class ObjectiveView extends JFrame {
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;

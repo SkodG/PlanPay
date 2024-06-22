@@ -15,4 +15,7 @@ public interface Objective {
 	public double getBalance();
 	public double getSavingTarget();	
 	public void setSavingTarget(double newTarget);
+	
+	
 }
+

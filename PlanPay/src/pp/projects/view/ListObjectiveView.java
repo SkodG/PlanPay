@@ -18,10 +18,12 @@ import javax.swing.SwingConstants;
 
 public class ListObjectiveView extends JPanel {
 	
+	
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Create the frame.
+	 *
 	 *
 	 */
 	public ListObjectiveView(String name, double balance, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {

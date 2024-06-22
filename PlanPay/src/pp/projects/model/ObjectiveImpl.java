@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class ObjectiveImpl extends AbstractOperations implements Objective, Data {
 	
+	
 	private String name;
 	private String description;
 	private double savedBalance;

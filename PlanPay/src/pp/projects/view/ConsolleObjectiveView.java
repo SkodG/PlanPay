@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 public class ConsolleObjectiveView extends JFrame {
+	
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;

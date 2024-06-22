@@ -43,6 +43,7 @@ public class ForecastView extends JFrame {
 	 * Create the frame.
 	 */
 	public ForecastView(ConsoleControllerImpl controller, String objectiveName) {
+		
 		years = 0;
 		months = 0;
 		result = 0.00;
