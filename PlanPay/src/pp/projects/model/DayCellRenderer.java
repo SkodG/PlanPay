@@ -16,8 +16,8 @@ public class DayCellRenderer extends DefaultTableCellRenderer {
             cell.setText("");
         }
         
-        cell.setVerticalAlignment(SwingConstants.TOP); // Posiziona il testo in alto
-        cell.setHorizontalAlignment(SwingConstants.LEFT); // Posiziona il testo a sinistra
+        cell.setVerticalAlignment(SwingConstants.TOP); 		// Posiziona il testo in alto
+        cell.setHorizontalAlignment(SwingConstants.LEFT); 	// Posiziona il testo a sinistra
         return cell;
     }
 }

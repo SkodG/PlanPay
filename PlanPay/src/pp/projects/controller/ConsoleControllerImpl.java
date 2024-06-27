@@ -18,7 +18,9 @@ import pp.projects.model.CalendarModel;
 import pp.projects.model.ComparatorEvents;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
+import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
+import pp.projects.model.IllegalOperationException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
@@ -48,7 +50,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 		
 	@Override
-	public boolean updateConto(double importo, boolean tipo, String nome, OperationType operType) throws IllegalArgumentException {
+	public boolean updateConto(double importo, boolean tipo, String nome, OperationType operType) throws IllegalOperationException {
 		boolean bRes = false;
 		
 		// Tipo: true indica un deposito (deposit)
@@ -58,9 +60,8 @@ public class ConsoleControllerImpl implements ConsoleController{
 		         if (operation instanceof ObjectiveImpl) {
 		        	 // prendo la lista di tutti gli obbiettivi
 		        	 if(operation.nome().equals(nome)) {
-			              if (tipo) {		            	  
-			            	  operation.deposit(importo, "");
-			                  bRes = true;
+			              if (tipo) {    	
+			                  bRes = operation.deposit(importo, "");
 			              } else {
 			                  bRes = operation.withdraw(importo, "");
 			              }
@@ -70,9 +71,8 @@ public class ConsoleControllerImpl implements ConsoleController{
 		  } else if (operType == OperationType.SERVIZIO) {
 		      for (AbstractOperations operation : operationsList) {
 		            if (operation instanceof ServicesImpl) {
-		                if (tipo) {
-		                    operation.deposit(importo, nome);
-		                    bRes = true;
+		                if (tipo) {		                    
+		                    bRes = operation.deposit(importo, nome);
 		                } else {
 		                    bRes = operation.withdraw(importo, nome);
 		                }
@@ -80,7 +80,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		        }
 		    }
 		    if (!bRes) {
-		        throw new IllegalArgumentException("Operazione non valida o fondi insufficienti.");
+		        throw new IllegalOperationException("Operazione non valida o fondi insufficienti.");
 		    }
 	    
 	    // Aggiorna la vista del conto dopo l'operazione
@@ -192,11 +192,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public CalendarView drawCalendar() {
-    	/*LocalDate today = LocalDate.now();
-    	int anno = today.getYear();
-    	int mese = today.getMonthValue();*/
-		
+	public CalendarView drawCalendar() {		
         return new CalendarView(this, getCalendarModel());
     }
 	
@@ -207,11 +203,11 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	@Override
 	public Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, 
-								String newName, String newdesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException {
+								String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException {
 		int daysEvents = 0;
 		LocalDate currentDate = daData;
 		Event event = null;
-		Set<Event> events = new TreeSet<>(new ComparatorEvents());
+		//Set<Event> events = new TreeSet<>(new ComparatorEvents());
 		
 		// Controllo se l'evento è già presente nella data/orario definita. Se non è presente lo creo. In caso contrario mostro messaggio di errore.
 		if(bNew) {
@@ -222,31 +218,36 @@ public class ConsoleControllerImpl implements ConsoleController{
 					if(i > 0) {
 						currentDate = currentDate.plusDays(1);
 					}
-					event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora, stato);
-					events.add(event);
+					event = calendario.newEvent(name, currentDate, daOra, newName, newdesc, newDaOra, newAora, stato, identifier);
+					//events.add(event);
 				}
 			// creazione dell'evento nella data singola.
 			} else {
-					event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora, stato);
-					events.add(event);
+				event = calendario.newEvent(name, daData, daOra, newName, newdesc, newDaOra, newAora, stato, identifier);
+					//events.add(event);
 			}
+			
+			if(event == null)
+				return Collections.emptySet(); 
 		} else {
-				event = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora, stato);	
-				events.add(event);
+				if(!calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, currentDate, newDaOra, newAora, stato, identifier)) {
+					System.out.println("ERRORE");
+				}
+				/*for(Event ev : modifyEvents) {
+					events.add(ev);
+				}*/
 		}
-
-	    // Salvataggio degli eventi su file
 	    if (!calendario.saveEventsToFile()) {
-	        return Collections.emptySet(); // Restituisce un insieme vuoto se il salvataggio fallisce
+	        return Collections.emptySet(); 
 	    }
-	    // se il salvataggio va a buon fine lo aggiungo al set		
-		return events;
+		
+		return calendario.getAllEvents();
 	}
 	
 	@Override
-	public Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException  {
+	public Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException  {
 	    // Salvataggio degli eventi su file
-		return calendario.removeEvent(name, date, daOra);
+		return calendario.removeEvent(name, date, daOra, aOra);
 	}
 	
 	public void updateUIevents() {
@@ -256,5 +257,4 @@ public class ConsoleControllerImpl implements ConsoleController{
 	public Set<Event> getAllEventToFile(){
 		return calendario.getAllEvents();
 	}
-	
 }

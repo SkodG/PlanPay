@@ -1,6 +1,7 @@
 package pp.projects.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EventImpl implements Event, Data{
 	
@@ -10,14 +11,16 @@ public class EventImpl implements Event, Data{
 	private State eventState;
 	private String daOra;
 	private String aOra;
+	private String identifier;
 	
-	public EventImpl(String name, String desc, LocalDate daData, String daOra, String aOra, State stato) {
+	public EventImpl(String name, String desc, LocalDate daData, String daOra, String aOra, State stato, String identifier) {
 		this.name = name;
 		this.description = desc;
 		this.daDate = daData;
 		this.daOra = daOra;
 		this.aOra = aOra;
 		this.eventState = stato;
+		this.identifier = identifier;
 	}
 	
 	@Override
@@ -56,8 +59,7 @@ public class EventImpl implements Event, Data{
 	}
 	
 	@Override
-	public String getInfoEventToString() {
-		
+	public String getInfoEventToString() {		
 		return this.getDaOra() + " - " + this.getAOra() + " : '" + this.getName() + "'";
 	}
 	
@@ -76,11 +78,35 @@ public class EventImpl implements Event, Data{
 		return this.getDate() + "[,]" + this.getDaOra() + "[,]" + this.getAOra() + "[,]" + this.getName() + "[,]" + this.getDescription() + "[,]" + this.getState().toString();
 	}
 	
+	@Override
+	public String getIdentifier() {
+        return identifier;
+    }
+	
+	@Override
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+	
 	public void setDaOra(String da) {
 		this.daOra = da;
 	}
 	
 	public void setAOra(String a) {
 		this.aOra = a;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    EventImpl event = (EventImpl) o;
+	    return Objects.equals(identifier, event.identifier) &&
+	           eventState == event.eventState;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return Objects.hash(name, description, daDate, daOra, aOra, eventState);
 	}
 }

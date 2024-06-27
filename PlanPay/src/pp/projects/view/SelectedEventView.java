@@ -67,7 +67,7 @@ public class SelectedEventView extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     // Apri la finestra dell'evento
                     EventView eventView = new EventView(false, day, controller, calendar);
-                    eventView.setEventDetail(adapter.getName(), day, ev.getDaOra(), ev.getAOra(),  adapter.getDescription());
+                    eventView.setEventDetail(adapter.getName(), day, ev.getDaOra(), ev.getAOra(), adapter.getDescription(), ev.getState());
                     eventView.setVisible(true);
                     SelectedEventView.this.setVisible(false);
                 }

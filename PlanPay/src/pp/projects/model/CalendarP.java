@@ -1,6 +1,8 @@
 package pp.projects.model;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 public interface CalendarP {
 
@@ -18,7 +20,7 @@ public interface CalendarP {
 	 * @throws InvalidParameterException 
 	 * @throws EventAlreadyExistsException 
 	 */
-	Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, InvalidParameterException;
+	Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException;
 	
 	/**
 	 * Modifica di un evento già esistente.
@@ -36,9 +38,10 @@ public interface CalendarP {
 	 * @param newAora
 	 * @return l'evento modificato.
 	 * @throws EventNotFoundException 
+	 * @throws EventAlreadyExistsException 
 	 */
-	Event modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato) throws EventNotFoundException;
+	boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
+			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException;
 	
 	/**
 	 * Rimozione di un evento.
@@ -49,5 +52,13 @@ public interface CalendarP {
 	 * @return l'evento rimosso.
 	 * @throws EventNotFoundException 
 	 */
-	Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException;
+	Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
+	
+	Set<Event> getAllEvents();
+	
+	boolean saveEventsToFile();
+	
+	Set<Event> loadEventsFromFile();
+
+	void setPath(String tempFilePath);
 }

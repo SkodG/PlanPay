@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -190,21 +191,49 @@ public class CalendarModel extends AbstractTableModel {
     	return cellData.get(date);
     }
     
-    public void setValueModifyEvent(LocalDate date, Event updateEvent) {
-    	 // Trova l'evento esistente e sostituiscilo con l'evento aggiornato
-        Set<Event> events = getEventsInDate(date);
-        
-        if (events != null) {
-        	events.stream()
-        		.filter(e -> new EventAdapter(e).getName().equals(new EventAdapter(updateEvent).getName()))
-        		.findFirst()
-        		.ifPresent(existingEvent -> {
-        			events.remove(existingEvent);
-        			events.add(updateEvent);
-        		});        		
-        } 
+    private Set<Event> eventIdentifier(String identifier, Set<Event> setEvents) {
+        return setEvents.stream()
+                        .filter(e -> ((EventImpl) e).getIdentifier().equals(identifier))
+                        .collect(Collectors.toSet());
+    }
+    
+    public void setValueModifyEvent(Set<Event> events, Event updateEvent) {
+    	String identifier = updateEvent.getIdentifier();
     	
-    	setValueEvent(date);
+    	Set<Event> relatedEvents = eventIdentifier(identifier, events);
+    	
+    	for(Event even : relatedEvents) {
+    		EventImpl ev = (EventImpl) even;
+    		// devo prendere gli eventi con stesso identificatore dell'evento modificato e poi modificarli per ogni data
+    		Set<Event> eventInDate = getEventsInDate(ev.getDate());
+            
+            /*if (eventInDate != null) {
+            	eventInDate.stream()
+		            		.filter(e -> new EventAdapter(e).getName().equals(new EventAdapter(updateEvent).getName()))
+		            		.findFirst()
+		            		.ifPresent(existingEvent -> {
+		            			events.remove(existingEvent);
+		            			events.add(updateEvent);
+		            		});        		
+            } */
+    		if (eventInDate != null) {
+                // Trova e modifica gli eventi con lo stesso identificatore nella data specifica
+    			eventInDate.stream()
+				    		.forEach(existingEvent -> {
+				                EventImpl existingEventImpl = (EventImpl) existingEvent;
+				                // Aggiorna i campi dell'evento esistente
+				                existingEventImpl.setName(((EventImpl) updateEvent).getName());
+				                existingEventImpl.setDescription(((EventImpl) updateEvent).getDescription());
+				                existingEventImpl.setDaOra(((EventImpl) updateEvent).getDaOra());
+				                existingEventImpl.setAOra(((EventImpl) updateEvent).getAOra());
+				                existingEventImpl.setState(((EventImpl) updateEvent).getState());
+				                existingEventImpl.setIdentifier(((EventImpl) updateEvent).getIdentifier());
+				            });
+	        // Aggiorna la mappa cellData con gli eventi modificati
+	        cellData.put(ev.getDate(), eventInDate);
+    		}
+    	}
+        
     }
     
     public boolean removeEvent(LocalDate date, Event event) {
@@ -250,7 +279,7 @@ public class CalendarModel extends AbstractTableModel {
             default:
                 color = "transparent"; // Default color
         }
-        return "<span style='color:" + color + "'>&#8226;</span> ";
+        return "<span style='color:" + color + "; font-size:20px;'>&#8226;</span> ";
 	}
 	
     

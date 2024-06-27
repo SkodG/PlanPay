@@ -25,7 +25,6 @@ public class Transaction implements Data {
 		this.name = name;		
 	}
 
-	// potrebbe diventare il toString
 	@Override
 	public String getDescription() {
 		String segno = "";
@@ -61,7 +60,6 @@ public class Transaction implements Data {
 
 	@Override
 	public void setDescription(String d) {
-		// TODO Cosa posso fargli fare?
 	}
 
 	@Override

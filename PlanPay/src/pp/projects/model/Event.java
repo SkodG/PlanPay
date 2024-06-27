@@ -38,4 +38,8 @@ public interface Event {
 	 * @return il formato per la scrittura nel file
 	 */
 	String getInfoEventToFile();
+	
+	String getIdentifier();
+	
+	void setIdentifier(String identifier);
 }

@@ -10,6 +10,7 @@ import pp.projects.model.CalendarModel;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
 import pp.projects.model.EventNotFoundException;
+import pp.projects.model.IllegalOperationException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
@@ -19,7 +20,7 @@ import pp.projects.view.CalendarView;
 
 public interface ConsoleController {
 	
-	boolean updateConto(double importo, boolean tipo, String nome, OperationType op) throws IllegalStateException;
+	boolean updateConto(double importo, boolean tipo, String nome, OperationType op) throws IllegalOperationException;
 	
 	List<ObjectiveImpl> getObjectiveList();
 	Optional<ObjectiveImpl> getObjective(String name);
@@ -65,7 +66,7 @@ public interface ConsoleController {
 	 * @throws InvalidParameterException 
 	 */
 	 Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, 
-					    String newName, String newdesc, String newDaOra, String newAora, State stato) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException;
+					    String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException;
 	
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
@@ -73,7 +74,7 @@ public interface ConsoleController {
 	 * @param o = obbiettivo da eliminare
 	 * @throws EventNotFoundException 
 	 */
-	Event removeEvent(String name, LocalDate date, String daOra) throws EventNotFoundException;
+	Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 
 	void updateUIevents();
 }

@@ -48,11 +48,14 @@ public class CalendarView extends JFrame {
 	private int eventiDaAvviare = 0;
 	private int eventiIncorso = 0;
 	private int eventiConclusi = 0;
+	private ConsoleController c;
     
 	/**
 	 * Create the frame.
 	 */
 	public CalendarView(ConsoleController controller, CalendarModel model) {
+		this.c = controller;
+		
 		setTitle("CALENDARIO");
 		this.calendarModel = model;
 		
@@ -137,7 +140,7 @@ public class CalendarView extends JFrame {
 	                    		EventAdapter eventAdapter = new EventAdapter(event);
 	                    		isSelectingEvent = true; 
 	                    		eventView = new EventView(false, dateLocal, controller, CalendarView.this);
-	                    		eventView.setEventDetail(eventAdapter.getName(), dateLocal, ((EventImpl) event).getDaOra(), ((EventImpl) event).getAOra(), eventAdapter.getDescription());
+	                    		eventView.setEventDetail(eventAdapter.getName(), dateLocal, event.getDaOra(), event.getAOra(), eventAdapter.getDescription(), event.getState());
 	                    		eventView.setVisible(true);
 	                    		isSelectingEvent = false;
 	                    	}
@@ -220,7 +223,7 @@ public class CalendarView extends JFrame {
 		pnLegenda.add(pnState_daAvviare);
 		
 		lbNeventi_concluso = new JLabel("0 attività concluse");
-		lbNeventi_concluso.setBounds(45, 66, 168, 25);
+		lbNeventi_concluso.setBounds(45, 10, 168, 25);
 		pnLegenda.add(lbNeventi_concluso);
 		
 		lbNeventi_incorso = new JLabel("0 attività in corso");
@@ -228,7 +231,7 @@ public class CalendarView extends JFrame {
 		pnLegenda.add(lbNeventi_incorso);
 		
 		lbNeventi_daAvviare = new JLabel("0 attività da avviare");
-		lbNeventi_daAvviare.setBounds(45, 10, 168, 25);
+		lbNeventi_daAvviare.setBounds(45, 66, 168, 25);
 		pnLegenda.add(lbNeventi_daAvviare);
         updateLegenda(controller.loadEvents());
 		
@@ -256,23 +259,24 @@ public class CalendarView extends JFrame {
 	
 	public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
 		if(!bDelete) {
-			for(Event ev : events) {
-				Data data = new EventAdapter(ev);
-				if(eventView.isbNew()) {
-					if(!(daData.equals(aData))) {
-						System.out.println(data.getDate());
-						calendarModel.setValueAddEvent(data.getDate(), ev);
-					} else {
-						calendarModel.setValueAddEvent(daData, ev);
-					}
-				}else {
-					calendarModel.setValueModifyEvent(daData, ev);
-				}
-			}			
-		} else {
-			eventView.setVisible(false);
-			calendarModel.setValueAddEvent(aData, null);
-		}
+			Set<Event> eventsCopy = new HashSet<>(events);  // Crea una copia della collezione
+	        for (Event ev : eventsCopy) {
+	            Data data = new EventAdapter(ev);
+	            if (eventView.isbNew()) {
+	                if (!(daData.equals(aData))) {
+	                    System.out.println(data.getDate());
+	                    calendarModel.setValueAddEvent(data.getDate(), ev);
+	                } else {
+	                    calendarModel.setValueAddEvent(daData, ev);
+	                }
+	            } else {
+	                calendarModel.setValueModifyEvent(c.loadEvents(), ev);
+	            }
+	        }
+	    } else {
+	        eventView.setVisible(false);
+	        calendarModel.setValueAddEvent(aData, null);
+	    }
 
 	    contentPane.revalidate();
 	    contentPane.repaint();		

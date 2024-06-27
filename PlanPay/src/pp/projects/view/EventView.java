@@ -14,6 +14,7 @@ import com.toedter.calendar.JDateChooser;
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
+import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
@@ -93,8 +94,6 @@ public class EventView extends JDialog {
 		txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
 		txtDescrizione.setBounds(10, 242, 416, 171);
 		contentPanel.add(txtDescrizione);		
-		this.desc = saveDescription();
-		System.out.println("DESC SAVE: " + desc);
         
 		JLabel lbAOra = new JLabel("Ora:");
 		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -220,8 +219,8 @@ public class EventView extends JDialog {
 					try {
 		                Set<Event> events;
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
-						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato);
-						
+						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, edTitolo.getText() + selectedDateDa);
+						edTitolo.setEditable(false);
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						c.updateUIevents();
 		                calendar.updateLegenda(events);
@@ -254,7 +253,7 @@ public class EventView extends JDialog {
 				LocalDate currentDay = calendar.selectDate();
 				
 				try {
-					event = c.removeEvent(edTitolo.getText(), currentDay, timeFieldDaOra.getText());
+					event = c.removeEvent(edTitolo.getText(), currentDay, timeFieldDaOra.getText(), timeFieldAora.getText());
 				} catch (EventNotFoundException e1) {
 					JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile cancellarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
@@ -284,12 +283,12 @@ public class EventView extends JDialog {
 		contentPanel.add(cmbStato);
 		
 		// Imposto un valore di default
-		cmbStato.setSelectedItem(" ");
+		stato = State.V;
 		
 		cmbStato.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String statoString = (String) cmbStato.getSelectedItem();
+            	String statoString = (String) cmbStato.getSelectedItem();
                 if(statoString.equals("Da avviare"))
                 	stato = State.DA_AVVIARE;
                 else if(statoString.equals("In corso"))
@@ -302,7 +301,7 @@ public class EventView extends JDialog {
         });
 	}
 	
-	public void setEventDetail(String name, LocalDate date, String daOra, String aOra, String desc) {
+	public void setEventDetail(String name, LocalDate date, String daOra, String aOra, String desc, State state) {
 		Date dateD = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		
 		edTitolo.setText(name);
@@ -320,7 +319,17 @@ public class EventView extends JDialog {
 		        JOptionPane.showMessageDialog(this, "Errore nella formattazione dell'ora: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 		    }
 		
-		 loadDescription();
+		 loadDescription(desc);
+		 
+		 String stateToString = "";
+		 if(state.equals(State.IN_CORSO)) {
+			 stateToString = "In corso";
+		 } else if(state.equals(State.DA_AVVIARE)) {
+			 stateToString = "Da avviare";
+		 } else if(state.equals(State.CONCLUSO)) {
+			 stateToString = "Concluso";
+		 }
+		 cmbStato.setSelectedItem(stateToString);
 	}
 	
 	public boolean isbNew() {
@@ -330,21 +339,22 @@ public class EventView extends JDialog {
 	private String saveDescription() {
 		StringBuilder sb = new StringBuilder();
         String[] lines = txtDescrizione.getText().split("\n");
-
+        System.out.println(lines.length);
         for (String line : lines) {
             if (sb.length() > 0) {
                 sb.append("[|]");
             }
+            System.out.println(line);
             sb.append(line);
         }        
         return sb.toString();
 	}
 	
-    private void loadDescription() {
-        if (desc != null) {
-            String loadedText = desc.replace("[|]", "\n");
+    private void loadDescription(String descr) {
+    	String loadedText = "";
+        if (descr != null) {
+            loadedText = descr.replace("[|]", "\n");
             txtDescrizione.setText(loadedText);
-            System.out.println("DESC LOAD: " + loadedText);
         }
     }
 }
