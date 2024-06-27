@@ -15,7 +15,7 @@ public abstract class AbstractOperations {
         this.transactionList = new ArrayList<>();
     }
 
-    public void deposit(double amount, String desc) {
+    public boolean deposit(double amount, String desc) {
         doDeposit(amount);
         transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito "+desc, amount));
     }
