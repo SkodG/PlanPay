@@ -10,7 +10,6 @@ import pp.projects.model.DayCellRenderer;
 import pp.projects.model.Event;
 import pp.projects.model.EventAdapter;
 import pp.projects.model.Data;
-import pp.projects.model.EventImpl;
 import pp.projects.model.State;
 
 import javax.swing.JTable;
@@ -49,6 +48,7 @@ public class CalendarView extends JFrame {
 	private int eventiIncorso = 0;
 	private int eventiConclusi = 0;
 	private ConsoleController c;
+	
     
 	/**
 	 * Create the frame.
@@ -140,7 +140,8 @@ public class CalendarView extends JFrame {
 	                    		EventAdapter eventAdapter = new EventAdapter(event);
 	                    		isSelectingEvent = true; 
 	                    		eventView = new EventView(false, dateLocal, controller, CalendarView.this);
-	                    		eventView.setEventDetail(eventAdapter.getName(), dateLocal, event.getDaOra(), event.getAOra(), eventAdapter.getDescription(), event.getState());
+	                    		// passo i valori che mi serviranno per la modifica/cancellazione dell'evento.
+	                    		eventView.setEventDetail(eventAdapter.getName(), dateLocal, event.getDaOra(), event.getAOra(), eventAdapter.getDescription(), event.getState(), event.getIdentifier());
 	                    		eventView.setVisible(true);
 	                    		isSelectingEvent = false;
 	                    	}
@@ -233,6 +234,7 @@ public class CalendarView extends JFrame {
 		lbNeventi_daAvviare = new JLabel("0 attività da avviare");
 		lbNeventi_daAvviare.setBounds(45, 66, 168, 25);
 		pnLegenda.add(lbNeventi_daAvviare);
+		
         updateLegenda(controller.loadEvents());
 		
 		// WindowListener per gestire l'evento "windowOpened"
@@ -264,7 +266,6 @@ public class CalendarView extends JFrame {
 	            Data data = new EventAdapter(ev);
 	            if (eventView.isbNew()) {
 	                if (!(daData.equals(aData))) {
-	                    System.out.println(data.getDate());
 	                    calendarModel.setValueAddEvent(data.getDate(), ev);
 	                } else {
 	                    calendarModel.setValueAddEvent(daData, ev);

@@ -14,7 +14,6 @@ import com.toedter.calendar.JDateChooser;
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
-import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
@@ -55,6 +54,7 @@ public class EventView extends JDialog {
 	private String name;
 	private String desc;
 	private State stato;
+	private String identifierEvent;
 	private LocalDate selectedDateDa;
 	private LocalDate selectedDateA;
 	private boolean bNew;
@@ -94,6 +94,7 @@ public class EventView extends JDialog {
 		txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
 		txtDescrizione.setBounds(10, 242, 416, 171);
 		contentPanel.add(txtDescrizione);		
+        this.desc = txtDescrizione.getText();
         
 		JLabel lbAOra = new JLabel("Ora:");
 		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -180,12 +181,12 @@ public class EventView extends JDialog {
 	            }
         	}
         });
-		
+        
 		JButton btnSalva = new JButton("Salva");
 		btnSalva.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				try {
+				try {					
 					timeFieldAora.commitEdit();
 	                timeFieldDaOra.commitEdit();
 	                
@@ -212,14 +213,16 @@ public class EventView extends JDialog {
 	                        JOptionPane.ERROR_MESSAGE);
 	                    return;
 	                }
-
-	                name = edTitolo.getText();
-	                desc = txtDescrizione.getText();
+	                
+	                // Alla creazione del nuovo evento devo definire identifier, uguale al primo valore + dalla data.
+	                // In tal modo, posso identificare quali sono gli eventi da modificare, collegati all'evento stesso.
+					if(bNew)
+						identifierEvent = edTitolo.getText() + " " + selectedDateDa;
 	                
 					try {
 		                Set<Event> events;
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
-						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, edTitolo.getText() + selectedDateDa);
+						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, identifierEvent);
 						edTitolo.setEditable(false);
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						c.updateUIevents();
@@ -231,6 +234,8 @@ public class EventView extends JDialog {
 						JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile modificarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
 					} catch (InvalidParameterException e1) {
 						JOptionPane.showMessageDialog(null, "Parametro non valido! Controlla i dati inseriti.", "Errore", JOptionPane.ERROR_MESSAGE);
+					} catch (RuntimeException e1) {
+					    JOptionPane.showMessageDialog(null, "Errore durante il salvataggio degli eventi. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (ParseException ex) {
 					Date daOraDate = (Date) timeFieldAora.getValue();
@@ -301,10 +306,13 @@ public class EventView extends JDialog {
         });
 	}
 	
-	public void setEventDetail(String name, LocalDate date, String daOra, String aOra, String desc, State state) {
+	public void setEventDetail(String nameEvent, LocalDate date, String daOra, String aOra, String desc, State state, String identifier) {
 		Date dateD = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		
-		edTitolo.setText(name);
+		edTitolo.setText(nameEvent);
+		// assegno alla variabile 'nome', il nome dell'evento aperto.
+		name = nameEvent;
+		identifierEvent = identifier;
 		dateChooserDa.setDate(dateD);
 		dateChooserA.setDate(dateD);
 		 try {
@@ -339,12 +347,10 @@ public class EventView extends JDialog {
 	private String saveDescription() {
 		StringBuilder sb = new StringBuilder();
         String[] lines = txtDescrizione.getText().split("\n");
-        System.out.println(lines.length);
         for (String line : lines) {
             if (sb.length() > 0) {
                 sb.append("[|]");
             }
-            System.out.println(line);
             sb.append(line);
         }        
         return sb.toString();

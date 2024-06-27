@@ -3,10 +3,10 @@ package pp.projects.model;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,14 +19,12 @@ public class LoginImpl implements Login{
     private Map<String, UserCredentials> credentials;
     private String accountName;
     
-	private InputStream inputStream; 
-    
-
+    private String path;
 	
 	public LoginImpl() {
 		this.credentials = new HashMap<>();
 		this.accountName = "";
-		this.inputStream = this.getClass().getResourceAsStream("/resource/credentials.txt");
+		this.path = "src/resource/credentials.txt";
 		this.writer = null;
 		// Alla creazione di un nuovo elemento autenticazione ricarico sempre i dati.
 		// In tal modo se sono stati modificati ricarico sempre quelli corretti.
@@ -36,7 +34,7 @@ public class LoginImpl implements Login{
 	@Override
 	public void loadCredential() {
 		try {
-			this.reader = new BufferedReader(new InputStreamReader(inputStream));
+			this.reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
 			
 			String input;
 			while ((input = reader.readLine()) != null) {
@@ -44,7 +42,6 @@ public class LoginImpl implements Login{
 				credentials.put(arrayCredentials[1], new UserCredentials(arrayCredentials[2], arrayCredentials[0]));
 			}
 		} catch (FileNotFoundException e) {
-            // Se il file non esiste, lo creeremo in seguito
 			System.out.print("File non trovato: " + e);
         } catch (IOException e) {
             System.out.print("Problemi all'apertura del file: " + e);
@@ -88,8 +85,7 @@ public class LoginImpl implements Login{
 	@Override
 	public void saveCredential(String utente, String password, String nomeUer) {
 		// Percorso relativo al file nel progetto
-        String relativePath = "src/resource/credentials.txt";
-        File file = new File(relativePath);
+        File file = new File(path);
 
         // Mi assicuro che la directory esista
         file.getParentFile().mkdirs();
@@ -113,7 +109,18 @@ public class LoginImpl implements Login{
         }		
 	}	
 	
+	@Override
 	public String getAccountName() {
 		return this.accountName;
+	}
+	
+	@Override
+	public Map<String, UserCredentials> getCredential() {
+		return this.credentials;
+	}
+	
+	@Override
+	public void setPath(String tmp) {
+		this.path = tmp;
 	}
 }

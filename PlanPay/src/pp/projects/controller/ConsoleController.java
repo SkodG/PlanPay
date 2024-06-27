@@ -20,10 +20,38 @@ import pp.projects.view.CalendarView;
 
 public interface ConsoleController {
 	
+	/**
+	 * 
+	 * @param importo
+	 * @param tipo
+	 * @param nome
+	 * @param op
+	 * @return
+	 * @throws IllegalOperationException
+	 */
 	boolean updateConto(double importo, boolean tipo, String nome, OperationType op) throws IllegalOperationException;
 	
+	/**
+	 * 
+	 * @return
+	 */
 	List<ObjectiveImpl> getObjectiveList();
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
 	Optional<ObjectiveImpl> getObjective(String name);
+	
+	/**
+	 * 
+	 * @param bNew
+	 * @param nameObjective
+	 * @param newDescrOb
+	 * @param savingTarget
+	 * @throws IllegalStateException
+	 */
 	void saveObjective(boolean bNew, String nameObjective, String newDescrOb, double savingTarget) throws IllegalStateException;
 	
 	/**
@@ -33,16 +61,46 @@ public interface ConsoleController {
 	 */
 	void removeObjective(String name) throws IllegalStateException;
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
 	List<Transaction> getAllTransactions();
+	
+	/**
+	 * 
+	 * @return
+	 */
 	List<String> getDatiTransazione();
 	
+	/**
+	 * 
+	 * @return
+	 */
 	Account getAccount();
+	
+	/**
+	 * 
+	 * @return
+	 */
 	String setNameController();
 	
-	// gestione calendario
+	/**
+	 * 
+	 * @return
+	 */
 	CalendarModel getCalendarModel();
+	
+	/**
+	 * 
+	 * @return
+	 */
 	CalendarView drawCalendar();
+	
+	/**
+	 * 
+	 * @return
+	 */
 	Set<Event> loadEvents();
 	
 	/**
@@ -60,7 +118,8 @@ public interface ConsoleController {
 	 * @param newdesc = descrizione dell'evento in modifica
 	 * @param newDaOra = da ora dell'evento in modifica
 	 * @param newAora = a ora dell'evento in modifica
-	 * @param newS = stato dell'evento in modifica
+	 * @param stato = stato dell'evento in modifica
+	 * @param identifier = identificatore per eventi collegati
 	 * @throws EventNotFoundException 
 	 * @throws EventAlreadyExistsException 
 	 * @throws InvalidParameterException 
@@ -76,5 +135,8 @@ public interface ConsoleController {
 	 */
 	Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 
+	/**
+	 * 
+	 */
 	void updateUIevents();
 }

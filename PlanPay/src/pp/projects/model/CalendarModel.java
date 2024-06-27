@@ -115,7 +115,7 @@ public class CalendarModel extends AbstractTableModel {
 	}
 	
 	/* Ogni qualvolta viene richiamata garantisce la scrittura tramite HTML della cella, rispetti agli eventi in un determinato giorno. */
-	private Object getValueAtDate(LocalDate date, Set<Event> events) {
+	public Object getValueAtDate(LocalDate date, Set<Event> events) {
 		// Creo una rappresentazione testuale formattata di una cella del calendario, 
         // utilizzando HTML per supportare la visualizzazione di più righe di testo all'interno della cella della JTable.
         StringBuilder cellContent = new StringBuilder();
@@ -207,15 +207,6 @@ public class CalendarModel extends AbstractTableModel {
     		// devo prendere gli eventi con stesso identificatore dell'evento modificato e poi modificarli per ogni data
     		Set<Event> eventInDate = getEventsInDate(ev.getDate());
             
-            /*if (eventInDate != null) {
-            	eventInDate.stream()
-		            		.filter(e -> new EventAdapter(e).getName().equals(new EventAdapter(updateEvent).getName()))
-		            		.findFirst()
-		            		.ifPresent(existingEvent -> {
-		            			events.remove(existingEvent);
-		            			events.add(updateEvent);
-		            		});        		
-            } */
     		if (eventInDate != null) {
                 // Trova e modifica gli eventi con lo stesso identificatore nella data specifica
     			eventInDate.stream()
@@ -255,7 +246,6 @@ public class CalendarModel extends AbstractTableModel {
     
     // carico gli aventi sul calendario
     public void loadEvents(Set<Event> events) {
-    	System.out.println(events.size());
         for (Event event : events) {
         	EventAdapter eventad = new EventAdapter(event);
             LocalDate date = eventad.getDate();
@@ -264,7 +254,7 @@ public class CalendarModel extends AbstractTableModel {
         fireTableDataChanged();
     }
     
-	private String toHtml(Event event) {
+	public String toHtml(Event event) {
         String color;
         switch (event.getState()) {
             case DA_AVVIARE:

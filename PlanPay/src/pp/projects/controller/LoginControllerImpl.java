@@ -3,6 +3,7 @@ package pp.projects.controller;
 import java.io.IOException;
 
 import pp.projects.model.AuthenticationException;
+import pp.projects.model.Login;
 import pp.projects.model.LoginImpl;
 import pp.projects.model.RegistrationException;
 import pp.projects.view.ConsolleView;
@@ -10,7 +11,7 @@ import pp.projects.view.LoginView;
 import pp.projects.view.SignupView;
 
 public class LoginControllerImpl implements LoginController{
-	private LoginImpl loginModel;
+	private Login loginModel;
 	private LoginView loginView;
 	private SignupView signupView;
 	private String userName;
@@ -49,7 +50,6 @@ public class LoginControllerImpl implements LoginController{
 	
 	@Override
 	public void newSignupButtonClick() {
-        // Rendi la vista di signup visibile
         signupView.setVisible(true);
         loginView.setVisible(false);
 	}
@@ -61,7 +61,6 @@ public class LoginControllerImpl implements LoginController{
 		if(!user.trim().equals("") && 
 		   !passw.trim().equals("") && 
 		   !name.trim().equals("")) {
-			  // richiamo la funzione per sapere se i dati sono corretti
 			  isRegistred = loginModel.registration(user, passw, name);
 			  if(isRegistred) {
 				  return true;
@@ -81,5 +80,9 @@ public class LoginControllerImpl implements LoginController{
 	@Override
 	public ConsolleView getConsolleView() {
 		return this.consolleView;
+	}
+	
+	public Login getLoginModel() {
+		return this.loginModel;
 	}
 }

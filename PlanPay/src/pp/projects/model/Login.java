@@ -1,5 +1,7 @@
 package pp.projects.model;
 
+import java.util.Map;
+
 /*
  * interfaccia per identificare l'utente
  */
@@ -35,5 +37,23 @@ public interface Login {
 	 * @param p
 	 * @param n
 	 */
-	void saveCredential(String u, String p, String n);			
+	void saveCredential(String u, String p, String n);
+	
+	/**
+	 * 
+	 * @return il nome dell'intestatario del conto.
+	 */
+	String getAccountName();
+	
+	/**
+	 * 
+	 * @return le credenziali dell'utente (metodo usato per i test)
+	 */
+	Map<String, UserCredentials> getCredential();
+	
+	/**
+	 * setta il file di testo per i test. > Viene usato un altro file: test_events.
+	 * @param tmp
+	 */
+	void setPath(String tmp);
 }

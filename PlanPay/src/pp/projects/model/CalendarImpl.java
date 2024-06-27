@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +19,6 @@ public class CalendarImpl implements CalendarP{
 	private Set<Event> setEvents;
 	private int day;
 	
-	// event
 	private String path = "src/resource/events.txt";
 		
 	public CalendarImpl(int day) {
@@ -40,9 +37,7 @@ public class CalendarImpl implements CalendarP{
 	    Optional<Event> existingEvent = getExistingEvent(newName, currentDate, newDaOra, newAora);
 	    
 		if (existingEvent.isPresent()) {	
-			EventImpl event = (EventImpl) existingEvent.get();
-            System.out.println("Evento esistente trovato: " + event.getName() + " " + event.getDate() + " " + event.getDaOra() + "-" + event.getAOra());
-			throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
+            throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
         }
 
         Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato, identifier);
@@ -53,42 +48,8 @@ public class CalendarImpl implements CalendarP{
 	
 	public boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
 							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException {
-		/*long modifiedCount = setEvents.stream()
-						                .map(e -> (EventImpl) e) 
-						                .filter(e -> e.getIdentifier().equals(identifier))
-						                .peek(event -> {
-						                    EventImpl eventImpl = (EventImpl) event; 
-						                    if (newName != null && !newName.trim().isEmpty()) {
-						                        eventImpl.setName(newName);
-						                    }
-						                    if (newDesc != null && !newDesc.trim().isEmpty()) {
-						                        eventImpl.setDescription(newDesc);
-						                    }
-						                    if (newDaOra != null && !newDaOra.trim().isEmpty()) {
-						                        eventImpl.setDaOra(newDaOra);
-						                    }
-						                    if (newAora != null && !newAora.trim().isEmpty()) {
-						                        eventImpl.setAOra(newAora);
-						                    }
-						                    if (stato != null) {
-						                        eventImpl.setState(stato);
-						                    }
-						                })
-						                .count();
-
-		System.out.println("modifiedCount:" + modifiedCount);
-		if (modifiedCount == 0) {
-			throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
-		}
 		
-		return true;*/
-		// Verifica se ci sono conflitti con altri eventi esistenti
-	    /*Optional<Event> existingConflict = getExistingEvent(newName, currentDate, newDaOra, newAora);
-	    if (existingConflict.isPresent()) {
-	        throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile modificarlo.");
-	    }*/
-
-	    List<EventImpl> eventsToModify = setEvents.stream()
+		List<EventImpl> eventsToModify = setEvents.stream()
 	            .filter(e -> e instanceof EventImpl && ((EventImpl) e).getIdentifier().equals(identifier))
 	            .map(e -> (EventImpl) e)
 	            .collect(Collectors.toList());
@@ -96,7 +57,7 @@ public class CalendarImpl implements CalendarP{
 	    if (eventsToModify.isEmpty()) {
 	        throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
 	    }
-
+	    
 	    for (EventImpl eventImpl : eventsToModify) {
 	        if (newName != null && !newName.trim().isEmpty()) {
 	            eventImpl.setName(newName);
@@ -114,7 +75,6 @@ public class CalendarImpl implements CalendarP{
 	            eventImpl.setState(stato);
 	        }
 	    }
-
 	    return true;
 	}
 	
@@ -154,7 +114,7 @@ public class CalendarImpl implements CalendarP{
 		try {
 			// Creo il writer in modo da sovrascrivere il file esistente			
 			writer = new BufferedWriter(new FileWriter(file, false));
-			
+						
 			// Scrivo gli eventi nel file
 			for (Event ev : setEvents) {
 	             writer.write(ev.getInfoEventToFile());
@@ -182,16 +142,12 @@ public class CalendarImpl implements CalendarP{
 	    BufferedReader reader = null;
 		File file = new File(path);
 
-		System.out.println("esiste?");
-		
 	    if (!file.exists()) {
-	    	System.out.println("NON ESISTE");
 	        return new TreeSet<Event>(new ComparatorEvents());
 	    }
 
 	    try {
 	         reader = new BufferedReader(new FileReader(file));
-	         System.out.println("leggo");
 	         String line;
 	         while ((line = reader.readLine()) != null) {
 	             String[] parts = line.split("\\[,\\]");
@@ -205,7 +161,6 @@ public class CalendarImpl implements CalendarP{
 	                    
 	                 EventImpl event = new EventImpl(name, description, date, daOra, aOra, State.valueOf(stato), name+date);
 	                 setEvents.add(event);
-	                 System.out.println("AGGIUNTO EVENTO");
 	             }
 	         }
 	     } catch (IOException e) {
@@ -219,7 +174,6 @@ public class CalendarImpl implements CalendarP{
 	              }
 	          }
 	     }
-	    System.out.println(setEvents.size());
 	    return this.setEvents;
 	  }
 	

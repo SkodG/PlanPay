@@ -3,12 +3,14 @@ package Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pp.projects.model.CalendarImpl;
+import pp.projects.model.CalendarModel;
 import pp.projects.model.CalendarP;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
@@ -19,7 +21,8 @@ import pp.projects.model.State;
 
 class CalendarTest {
 
-	private CalendarP calendario = new CalendarImpl(0);
+	private CalendarP calendario;
+	private CalendarModel calendarModel;
 	private Event meeting1;
 	private Event meeting2;
 	private Event meeting3;
@@ -32,6 +35,8 @@ class CalendarTest {
 	@BeforeEach
 	 public void setUp() throws EventAlreadyExistsException, InvalidParameterException {
 		// rimuovo tutti gli eventi che ho precdentemente salvato
+		calendario = new CalendarImpl(0);
+		calendarModel = new CalendarModel(2024, 7);
 		CalendarImpl cale = (CalendarImpl) calendario;
 		cale.deleteAll();
 		
@@ -141,9 +146,10 @@ class CalendarTest {
 		try {
 			// NUOVO EVENTO
 			calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "Ferie", "", "17:00", "18:00", State.DA_AVVIARE, "Ferie " + LocalDate.now().plusDays(1).toString());
-		} catch(Exception ex) {}
+		} catch(Exception ex) {
+			
+		}
 		
-		//TODO 
 		// Test per EventAlreadyExistsException
 		assertThrows(EventAlreadyExistsException.class, () -> calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "Ferie", "", "17:00", "18:00", State.DA_AVVIARE, "Ferie " + LocalDate.now().plusDays(1).toString()));
 		
@@ -158,9 +164,37 @@ class CalendarTest {
 		
 		// Test per EventNotFoundException durante la modifica di un evento non esistente
 		assertThrows(EventNotFoundException.class, () ->
-        				calendario.removeEvent("Discussione progetto", LocalDate.now(), "00:00", "01:00"));
-		
-		
+        				calendario.removeEvent("Discussione progetto", LocalDate.now(), "00:00", "01:00"));		
 	}
+	   
+    @Test
+    public void testGetEventsInDate() {
+        LocalDate date = LocalDate.now().plusDays(1);
+        calendarModel.setValueAddEvent(date, meeting1);
+        calendarModel.setValueAddEvent(date, presentaz2);
 
+        Set<Event> eventsInDate = calendarModel.getEventsInDate(date);
+
+        // Verifico che gli eventi aggiunti siano presenti
+        assertNotNull(eventsInDate);
+        assertTrue(eventsInDate.contains(meeting1));
+        assertTrue(eventsInDate.contains(presentaz2));
+    }
+
+    @Test
+    public void testGetValueAtDate() {
+        LocalDate date = LocalDate.now().plusDays(1);
+
+        Set<Event> events = new HashSet<>();
+        events.add(meeting1);
+        events.add(presentaz1);
+
+        String event1Html = calendarModel.toHtml(meeting1) + meeting1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
+        String event2Html = calendarModel.toHtml(presentaz1) + presentaz1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
+
+        String expectedHtml = "<html>28<br>" + event1Html + "<br>" + event2Html + "</html>";
+        Object actualHtml = calendarModel.getValueAtDate(date, events);
+        
+        assertEquals(expectedHtml, actualHtml);
+    }
 }
