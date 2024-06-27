@@ -16,8 +16,13 @@ public abstract class AbstractOperations {
     }
 
     public boolean deposit(double amount, String desc) {
-        doDeposit(amount);
-        transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito "+desc, amount));
+        boolean success = doDeposit(amount);
+        if(success) {
+        	transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito "+desc, amount));
+        }
+        return success;
+        
+        
     }
 
     public boolean withdraw(double amount, String desc) {
