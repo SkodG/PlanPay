@@ -28,7 +28,7 @@ public abstract class AbstractOperations {
         return success;
     }
 
-    protected abstract void doDeposit(double amount);
+    protected abstract boolean doDeposit(double amount);
     protected abstract boolean doWithdraw(double amount);
     protected abstract String getTransactionType();
 

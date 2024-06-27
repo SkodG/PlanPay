@@ -10,9 +10,10 @@ public class ServicesImpl extends AbstractOperations {
 	}
 
 	@Override
-	protected void doDeposit(double amount) {
+	protected boolean doDeposit(double amount) {
 		//operazione sul conto(+)
-		accountRef.addBalance(amount);		
+		accountRef.addBalance(amount);
+		return true;
 	}
 		
 	@Override

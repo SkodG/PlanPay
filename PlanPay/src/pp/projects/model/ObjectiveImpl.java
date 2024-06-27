@@ -21,20 +21,25 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
     }
     
 	@Override
-	protected void doDeposit(double amount) {
-		if(accountRef.subBalance(amount))
+	protected boolean doDeposit(double amount) {
+		boolean result = false;
+		if(accountRef.subBalance(amount)) {
 			savedBalance += amount;
+			result = true;
+		}
+		return result;
+			
 	}
 	
 	@Override
 	protected boolean doWithdraw(double amount) {
+		boolean result = false;
 		if (isTargetMet() && savedBalance >= amount) {
 			savedBalance -= amount;
 			accountRef.addBalance(amount);
-			return true;
+			result = true;
 		} 
-		else
-			return false;
+		return result;
 	}
 	
 	@Override
