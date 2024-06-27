@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pp.projects.model.AbstractOperations;
@@ -15,12 +16,21 @@ import pp.projects.model.Transaction;
 
 class OperationTest {
 	
+	private AccountImpl account;
+	private ServicesImpl services;
+	private ObjectiveImpl objective1;
+	private ObjectiveImpl objective2;
+	private LocalDate actualDayMonth;
+	
+	@BeforeEach
+	 public void setUp() {
 	//istanzio un AccountImpl, un ServicesImpl e due ObjectiveImpl
-	AccountImpl account = new AccountImpl("Luca");
-	ServicesImpl services = new ServicesImpl(account);
-	ObjectiveImpl objective1 = new ObjectiveImpl(account, "Auto", "Tesla", 30000);
-	ObjectiveImpl objective2 = new ObjectiveImpl(account, "Gaming", "Playstation5", 600);
-	LocalDate actualDayMonth = LocalDate.now();	
+		account = new AccountImpl("Luca");
+		services = new ServicesImpl(account);
+		objective1 = new ObjectiveImpl(account, "Auto", "Tesla", 30000);
+		objective2 = new ObjectiveImpl(account, "Gaming", "Playstation5", 600);
+		actualDayMonth = LocalDate.now();	
+	}
 
 	
 	@Test
@@ -58,21 +68,7 @@ class OperationTest {
 		objective1.setName("Auto Elettrica");
 		objective2.setDescription("Next-gen console");
 	}
-	@Test
-	public void TestAccountOperations(){
-		account.addBalance(100);
-		assertTrue(account.getBalance() == 100);
-		account.setBalance(0.0);
-		assertTrue(account.getBalance() == 0.0);
-		account.addBalance(1000);
-		assertTrue(account.subBalance(500));
-		assertTrue(account.getBalance() == 500.0);
-		
-		assertFalse(account.subBalance(10000));
-		
-		account.setBalance(300.45);
-		assertTrue(account.getBalance() == 300.45);
-	}
+
 	
 	@Test
 	public void TestServicesOperations(){

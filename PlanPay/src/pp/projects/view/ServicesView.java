@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.model.IllegalOperationException;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
 
@@ -112,7 +113,7 @@ public class ServicesView extends JFrame {
 								"Errore", JOptionPane.ERROR_MESSAGE);
 						}				
 					} 
-				}catch(NumberFormatException n) {
+				}catch(NumberFormatException | IllegalOperationException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
 					textAmount.setText("0.00");
 				}		
@@ -169,7 +170,7 @@ public class ServicesView extends JFrame {
 					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
 					textAmount.setText("0.00");
 				} 
-				catch(IllegalArgumentException i){
+				catch(IllegalArgumentException | IllegalOperationException i){
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 					textAmount.setText("0.00");
 				} 				
