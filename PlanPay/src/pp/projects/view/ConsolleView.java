@@ -1,14 +1,11 @@
 package pp.projects.view;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.Account;
 import pp.projects.model.OperationType;
-import pp.projects.model.CalendarModel;
 import pp.projects.model.Event;
-import pp.projects.model.EventAdapter;
 import pp.projects.model.EventImpl;
 
 import java.awt.Font;
@@ -16,7 +13,6 @@ import java.awt.Image;
 import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.awt.event.ActionListener;
@@ -28,9 +24,7 @@ import java.time.format.TextStyle;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
 
 public class ConsolleView extends JFrame {
@@ -49,7 +43,6 @@ public class ConsolleView extends JFrame {
 	private JList<String> transactionList;
 	private DefaultListModel<String> eventListModel;
 	private JList<String> eventListToday;	
-	private JTextArea eventTextArea;	
 	private JScrollPane scrollPane;
 	
 	private int count;
@@ -90,11 +83,7 @@ public class ConsolleView extends JFrame {
 		btnServices = new JButton("SERVIZI");
 		btnServices.setBackground(new Color(255, 255, 255));
 		setButtonIcon(btnServices, "/images/payment.png");
-		/*try {
-			btnServices.setIcon(new ImageIcon(this.getClass().getResource("/images/payment.png")));
-		} catch (Exception ex) {
-		    System.out.println(ex);
-		}*/
+		
 		btnServices.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				servicesView.setVisible(true);
@@ -167,11 +156,6 @@ public class ConsolleView extends JFrame {
 		btnObjectives.setBounds(414, 155, 320, 100);
 		contentPane.add(btnObjectives);
 		setButtonIcon(btnObjectives, "/images/objective.png");
-		/*try {
-			btnObjectives.setIcon(new ImageIcon(this.getClass().getResource("/images/objective.png")));
-		} catch (Exception ex) {
-		    System.out.println(ex);
-		}*/
 		
 		btnObjectives.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -240,23 +224,25 @@ public class ConsolleView extends JFrame {
 	}
 	
 	public void updateEventsUI() {
-		Set<Event> eventsToFile = controller.getAllEventToFile();		
-		Set<Event> eventsToday = eventsToFile.stream()
-											  .filter(e -> {
-											      if (e instanceof EventImpl) {
-														EventImpl ev = (EventImpl) e;													
-														return ev.getDate().equals(LocalDate.now());
-													}
-													return false;
-												})
-												.collect(Collectors.toSet());
-		if(eventsToday != null) {
-			eventListModel.clear();			
-			eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
-			for (Event event : eventsToday) {
-				eventListModel.addElement(event.getInfoEventToString());
-            }
-        }
+		Set<Event> eventsToFile = controller.getAllEventToFile();	
+		if(!eventsToFile.isEmpty()) {
+			Set<Event> eventsToday = eventsToFile.stream()
+												  .filter(e -> {
+												      if (e instanceof EventImpl) {
+															EventImpl ev = (EventImpl) e;													
+															return ev.getDate().equals(LocalDate.now());
+														}
+														return false;
+													})
+													.collect(Collectors.toSet());
+			if(eventsToday != null) {
+				eventListModel.clear();			
+				eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
+				for (Event event : eventsToday) {
+					eventListModel.addElement(event.getInfoEventToString());
+	            }
+	        }
+		}
     }
 	
 	public void updateUIconto() {

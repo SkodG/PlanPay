@@ -39,7 +39,6 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.account = new AccountImpl(controllerLogin.getUserName());
 		this.operationsList = new ArrayList<>();
         this.operationsList.add(new ServicesImpl(account));
-        this.calendario = new CalendarImpl(0);
 	}
 		
 	@Override
@@ -210,8 +209,9 @@ public class ConsoleControllerImpl implements ConsoleController{
     }
     
     private void modifyExistingEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-        String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
-		boolean modified = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, daData, newDaOra, newAora, stato, identifier);
+    								 String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
+		System.out.println("NEW DESC CONTROLLER : " + newdesc);
+    	boolean modified = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, daData, newDaOra, newAora, stato, identifier);
 		if (!modified) {
 			throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
 		}
@@ -227,6 +227,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	public Set<Event> getAllEventToFile(){
+		this.calendario = new CalendarImpl(0, setNameController());
 		return calendario.getAllEvents();
 	}
 }

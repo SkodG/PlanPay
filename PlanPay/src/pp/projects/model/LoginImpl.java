@@ -18,6 +18,7 @@ public class LoginImpl implements Login{
 	private BufferedWriter writer;
     private Map<String, UserCredentials> credentials;
     private String accountName;
+    private String pathEvents;
     
     private String path;
 	
@@ -26,6 +27,7 @@ public class LoginImpl implements Login{
 		this.accountName = "";
 		this.path = "src/resource/credentials.txt";
 		this.writer = null;
+		this.pathEvents = "";
 		// Alla creazione di un nuovo elemento autenticazione ricarico sempre i dati.
 		// In tal modo se sono stati modificati ricarico sempre quelli corretti.
 		loadCredential();
@@ -39,7 +41,7 @@ public class LoginImpl implements Login{
 			String input;
 			while ((input = reader.readLine()) != null) {
 				String[] arrayCredentials = input.split(" ");
-				credentials.put(arrayCredentials[1], new UserCredentials(arrayCredentials[2], arrayCredentials[0]));
+				credentials.put(arrayCredentials[1], new UserCredentials(arrayCredentials[2], arrayCredentials[0], arrayCredentials[3]));
 			}
 		} catch (FileNotFoundException e) {
 			System.out.print("File non trovato: " + e);
@@ -77,7 +79,9 @@ public class LoginImpl implements Login{
 		if(credentials.containsKey(utente)) {
 			return false;
 		}
-		credentials.put(utente, new UserCredentials(password, nomeUser));
+		
+		pathEvents = "src/resource/" + utente + "_events.txt";
+		credentials.put(utente, new UserCredentials(password, nomeUser, pathEvents));
 		saveCredential(utente, password, nomeUser);
 		return true;
 	}
@@ -92,7 +96,10 @@ public class LoginImpl implements Login{
 		try {
 			this.writer = new BufferedWriter(new FileWriter(file, true));
 			
-			writer.write(nomeUer + " " + utente + " " + password);
+			if(pathEvents.trim() == "")
+				// sono nella fase di test e restituisco il percorso del file di test
+				pathEvents = "test_events";
+			writer.write(nomeUer + " " + utente + " " + password +  " " + pathEvents);
 			writer.newLine();
 		} catch (IOException e) {
             System.out.print("Problemi al salvataggio del file: " + e);
@@ -123,4 +130,13 @@ public class LoginImpl implements Login{
 	public void setPath(String tmp) {
 		this.path = tmp;
 	}
+	
+	@Override
+    public String getEventsFilePath(String user) {
+        UserCredentials cred = credentials.get(user);
+        if (cred != null) {
+            return cred.getEventsFilePath();
+        }
+        return null;
+    }
 }

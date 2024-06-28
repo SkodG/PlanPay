@@ -75,7 +75,7 @@ public class EventImpl implements Event, Data{
 	
 	@Override
 	public String getInfoEventToFile() {
-		return this.getDate() + "[,]" + this.getDaOra() + "[,]" + this.getAOra() + "[,]" + this.getName() + "[,]" + this.getDescription() + "[,]" + this.getState().toString();
+		return this.getDate() + "[,]" + this.getDaOra() + "[,]" + this.getAOra() + "[,]" + this.getName() + "[,]" + this.getDescription() + "[,]" + this.getState().toString() + "[,]" + this.getIdentifier();
 	}
 	
 	@Override

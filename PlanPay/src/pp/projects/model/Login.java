@@ -56,4 +56,11 @@ public interface Login {
 	 * @param tmp
 	 */
 	void setPath(String tmp);
+	
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 */
+	String getEventsFilePath(String user);
 }

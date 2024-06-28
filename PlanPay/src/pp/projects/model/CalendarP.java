@@ -58,6 +58,6 @@ public interface CalendarP {
 	boolean saveEventsToFile();
 	
 	Set<Event> loadEventsFromFile();
-
-	void setPath(String tempFilePath);
+	
+	void setPathEvents(String path);
 }

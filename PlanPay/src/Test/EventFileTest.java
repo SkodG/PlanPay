@@ -26,9 +26,9 @@ class EventFileTest {
 
 	@BeforeEach
 	 public void setUp() throws IOException, EventAlreadyExistsException, InvalidParameterException{
-		calendar = new CalendarImpl(0);
+		calendar = new CalendarImpl(0, "");
         tempFilePath = "src/resource/test_events.txt";
-        calendar.setPath(tempFilePath);
+        calendar.setPathEvents(tempFilePath);
         
         event1 = calendar.newEvent("", LocalDate.of(2024, 6, 21), "00:00", "Test Event 1", "Description 1", "10:00", "11:00", State.IN_CORSO, "Test Event 1 " + LocalDate.of(2024, 6, 21).toString());
         event2 = calendar.newEvent("", LocalDate.of(2024, 6, 22), "00:00", "Test Event 2", "Description 2", "12:00", "13:00", State.DA_AVVIARE, "Test Event 2 " + LocalDate.of(2024, 6, 22).toString());

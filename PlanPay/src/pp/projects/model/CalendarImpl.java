@@ -18,14 +18,17 @@ public class CalendarImpl implements CalendarP{
 
 	private Set<Event> setEvents;
 	private int day;
-	
-	private String path = "src/resource/events.txt";
-		
-	public CalendarImpl(int day) {
+	private String pathEvents;
+	private Login login;
+			
+	public CalendarImpl(int day, String user) {
 		this.setEvents = new TreeSet<>(new ComparatorEvents());
 		this.day = day;
+		this.login = new LoginImpl();
+		this.pathEvents = login.getEventsFilePath(user);
 		
-		setEvents = loadEventsFromFile();
+		if(pathEvents != null)		
+			setEvents = loadEventsFromFile();
 	}
 	
 	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException{
@@ -42,13 +45,13 @@ public class CalendarImpl implements CalendarP{
 
         Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato, identifier);
         setEvents.add(newEvent);
-	    
+
 	    return newEvent;
 	}
 	
 	public boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-							 String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException {
-		
+							   String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException {
+
 		List<EventImpl> eventsToModify = setEvents.stream()
 	            .filter(e -> e instanceof EventImpl && ((EventImpl) e).getIdentifier().equals(identifier))
 	            .map(e -> (EventImpl) e)
@@ -62,9 +65,6 @@ public class CalendarImpl implements CalendarP{
 	        if (newName != null && !newName.trim().isEmpty()) {
 	            eventImpl.setName(newName);
 	        }
-	        if (newDesc != null && !newDesc.trim().isEmpty()) {
-	            eventImpl.setDescription(newDesc);
-	        }
 	        if (newDaOra != null && !newDaOra.trim().isEmpty()) {
 	            eventImpl.setDaOra(newDaOra);
 	        }
@@ -75,6 +75,21 @@ public class CalendarImpl implements CalendarP{
 	            eventImpl.setState(stato);
 	        }
 	    }
+
+	    // visto che la descrizione è singola invece cerco l'evento con identificatore passato e data corretta passata.
+	    EventImpl event = eventsToModify.stream().filter(e -> e.getDate().equals(currentDate)).findFirst().get();
+	    
+	    if (newDesc != null && !newDesc.trim().isEmpty()) {
+	    	event.setDescription(newDesc);
+        }
+	    
+	    System.out.println("-------------");
+	    System.out.println("MODIFICA DESC");
+	    for(Event e : setEvents) {
+	    	EventImpl ev = (EventImpl) e;
+	    	System.out.println("DESCRIZIONE: " + ev.getDescription());
+	    }
+	    System.out.println("-------------");
 	    return true;
 	}
 	
@@ -106,8 +121,9 @@ public class CalendarImpl implements CalendarP{
 	
 	@Override
 	public boolean saveEventsToFile() {
-        File file = new File(path);
+        File file = new File(pathEvents);
 		BufferedWriter writer = null;
+		System.out.println("salvo EVENTI " + pathEvents);
 
         // Mi assicuro che la directory esista
         file.getParentFile().mkdirs();
@@ -140,9 +156,11 @@ public class CalendarImpl implements CalendarP{
 	@Override
 	public Set<Event> loadEventsFromFile() {
 	    BufferedReader reader = null;
-		File file = new File(path);
+		File file = new File(pathEvents);
+		System.out.println("carico EVENTI " + pathEvents);
 
 	    if (!file.exists()) {
+	    	System.out.println("IL FILE NON ESISTE");
 	        return new TreeSet<Event>(new ComparatorEvents());
 	    }
 
@@ -151,15 +169,17 @@ public class CalendarImpl implements CalendarP{
 	         String line;
 	         while ((line = reader.readLine()) != null) {
 	             String[] parts = line.split("\\[,\\]");
-	             if (parts.length == 6) {
+	             if (parts.length == 7) {
+	            	 System.out.println("LEGGO");
 	                 LocalDate date = LocalDate.parse(parts[0]);
 	                 String daOra = parts[1];
 	                 String aOra = parts[2];
 	                 String name = parts[3];
 	                 String description = parts[4];
 	                 String stato = parts[5];
+	                 String identifier = parts[6];
 	                    
-	                 EventImpl event = new EventImpl(name, description, date, daOra, aOra, State.valueOf(stato), name+date);
+	                 EventImpl event = new EventImpl(name, description, date, daOra, aOra, State.valueOf(stato), identifier);
 	                 setEvents.add(event);
 	             }
 	         }
@@ -214,7 +234,8 @@ public class CalendarImpl implements CalendarP{
 		}
 	}
 	
-	public void setPath(String strPath) {
-		this.path = strPath;
+	@Override
+	public void setPathEvents(String path) {
+		this.pathEvents = path;
 	}
 }

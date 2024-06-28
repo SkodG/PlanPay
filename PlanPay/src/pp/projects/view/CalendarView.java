@@ -9,6 +9,7 @@ import pp.projects.model.CalendarModel;
 import pp.projects.model.DayCellRenderer;
 import pp.projects.model.Event;
 import pp.projects.model.EventAdapter;
+import pp.projects.model.EventImpl;
 import pp.projects.model.Data;
 import pp.projects.model.State;
 
@@ -261,14 +262,16 @@ public class CalendarView extends JFrame {
 	
 	public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
 		if(!bDelete) {
-			Set<Event> eventsCopy = new HashSet<>(events);  // Crea una copia della collezione
+			Set<Event> eventsCopy = new HashSet<>(events); 
 	        for (Event ev : eventsCopy) {
 	            Data data = new EventAdapter(ev);
+	            EventImpl eventImpl = (EventImpl) ev;
+	            System.out.println("DESCRIZIONE DOPO MODIFICA: " + eventImpl.getDescription());
 	            if (eventView.isbNew()) {
 	                if (!(daData.equals(aData))) {
-	                    calendarModel.setValueAddEvent(data.getDate(), ev);
+	                    calendarModel.setValueEvent(data.getDate(), ev);
 	                } else {
-	                    calendarModel.setValueAddEvent(daData, ev);
+	                    calendarModel.setValueEvent(daData, ev);
 	                }
 	            } else {
 	                calendarModel.setValueModifyEvent(c.loadEvents(), ev);
@@ -276,7 +279,7 @@ public class CalendarView extends JFrame {
 	        }
 	    } else {
 	        eventView.setVisible(false);
-	        calendarModel.setValueAddEvent(aData, null);
+	        calendarModel.setValueEvent(aData, null);
 	    }
 
 	    contentPane.revalidate();

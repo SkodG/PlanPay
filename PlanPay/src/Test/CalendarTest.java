@@ -35,7 +35,7 @@ class CalendarTest {
 	@BeforeEach
 	 public void setUp() throws EventAlreadyExistsException, InvalidParameterException {
 		// rimuovo tutti gli eventi che ho precdentemente salvato
-		calendario = new CalendarImpl(0);
+		calendario = new CalendarImpl(0, "");
 		calendarModel = new CalendarModel(2024, 7);
 		CalendarImpl cale = (CalendarImpl) calendario;
 		cale.deleteAll();
@@ -170,8 +170,8 @@ class CalendarTest {
     @Test
     public void testGetEventsInDate() {
         LocalDate date = LocalDate.now().plusDays(1);
-        calendarModel.setValueAddEvent(date, meeting1);
-        calendarModel.setValueAddEvent(date, presentaz2);
+        calendarModel.setValueEvent(date, meeting1);
+        calendarModel.setValueEvent(date, presentaz2);
 
         Set<Event> eventsInDate = calendarModel.getEventsInDate(date);
 
@@ -192,7 +192,7 @@ class CalendarTest {
         String event1Html = calendarModel.toHtml(meeting1) + meeting1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
         String event2Html = calendarModel.toHtml(presentaz1) + presentaz1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
 
-        String expectedHtml = "<html>28<br>" + event1Html + "<br>" + event2Html + "</html>";
+        String expectedHtml = "<html>29<br>" + event1Html + "<br>" + event2Html + "</html>";
         Object actualHtml = calendarModel.getValueAtDate(date, events);
         
         assertEquals(expectedHtml, actualHtml);

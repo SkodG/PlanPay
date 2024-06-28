@@ -48,7 +48,7 @@ public class LoginTest {
             String line;
             boolean bFound = false;
             while ((line = reader.readLine()) != null) {
-                if (line.equals("New User newuser newpassword")) {
+                if (line.equals("newuser newuser newpassword")) {
                 	bFound = true;
                     break;
                 }

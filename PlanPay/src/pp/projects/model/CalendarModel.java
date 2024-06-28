@@ -122,6 +122,11 @@ public class CalendarModel extends AbstractTableModel {
 
         cellContent.append("<html>").append(date.getDayOfMonth());
         for (Event event : events) {   
+        	System.out.println("**************************");
+        	System.out.println(event.getIdentifier());
+        	EventImpl ev = (EventImpl) event;
+        	System.out.println("DESC EVENT MODIFICATO: " + ev.getDescription());
+        	System.out.println("**************************");
         	String eventText = event.getInfoEventToString().replace("\n", " ").replace("\r", " ");
         	String eventHtml = toHtml(event) + eventText;        	
             cellContent.append("<br>").append(eventHtml);
@@ -166,7 +171,7 @@ public class CalendarModel extends AbstractTableModel {
     	return new int[] {row, column};
     }
     
-    private void setValueEvent(LocalDate date) {
+    private void setValueCalendarEvent(LocalDate date) {
     	// trovo l'indice per notificare tramite il metodo fireTableCellUpdated (messo a disposizione da AbstractTableModel)
     	// che i dati in una specifica cella sono stati aggiornati, aggiornando la visualizzazione della cella.
     	int[] index = findDateIndices(date);
@@ -175,7 +180,7 @@ public class CalendarModel extends AbstractTableModel {
     	}
     }
     
-    public void setValueAddEvent(LocalDate date, Event addEvent) {
+    public void setValueEvent(LocalDate date, Event addEvent) {
     	// verifico se k esiste, in caso negativa creo un nuovo arraylist,
     	// in caso positivo restituisce il valore (la lista degli eventi) associato a quella chiave. 
     	// poi con .add(event) aggiungo l'evento alla lista associato a k.
@@ -184,7 +189,7 @@ public class CalendarModel extends AbstractTableModel {
     	Set<Event> eventsInDay = cellData.get(date);
     	getValueAtDate(date, eventsInDay);
     	
-    	setValueEvent(date);
+    	setValueCalendarEvent(date);
     }
     
     public Set<Event> getEventsInDate(LocalDate date){
@@ -240,7 +245,7 @@ public class CalendarModel extends AbstractTableModel {
         	return false;
         }
     	
-        setValueEvent(date);        
+        setValueCalendarEvent(date);        
         return true;
     }
     
@@ -249,7 +254,7 @@ public class CalendarModel extends AbstractTableModel {
         for (Event event : events) {
         	EventAdapter eventad = new EventAdapter(event);
             LocalDate date = eventad.getDate();
-            setValueAddEvent(date, event);
+            setValueEvent(date, event);
         }
         fireTableDataChanged();
     }

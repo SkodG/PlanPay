@@ -14,6 +14,7 @@ import com.toedter.calendar.JDateChooser;
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
+import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
@@ -224,6 +225,10 @@ public class EventView extends JDialog {
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
 						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, identifierEvent);
 						edTitolo.setEditable(false);
+						for(Event ev : events) {
+							EventImpl ee = (EventImpl) ev;
+							System.out.println("IDENTIFIERER : " + ev.getIdentifier() + " - DESC : " + ee.getDescription());
+						}
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						c.updateUIevents();
 		                calendar.updateLegenda(events);
@@ -360,6 +365,7 @@ public class EventView extends JDialog {
     	String loadedText = "";
         if (descr != null) {
             loadedText = descr.replace("[|]", "\n");
+            System.out.println("loadedText " + loadedText);
             txtDescrizione.setText(loadedText);
         }
     }

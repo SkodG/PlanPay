@@ -4,10 +4,12 @@ package pp.projects.model;
 public class UserCredentials {
 	private String userName;
     private String password;
+    private String eventsFilePath;
 
-    public UserCredentials(String password, String userName) {
+    public UserCredentials(String password, String userName, String eventsFilePath) {
         this.userName = userName;
         this.password = password;
+        this.eventsFilePath = eventsFilePath;
     }
 
     public String getUserName() {
@@ -18,11 +20,20 @@ public class UserCredentials {
         return this.password;
     }
 
+    public String getEventsFilePath() {
+        return this.eventsFilePath;
+    }
+
+    public void setEventsFilePath(String eventsFilePath) {
+        this.eventsFilePath = eventsFilePath;
+    }
+    
     @Override
     public String toString() {
         return "UserCredentials{" +
                 "userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
+                ", eventsFilePath='" + eventsFilePath + '\'' +
                 '}';
     }
 }
