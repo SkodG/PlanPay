@@ -104,17 +104,23 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	}
 
 	@Override
-	public double savingForecast(double targetAmount, double frequency, int years, int months, boolean isBalanceAccounted)
+	public double savingForecast(double targetAmount, double monthsPerSaving, int years, int months, boolean isBalanceAccounted)
 			throws IllegalInputException {
-		int time = years + months/12;
+		int timeInMonths = years*12 + months;
+		double timeInYears = years + months/12.0;
+		double yearlyFrequency = 12 / monthsPerSaving;
 		double result = 0.0;
-		if(frequency > time*12)
-			throw new IllegalInputException("Frequenza non corretta! Inserire un valore inferiore al periodo temporale totale");
-		System.out.println("tempo "+ time);
-		if(time*12 % frequency > 0)
-			frequency = Math.floor(time*12/frequency);
-		else
-			frequency = frequency*12;
+		double frequency = 0.0;
+		if(monthsPerSaving > timeInMonths || monthsPerSaving <= 0 || timeInYears < 0)
+			throw new IllegalInputException("Input non valido! \n"+
+							"Inserire valori temporali positivi e una frequenza positiva inferiore al periodo temporale totale");
+		System.out.println("tempo in anni"+ timeInYears);
+		if( yearlyFrequency > 12)
+			frequency = Math.floor(timeInMonths/yearlyFrequency);
+		else {
+			frequency = Math.floor(yearlyFrequency*timeInYears);
+			System.out.println("else interno freq: "+frequency);
+		}
 		System.out.println("arrotondo frequenza a "+ frequency);
 		if(isBalanceAccounted)
 			result = (targetAmount - this.getBalance())/frequency;

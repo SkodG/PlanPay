@@ -27,14 +27,14 @@ public class ForecastView extends JFrame {
 	private JPanel contentPane;
 	private JTextField textAmount;
 	private JLabel lblInserireMesi;
-	private JTextField textYearlyFreq;
+	private JTextField textCustomMonths;
 	private JComboBox<String> comboBox;
 	private JTextField textYears;
 	private JTextField textMonths;
 	private int years;
 	private int months;
-	private double frequency;
-	private double balance;
+	private double monthsPerSaving;
+	private double target;
 	private double result;
 
 
@@ -46,12 +46,11 @@ public class ForecastView extends JFrame {
 		years = 0;
 		months = 0;
 		result = 0.00;
-		balance = 0.00;
+		target = 0.00;
 		String[] freqSelection = {"Nessuna","Mensile","Semestrale","Annuale", "Altro"};
 		Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
-		ObjectiveImpl objective = null;
-		if(optObjective.isPresent())
-			balance	= optObjective.get().getBalance();
+		if(optObjective.isPresent()) 
+			target = optObjective.get().getSavingTarget();
 		else
 			JOptionPane.showMessageDialog(null, "Obbiettivo non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
 		//TODO chiudere la finestra
@@ -81,7 +80,7 @@ public class ForecastView extends JFrame {
 		lblNewLabel_1.setBounds(341, 15, 33, 14);
 		contentPane.add(lblNewLabel_1);
 
-		textAmount = new JTextField();
+		textAmount = new JTextField(Double.toString(target));
 		textAmount.setHorizontalAlignment(SwingConstants.RIGHT);
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textAmount.setColumns(10);
@@ -102,17 +101,17 @@ public class ForecastView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) comboBox.getSelectedItem();
                 handleComboBoxSelection(selected);
-                System.out.println("frequency selected: "+frequency);
+                System.out.println("frequency selected: "+monthsPerSaving);
             }
         });
 
-		textYearlyFreq = new JTextField();
-		textYearlyFreq.setHorizontalAlignment(SwingConstants.RIGHT);
-		textYearlyFreq.setFont(new Font("Calibri", Font.PLAIN, 13));
-		textYearlyFreq.setColumns(10);
-		textYearlyFreq.setBounds(231, 137, 98, 20);
-		contentPane.add(textYearlyFreq);
-		textYearlyFreq.setVisible(false);
+		textCustomMonths = new JTextField("0");
+		textCustomMonths.setHorizontalAlignment(SwingConstants.RIGHT);
+		textCustomMonths.setFont(new Font("Calibri", Font.PLAIN, 13));
+		textCustomMonths.setColumns(10);
+		textCustomMonths.setBounds(231, 137, 98, 20);
+		contentPane.add(textCustomMonths);
+		textCustomMonths.setVisible(false);
 
 		lblInserireMesi = new JLabel("inserire mesi versamento");
 		lblInserireMesi.setFont(new Font("Calibri", Font.PLAIN, 13));
@@ -131,7 +130,7 @@ public class ForecastView extends JFrame {
 		lblNewLabel.setBounds(10, 44, 164, 14);
 		contentPane.add(lblNewLabel);
 
-		textYears = new JTextField();
+		textYears = new JTextField("0");
 		textYears.setHorizontalAlignment(SwingConstants.RIGHT);
 		textYears.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textYears.setColumns(10);
@@ -144,7 +143,7 @@ public class ForecastView extends JFrame {
 		lblAnni.setBounds(341, 45, 33, 14);
 		contentPane.add(lblAnni);
 
-		textMonths = new JTextField();
+		textMonths = new JTextField("0");
 		textMonths.setHorizontalAlignment(SwingConstants.RIGHT);
 		textMonths.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textMonths.setColumns(10);
@@ -171,11 +170,9 @@ public class ForecastView extends JFrame {
 						years = Integer.parseInt(textYears.getText());
 						months = Integer.parseInt(textMonths.getText());
 						double targetAmount = Double.parseDouble(textAmount.getText());						
-						if(comboBox.getSelectedItem().equals("Altro")) {
-							frequency = 12 / Double.parseDouble(textYearlyFreq.getText());
-							System.out.println("frequenza inserita:"+ frequency);
-						}
-						result = optObjective.get().savingForecast(targetAmount, frequency, years, months, ckboxNewCheckBox.isSelected());
+						if(comboBox.getSelectedItem().equals("Altro")) 
+							monthsPerSaving = Double.parseDouble(textCustomMonths.getText());
+						result = optObjective.get().savingForecast(targetAmount, monthsPerSaving, years, months, ckboxNewCheckBox.isSelected());
 						String truncatedResult = String.format("%.2f",result);
 						lblDisplayResult.setText(truncatedResult);
 					}
@@ -200,25 +197,25 @@ public class ForecastView extends JFrame {
 	}
 	private void handleComboBoxSelection(String selected) {
 		lblInserireMesi.setVisible(false);
-    	textYearlyFreq.setVisible(false);
+    	textCustomMonths.setVisible(false);
 
 	        switch (selected) {
 	        	case "Nessuna":
-	        		this.frequency -= frequency;
+	        		this.monthsPerSaving -= monthsPerSaving;
 	        		break;
 	            case "Mensile":
-	                this.frequency = 12.0;
+	                this.monthsPerSaving = 1.0;
 	                break;
 	            case "Semestrale":
-	            	this.frequency = 2.0;
+	            	this.monthsPerSaving = 6.0;
 	                break;
 	            case "Annuale":
-	            	this.frequency = 1.0;
+	            	this.monthsPerSaving = 12.0;
 	            	break;
 	            case "Altro":
-	            	this.frequency = 0.0;
+	            	this.monthsPerSaving = 0.0;
 	        		lblInserireMesi.setVisible(true);
-	            	textYearlyFreq.setVisible(true);
+	            	textCustomMonths.setVisible(true);
 	            	break;
 	        }
 	}
