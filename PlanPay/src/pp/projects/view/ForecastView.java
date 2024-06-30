@@ -220,3 +220,4 @@ public class ForecastView extends JFrame {
 	        }
 	}
 }
+

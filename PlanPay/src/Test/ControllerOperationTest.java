@@ -52,3 +52,4 @@ class ControllerOperationTest {
 	//	assertTrue(objective2.savingForecast(0, 0, 0, 0, false));
 	//}
 }
+
