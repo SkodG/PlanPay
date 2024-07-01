@@ -15,6 +15,11 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
@@ -80,11 +85,35 @@ public class ForecastView extends JFrame {
 		lblNewLabel_1.setBounds(341, 15, 33, 14);
 		contentPane.add(lblNewLabel_1);
 
-		textAmount = new JTextField(Double.toString(target));
+		textAmount = new JTextField(Double.toString(target).replace(".", ","));
 		textAmount.setHorizontalAlignment(SwingConstants.RIGHT);
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 13));
 		textAmount.setColumns(10);
 		textAmount.setBounds(231, 12, 98, 20);
+		textAmount.addFocusListener(new FocusAdapter() {			
+			@Override
+			public void focusLost(FocusEvent e) {
+				String input = textAmount.getText().trim();
+				if(!input.isEmpty()) {
+					try {
+						String convInput = input.replace(".", "");
+						convInput = convInput.replace(",", ".");
+						double parsedInput = Double.parseDouble(convInput);	
+						target = parsedInput;
+						System.out.println("Ammontare inserito: "+ target);
+						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
+						sym.setDecimalSeparator(',');
+						sym.setGroupingSeparator('.');
+						DecimalFormat decFormat =  new DecimalFormat("#,##0.00", sym);
+						String formattedAmount = decFormat.format(parsedInput);
+						textAmount.setText(formattedAmount);
+					} catch(NumberFormatException ne) {
+						System.out.println(ne.getMessage());
+						textAmount.setText("0,00");
+					}
+				}				
+			}				
+		});
 		contentPane.add(textAmount);
 
 		JLabel lblNewLabel_2 = new JLabel("Quanto dovresti versare?");
@@ -168,22 +197,18 @@ public class ForecastView extends JFrame {
 				try {
 					if(optObjective.isPresent()) {//TODO sostituire con un  excpetion? es ObjectiveNotFoundException
 						years = Integer.parseInt(textYears.getText());
-						months = Integer.parseInt(textMonths.getText());
-						double targetAmount = Double.parseDouble(textAmount.getText());						
+						months = Integer.parseInt(textMonths.getText());						
 						if(comboBox.getSelectedItem().equals("Altro")) 
 							monthsPerSaving = Double.parseDouble(textCustomMonths.getText());
-						result = optObjective.get().savingForecast(targetAmount, monthsPerSaving, years, months, ckboxNewCheckBox.isSelected());
+						result = optObjective.get().savingForecast(target, monthsPerSaving, years, months, ckboxNewCheckBox.isSelected());
 						String truncatedResult = String.format("%.2f",result);
 						lblDisplayResult.setText(truncatedResult);
 					}
 					else
 						JOptionPane.showMessageDialog(null, "Obbiettivo non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
-				catch(NumberFormatException n) {
-					JOptionPane.showMessageDialog(null, "Uno o più campi errati!", "Errore", JOptionPane.ERROR_MESSAGE);					
-				}
-				catch(NullPointerException p){
-					JOptionPane.showMessageDialog(null, "Uno o più campi vuoti!", "Errore", JOptionPane.ERROR_MESSAGE);
+				catch(NumberFormatException | NullPointerException n) {
+					JOptionPane.showMessageDialog(null, "Uno o più campi non validi!", "Errore", JOptionPane.ERROR_MESSAGE);					
 				}
 				catch(IllegalInputException i) {
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

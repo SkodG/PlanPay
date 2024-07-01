@@ -15,9 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 
@@ -29,6 +34,7 @@ public class ServicesView extends JFrame {
 	private JTextField textAmount;
 	private JTextField textName;
 	private LocalDate date;
+	private double Amount;
 
 	/**
 	 * Create the frame.
@@ -53,10 +59,36 @@ public class ServicesView extends JFrame {
 		lblAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		contentPane.add(lblAmount);
 		
-		textAmount = new JTextField("0.00");
+		textAmount = new JTextField("0,00");
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
 		textAmount.setBounds(82, 32, 86, 20);
+		textAmount.addFocusListener(new FocusAdapter() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				String input = textAmount.getText().trim();
+				if(!input.isEmpty()) {
+					try {
+						String convInput = input.replace(".", "");
+						convInput = convInput.replace(",", ".");
+						double parsedInput = Double.parseDouble(convInput);	
+						Amount = parsedInput;
+						System.out.println("Ammontare inserito: "+ Amount);
+						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
+						sym.setDecimalSeparator(',');
+						sym.setGroupingSeparator('.');
+						DecimalFormat decFormat =  new DecimalFormat("#,##0.00", sym);
+						String formattedAmount = decFormat.format(parsedInput);
+						textAmount.setText(formattedAmount);
+					} catch(NumberFormatException ne) {
+						System.out.println("focus ha generato exception per textAmount ");
+						textAmount.setText("0,00");
+					}
+					
+				}				
+			}				
+		});
 		contentPane.add(textAmount);
 		
 		JLabel lblTitle = new JLabel("Causale");
@@ -81,18 +113,16 @@ public class ServicesView extends JFrame {
 		JButton btnDeposit = new JButton("Deposita");
 		btnDeposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Double dAmount;
 				//leggo la cifra inserita, se non è stata inserita alcuna cifra
 				//do messaggio di errore
 				try {
-					dAmount = Double.parseDouble(textAmount.getText());
-					if(textName.getText().isEmpty() && operationType == OperationType.SERVIZIO) {
+					if(textName.getText().trim().isEmpty() && operationType == OperationType.SERVIZIO) {
 						JOptionPane.showMessageDialog(null, "Inserire una causale ", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 					else if(operationType == OperationType.SERVIZIO) {
-						controller.updateConto(dAmount, true, textName.getText(), operationType);
+						controller.updateConto(Amount, true, textName.getText().trim(), operationType);
 						setVisible(false);
-						textAmount.setText("0.00");
+						textAmount.setText("0,00");
 						textName.setText("");
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
@@ -101,9 +131,9 @@ public class ServicesView extends JFrame {
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
 							System.out.println("deposito in "+optObjective.get().getName());
-							controller.updateConto(dAmount, true, operationName, operationType);
+							controller.updateConto(Amount, true, operationName, operationType);
 							setVisible(false);
-							textAmount.setText("0.00");
+							textAmount.setText("0,00");
 							textName.setText("");
 						}
 						else {
@@ -114,11 +144,12 @@ public class ServicesView extends JFrame {
 						}				
 					} 
 				}catch(NumberFormatException e1) {
+					System.out.println("textAmount inserito: "+textAmount.getText());
 					JOptionPane.showMessageDialog(null, "Inserire valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0.00");
+					textAmount.setText("0,00");
 				}
 				catch( IllegalOperationException n1) {
-					JOptionPane.showMessageDialog(null, "Importo insufficiente!", "Errore", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi nel Conto insufficienti!", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -130,30 +161,33 @@ public class ServicesView extends JFrame {
 		btnWithdraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
 				boolean result = false;
-				
 				//TODO effettuare l'operazione di prelievo
 				//Se questa view è stata chiamata dalla consoleView
 				try {
-					double dAmount = Double.parseDouble(textAmount.getText());
-					if(textName.getText().isEmpty() && operationType == OperationType.SERVIZIO) {
-						JOptionPane.showMessageDialog(null, "Inserire una causale", "Errore", JOptionPane.ERROR_MESSAGE);
+					if(textName.getText().trim().isEmpty() && operationType == OperationType.SERVIZIO) {
+					 	JOptionPane.showMessageDialog(null, "Inserire una causale", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 					else if(operationType == OperationType.SERVIZIO) {
-						result = controller.updateConto(dAmount, false, textName.getText(), operationType);
-						System.out.println(""+result);
+						result = controller.updateConto(Amount, false, textName.getText().trim(), operationType);
+						System.out.println(result);
 						//Controllo che l'operazione sia avvenuta
 						if(!result) 
 							JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
 									"Errore", JOptionPane.ERROR_MESSAGE);
-						else
+						else {
 							setVisible(false);
+							textName.setText("");
+							textAmount.setText("0,00");
+							Amount = 0.0;
+						}
+							
 					}
 					else if(operationType == OperationType.OBIETTIVO) {
 						//cerco nella lista degli obbiettivi 
 						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
 						//se trovo l'obbiettivo posso eseguire l'operazione
 						if(optObjective.isPresent()) {
-							result = controller.updateConto(dAmount, false, operationName, operationType);
+							result = controller.updateConto(Amount, false, operationName, operationType);
 							//Controllo che l'operazione sia avvenuta
 							if(!result) 
 								JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
@@ -171,11 +205,11 @@ public class ServicesView extends JFrame {
 				} 
 				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0.00");
+					textAmount.setText("0,00");
 				} 
 				catch(IllegalArgumentException | IllegalOperationException i){
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0.00");
+					textAmount.setText("0,00");
 				} 				
 			} //TODO Si può riutilizzare il codice con un singolo actionListener?
 		});
@@ -185,11 +219,9 @@ public class ServicesView extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				textAmount.setText("0.00");
+				textAmount.setText("0,00");
 				textName.setText("");
-			}
-			
+			}			
 		});
 	}
 }
-

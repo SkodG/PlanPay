@@ -16,7 +16,12 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
@@ -37,6 +42,7 @@ public class ObjectiveView extends JFrame {
 	private boolean	bNew;
 	private boolean	hasSaved;
 	private String description;
+	private String formatTarget;
 	private String nomeObbiettivo;
 	private Optional<ObjectiveImpl> optObjective;
 	
@@ -56,7 +62,7 @@ public class ObjectiveView extends JFrame {
 		this.nomeObbiettivo = nomeObbiettivo;
 		this.bNew  = bNew;
 		optObjective = controller.getObjective(nomeObbiettivo);
-		savingAmount = updateSavingAmount(nomeObbiettivo);
+		savingAmount = updateSavingAmount(nomeObbiettivo);		
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
 		System.out.println("soglia  risparmio =" +savingAmount);
@@ -108,10 +114,34 @@ public class ObjectiveView extends JFrame {
 		lblThreshold.setBounds(22, 120, 101, 14);
 		contentPane.add(lblThreshold);
 				
-		textAmount = new JTextField(Double.toString(savingAmount));
+		textAmount = new JTextField(Double.toString(savingAmount).replace(".", ","));
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
 		textAmount.setBounds(151, 117, 99, 20);
+		textAmount.addFocusListener(new FocusAdapter() {	
+			@Override
+			public void focusLost(FocusEvent e) {
+				String input = textAmount.getText().trim();
+				if(!input.isEmpty()) {
+					try {
+						String convInput = input.replace(".", "");
+						convInput = convInput.replace(",", ".");
+						double parsedInput = Double.parseDouble(convInput);	
+						savingAmount = parsedInput;
+						System.out.println("Ammontare inserito: "+ savingAmount);
+						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
+						sym.setDecimalSeparator(',');
+						sym.setGroupingSeparator('.');
+						DecimalFormat decFormat =  new DecimalFormat("#,##0.00", sym);
+						String formattedAmount = decFormat.format(parsedInput);
+						textAmount.setText(formattedAmount);
+					} catch(NumberFormatException ne) {
+						System.out.println(ne.getMessage());
+						textAmount.setText("0,00");
+					}					
+				}				
+			}				
+		});
 		contentPane.add(textAmount);
 		
 		JTextArea textDescr = new JTextArea(description);
@@ -141,7 +171,11 @@ public class ObjectiveView extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					savingAmount = Double.parseDouble(textAmount.getText());
+					//String input = textAmount.getText().trim();
+					//String convInput = input.replace(".", "");
+					//convInput = convInput.replace(",", ".");
+					//savingAmount = Double.parseDouble(convInput);
+					System.out.println("Soglia impostata: "+savingAmount);
 					optObjective = controller.getObjective(textName.getText());
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
 						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
@@ -156,12 +190,14 @@ public class ObjectiveView extends JFrame {
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
 						hasSaved = true;
 						textName.setEditable(false);
+						savingAmount = updateSavingAmount(textName.getText());
 						setVisible(false);
 					}//altrimenti se l'obbiettivo è già stato creato ma viene modificato
 					else if((optObjective.get().getSavingTarget() != savingAmount) ||
 							 (optObjective.get().getDescription().equals(description))) {
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
+						savingAmount = updateSavingAmount(textName.getText());
 						setVisible(false);
 					}
 					else if(bNew && hasSaved == false){
@@ -170,7 +206,7 @@ public class ObjectiveView extends JFrame {
 				}
 				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica per la soglia di risparmio", "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0.00");
+					textAmount.setText("0,00");
 				}
 				catch(IllegalStateException l) {
 					JOptionPane.showMessageDialog(null, l.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

@@ -111,17 +111,14 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		double yearlyFrequency = 12 / monthsPerSaving;
 		double result = 0.0;
 		double frequency = 0.0;
-		if(monthsPerSaving > timeInMonths || monthsPerSaving <= 0 || timeInYears < 0)
+		if(monthsPerSaving > timeInMonths || monthsPerSaving <= 0 || timeInYears < 0 || targetAmount <= 0.0)
 			throw new IllegalInputException("Input non valido! \n"+
-							"Inserire valori temporali positivi e una frequenza positiva inferiore al periodo temporale totale");
-		System.out.println("tempo in anni"+ timeInYears);
+							"Inserire valori positivi e una frequenza inferiore al periodo temporale totale");
 		if( yearlyFrequency > 12)
 			frequency = Math.floor(timeInMonths/yearlyFrequency);
-		else {
+		else 
 			frequency = Math.floor(yearlyFrequency*timeInYears);
-			System.out.println("else interno freq: "+frequency);
-		}
-		System.out.println("arrotondo frequenza a "+ frequency);
+		
 		if(isBalanceAccounted)
 			result = (targetAmount - this.getBalance())/frequency;
 		else
@@ -129,5 +126,3 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		return result;
 	}
 }
-
-
