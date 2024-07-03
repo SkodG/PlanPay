@@ -31,173 +31,119 @@ public class CalendarImpl implements CalendarP{
 			setEvents = loadEventsFromFile();
 	}
 	
-	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException{
-		// Verifico se i parametri dell'evento non sono nulli o vuoti
-	    if (newName == null || newName.trim().isEmpty() || newDaOra == null || newDaOra.trim().isEmpty() || newAora == null || newAora.trim().isEmpty()) {
-	        throw new InvalidParameterException("I parametri dell'evento non possono essere nulli o vuoti.");
-	    }
-		
-	    Optional<Event> existingEvent = getExistingEvent(newName, currentDate, newDaOra, newAora);
-	    
-		if (existingEvent.isPresent()) {	
+	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException {
+        validateEventParameters(newName, newDaOra, newAora);
+
+        Optional<Event> existingEvent = getExistingEvent(newName, currentDate, newDaOra, newAora);
+        
+        if (existingEvent.isPresent()) {
+        	System.out.println("evento esistente : " + existingEvent.get().getIdentifier() + " - " + existingEvent.get().getDaOra() + " " + existingEvent.get().getAOra());
             throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
         }
 
         Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato, identifier);
         setEvents.add(newEvent);
 
-	    return newEvent;
-	}
-	
-	public boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
-							   String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException {
+        return newEvent;
+    }
 
-		List<EventImpl> eventsToModify = setEvents.stream()
-	            .filter(e -> e instanceof EventImpl && ((EventImpl) e).getIdentifier().equals(identifier))
-	            .map(e -> (EventImpl) e)
-	            .collect(Collectors.toList());
+    public boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
+                               String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException {
+        List<EventImpl> eventsToModify = getEventsByIdentifier(identifier);
 
-	    if (eventsToModify.isEmpty()) {
-	        throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
-	    }
-	    
-	    for (EventImpl eventImpl : eventsToModify) {
-	        if (newName != null && !newName.trim().isEmpty()) {
-	            eventImpl.setName(newName);
-	        }
-	        if (newDaOra != null && !newDaOra.trim().isEmpty()) {
-	            eventImpl.setDaOra(newDaOra);
-	        }
-	        if (newAora != null && !newAora.trim().isEmpty()) {
-	            eventImpl.setAOra(newAora);
-	        }
-	        if (stato != null) {
-	            eventImpl.setState(stato);
-	        }
-	    }
-
-	    // visto che la descrizione è singola invece cerco l'evento con identificatore passato e data corretta passata.
-	    EventImpl event = eventsToModify.stream().filter(e -> e.getDate().equals(currentDate)).findFirst().get();
-	    
-	    if (newDesc != null && !newDesc.trim().isEmpty()) {
-	    	event.setDescription(newDesc);
+        if (eventsToModify.isEmpty()) {
+            throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
         }
-	    
-	    System.out.println("-------------");
-	    System.out.println("MODIFICA DESC");
-	    for(Event e : setEvents) {
-	    	EventImpl ev = (EventImpl) e;
-	    	System.out.println("DESCRIZIONE: " + ev.getDescription());
-	    }
-	    System.out.println("-------------");
-	    return true;
-	}
-	
-	@Override
-	public Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException {
-		Optional<Event> existingEvent = getExistingEvent(name, date, daOra, aOra);
-		
-		if (!existingEvent.isPresent()) {
-	        throw new EventNotFoundException("Evento inesistente! Impossibile cancellarlo.");
-	    }
-	   
-		setEvents.remove(existingEvent.get());		
-		
-	    if (!saveEventsToFile()) {
-	        return null; // Restituisce un insieme vuoto se il salvataggio fallisce
-	    }	    
-		
-		return existingEvent.get();
-	}
-	
-	public int getDay() {
-		return this.day;
-	}
-	
-	@Override
-	public Set<Event> getAllEvents(){
-		return this.setEvents;
-	}
-	
-	@Override
-	public boolean saveEventsToFile() {
-        File file = new File(pathEvents);
-		BufferedWriter writer = null;
-		System.out.println("salvo EVENTI " + pathEvents);
 
-        // Mi assicuro che la directory esista
-        file.getParentFile().mkdirs();
-		try {
-			// Creo il writer in modo da sovrascrivere il file esistente			
-			writer = new BufferedWriter(new FileWriter(file, false));
-						
-			// Scrivo gli eventi nel file
-			for (Event ev : setEvents) {
-	             writer.write(ev.getInfoEventToFile());
-	             writer.newLine();
-	         }
-		} catch (IOException e) {
-            System.out.print("Problemi al salvataggio del file: " + e);
+        for (EventImpl eventImpl : eventsToModify) {
+            if (isValidString(newName)) eventImpl.setName(newName);
+            if (isValidString(newDaOra)) eventImpl.setDaOra(newDaOra);
+            if (isValidString(newAora)) eventImpl.setAOra(newAora);
+            if (stato != null) eventImpl.setState(stato);
+        }
+
+        updateEventDescription(eventsToModify, currentDate, newDesc);
+        saveEventsToFile();
+        return true;
+    }
+
+    @Override
+    public Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException {
+        Event eventToRemove = getExistingEvent(name, date, daOra, aOra)
+                .orElseThrow(() -> new EventNotFoundException("Evento inesistente! Impossibile cancellarlo."));
+
+        setEvents.remove(eventToRemove);
+        saveEventsToFile();
+        return eventToRemove;
+    }
+    
+	@Override
+	public Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException {
+		Event eventToRemove = getExistingEvent(name, date, daOra, aOra)
+                .orElseThrow(() -> new EventNotFoundException("Evento inesistente! Impossibile cancellarlo."));
+
+		String identifierRemove = eventToRemove.getIdentifier();
+		
+	    Set<Event> eventsToRemove = setEvents.stream()
+								             .filter(e -> e.getIdentifier().equals(identifierRemove))
+								             .collect(Collectors.toSet());
+
+	    // Rimuovi gli eventi dal set originale
+	    setEvents.removeAll(eventsToRemove);
+	    saveEventsToFile();
+	    return eventsToRemove;
+	}
+
+    public int getDay() {
+        return this.day;
+    }
+
+    @Override
+    public Set<Event> getAllEvents() {
+        return this.setEvents;
+    }
+
+    @Override
+    public boolean saveEventsToFile() {
+        if (pathEvents == null) return false;
+
+        File file = new File(pathEvents);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            file.getParentFile().mkdirs();
+            for (Event ev : setEvents) {
+                writer.write(ev.getInfoEventToFile());
+                writer.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            System.out.println("Problemi al salvataggio del file: " + e.getMessage());
             return false;
-        } finally {
-        	// Chiusura del writer, se è stato aperto con successo
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    System.out.println("Errore durante la chiusura del writer: " + e.getMessage());
-                    e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Set<Event> loadEventsFromFile() {
+        if (pathEvents == null) return new TreeSet<>(new ComparatorEvents());
+
+        File file = new File(pathEvents);
+        if (!file.exists()) return new TreeSet<>(new ComparatorEvents());
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\[,\\]");
+                if (parts.length == 7) {
+                    EventImpl event = new EventImpl(parts[3], parts[4], LocalDate.parse(parts[0]), parts[1], parts[2], State.valueOf(parts[5]), parts[6]);
+                    setEvents.add(event);
                 }
             }
-        }	
-		return true;
-	}
-	
-	@Override
-	public Set<Event> loadEventsFromFile() {
-	    BufferedReader reader = null;
-		File file = new File(pathEvents);
-		System.out.println("carico EVENTI " + pathEvents);
+        } catch (IOException e) {
+            System.out.println("Errore nel caricamento degli eventi dal file: " + e.getMessage());
+        }
+        return this.setEvents;
+    }
 
-	    if (!file.exists()) {
-	    	System.out.println("IL FILE NON ESISTE");
-	        return new TreeSet<Event>(new ComparatorEvents());
-	    }
-
-	    try {
-	         reader = new BufferedReader(new FileReader(file));
-	         String line;
-	         while ((line = reader.readLine()) != null) {
-	             String[] parts = line.split("\\[,\\]");
-	             if (parts.length == 7) {
-	            	 System.out.println("LEGGO");
-	                 LocalDate date = LocalDate.parse(parts[0]);
-	                 String daOra = parts[1];
-	                 String aOra = parts[2];
-	                 String name = parts[3];
-	                 String description = parts[4];
-	                 String stato = parts[5];
-	                 String identifier = parts[6];
-	                    
-	                 EventImpl event = new EventImpl(name, description, date, daOra, aOra, State.valueOf(stato), identifier);
-	                 setEvents.add(event);
-	             }
-	         }
-	     } catch (IOException e) {
-	         System.out.println("Errore nel caricamento degli eventi dal file: " + e.getMessage());
-	     } finally {
-	         if (reader != null) {
-	             try {
-	                  reader.close();
-	              } catch (IOException e) {
-	                  System.out.println("Errore durante la chiusura del reader: " + e.getMessage());
-	              }
-	          }
-	     }
-	    return this.setEvents;
-	  }
-	
-	private Optional<Event> getExistingEvent(String name, LocalDate currentDate, String daOra, String aOra) {
+    private Optional<Event> getExistingEvent(String name, LocalDate currentDate, String daOra, String aOra) {
 		LocalTime newStart = LocalTime.parse(daOra);
 	    LocalTime newEnd = LocalTime.parse(aOra);
 		
@@ -213,29 +159,55 @@ public class CalendarImpl implements CalendarP{
 								    		.map(e -> (EventImpl) e) 
 								    	    .collect(Collectors.toSet());
 		return sameDateEvent.stream()
-						.filter(e -> {
-		                    if (e instanceof EventImpl) {
-		                        EventImpl eventImpl = (EventImpl) e;
-		                        LocalTime existingStart = LocalTime.parse(eventImpl.getDaOra());
-	                            LocalTime existingEnd = LocalTime.parse(eventImpl.getAOra());
-		                        
-	                            return (newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart)) || 
-	                                    newStart.equals(existingStart) || 
-	                                    newEnd.equals(existingEnd);
-		                    }
-		                    return false;
-		                })
-		                .findFirst();
+							.filter(e -> {
+			                    if (e instanceof EventImpl) {
+			                        EventImpl eventImpl = (EventImpl) e;
+			                        LocalTime existingStart = LocalTime.parse(eventImpl.getDaOra());
+		                            LocalTime existingEnd = LocalTime.parse(eventImpl.getAOra());
+			                        
+		                            return (newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart)) || 
+		                                    newStart.equals(existingStart) || 
+		                                    newEnd.equals(existingEnd);
+			                    }
+			                    return false;
+			                })
+			                .findFirst();
 	}
 	
-	public void deleteAll() {
-		if(getAllEvents().size() > 0) {
-			getAllEvents().removeAll(getAllEvents());
-		}
-	}
-	
-	@Override
-	public void setPathEvents(String path) {
-		this.pathEvents = path;
-	}
+    public void deleteAll() {
+        setEvents.clear();
+    }
+
+    @Override
+    public void setPathEvents(String path) {
+        this.pathEvents = path;
+    }
+
+    private void validateEventParameters(String newName, String newDaOra, String newAora) throws InvalidParameterException {
+        if (!isValidString(newName) || !isValidString(newDaOra) || !isValidString(newAora)) {
+            throw new InvalidParameterException("I parametri dell'evento non possono essere nulli o vuoti.");
+        }
+    }
+
+    private boolean isValidString(String str) {
+        return str != null && !str.trim().isEmpty();
+    }
+
+    private List<EventImpl> getEventsByIdentifier(String identifier) {
+        return setEvents.stream()
+                .filter(e -> ((EventImpl) e).getIdentifier().equals(identifier))
+                .map(e -> (EventImpl) e)
+                .collect(Collectors.toList());
+    }
+
+    private void updateEventDescription(List<EventImpl> events, LocalDate currentDate, String newDesc) {
+        events.stream()
+                .filter(e -> e.getDate().equals(currentDate))
+                .findFirst()
+                .ifPresent(event -> {
+                    if (isValidString(newDesc)) {
+                        event.setDescription(newDesc);
+                    }
+                });
+    }
 }

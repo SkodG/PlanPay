@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.model.Account;
+import pp.projects.model.ComparatorEvents;
 import pp.projects.model.OperationType;
 import pp.projects.model.Event;
 import pp.projects.model.EventImpl;
@@ -14,11 +15,14 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.awt.event.ActionEvent;
@@ -136,13 +140,13 @@ public class ConsolleView extends JFrame {
 					if(updateTransactionsUI()) {
 						transactionList.setVisible(false);
 				        scrollPane.setVisible(false);
-						setBounds(100, 100, 736, 490);
+						setBounds(100, 100, 772, 490);
 					}
 				} else {
 					if(updateTransactionsUI()) {
 						transactionList.setVisible(true);
 				        scrollPane.setVisible(true);
-						setBounds(100, 100, 736, 722);
+						setBounds(100, 100, 772, 722);
 					}
 				}
 			}
@@ -242,12 +246,38 @@ public class ConsolleView extends JFrame {
 					eventListModel.addElement(event.getInfoEventToString());
 	            }
 	        }
+			
+			Set<Event> nextEvents = eventsToFile.stream()
+									            .filter(event -> {
+									                EventImpl eventImpl = (EventImpl) event;
+									                LocalDate eventDate = eventImpl.getDate(); // Assuming getDate() returns the start date
+									                return eventDate.isAfter(LocalDate.now());
+									            })
+									            .collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
+		    
+			if(nextEvents != null && nextEvents.size() > 0) {		
+				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
+				eventListModel.addElement("<html><body style='font-size: 16px;'>" + "<u>Prossimi eventi: </u></body></html>");
+				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
+				for (Event event : nextEvents) {
+					EventImpl ev = (EventImpl) event;
+					eventListModel.addElement(ev.getDate() + " : " + ev.getInfoEventToString());
+	            }
+	        }
 		}
     }
 	
 	public void updateUIconto() {
-		lblmporto.setText(account.getBalance().toString());
+		lblmporto.setText(formattedImport(account.getBalance()) + " €");
 		consolleObjectiveView.updateUI();
+	}
+	
+	private String formattedImport(double amount) {
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+        return decimalFormat.format(amount);
 	}
 	
 	private void setButtonIcon(JButton button, String path) {

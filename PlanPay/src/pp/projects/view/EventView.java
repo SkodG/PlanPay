@@ -12,6 +12,7 @@ import javax.swing.text.DateFormatter;
 import com.toedter.calendar.JDateChooser;
 
 import pp.projects.controller.ConsoleController;
+import pp.projects.model.ComparatorEvents;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
 import pp.projects.model.EventImpl;
@@ -27,6 +28,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -51,6 +54,8 @@ public class EventView extends JDialog {
 	private JFormattedTextField timeFieldAora;
 	private JTextArea txtDescrizione;
 	private JComboBox<String> cmbStato;
+	private JButton btnCancellaAttivita;
+	private JButton btnCancellaTuttoEvento;
 	
 	private String name;
 	private String desc;
@@ -59,16 +64,18 @@ public class EventView extends JDialog {
 	private LocalDate selectedDateDa;
 	private LocalDate selectedDateA;
 	private boolean bNew;
-
+	private ConsoleController controller;
+	
 	/**
 	 * Create the dialog.
 	 */
 	public EventView(boolean bNew, LocalDate date, ConsoleController c, CalendarView calendar) {		
 		this.name = new String();
 		this.bNew = bNew;
+		this.controller = c;
 		
 		setTitle("EVENTO");
-		setBounds(100, 100, 450, 506);
+		setBounds(100, 100, 500, 526);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -86,25 +93,25 @@ public class EventView extends JDialog {
 		
 		edTitolo = new JTextField();
 		edTitolo.setFont(new Font("Calibri", Font.PLAIN, 15));
-		edTitolo.setBounds(104, 158, 322, 36);
+		edTitolo.setBounds(104, 158, 372, 36);
 		contentPanel.add(edTitolo);
 		edTitolo.setColumns(10);
 		this.name = edTitolo.getText();
 		
 		txtDescrizione = new JTextArea();
 		txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
-		txtDescrizione.setBounds(10, 242, 416, 171);
+		txtDescrizione.setBounds(10, 242, 466, 171);
 		contentPanel.add(txtDescrizione);		
         this.desc = txtDescrizione.getText();
         
 		JLabel lbAOra = new JLabel("Ora:");
 		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbAOra.setBounds(255, 58, 41, 27);
+		lbAOra.setBounds(305, 58, 41, 27);
 		contentPanel.add(lbAOra);
 		
 		JLabel lbDaOra = new JLabel("Ora:");
 		lbDaOra.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbDaOra.setBounds(255, 20, 41, 27);
+		lbDaOra.setBounds(305, 20, 41, 27);
 		contentPanel.add(lbDaOra);
 		
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -114,13 +121,13 @@ public class EventView extends JDialog {
                 
         timeFieldDaOra = new JFormattedTextField(timeFormatter);
 		timeFieldDaOra.setFont(new Font("Calibri", Font.PLAIN, 16));
-		timeFieldDaOra.setBounds(306, 20, 120, 30);
+		timeFieldDaOra.setBounds(356, 20, 120, 30);
 		timeFieldDaOra.setColumns(5);
 	    contentPanel.add(timeFieldDaOra);  
 	        
 		timeFieldAora = new JFormattedTextField(timeFormatter);
 		timeFieldAora.setFont(new Font("Calibri", Font.PLAIN, 16));
-		timeFieldAora.setBounds(306, 53, 120, 30);
+		timeFieldAora.setBounds(356, 53, 120, 30);
 		timeFieldAora.setColumns(5);
 	    contentPanel.add(timeFieldAora);     
 
@@ -225,10 +232,6 @@ public class EventView extends JDialog {
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
 						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, identifierEvent);
 						edTitolo.setEditable(false);
-						for(Event ev : events) {
-							EventImpl ee = (EventImpl) ev;
-							System.out.println("IDENTIFIERER : " + ev.getIdentifier() + " - DESC : " + ee.getDescription());
-						}
 						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						c.updateUIevents();
 		                calendar.updateLegenda(events);
@@ -253,31 +256,34 @@ public class EventView extends JDialog {
 		});
 		btnSalva.setFont(new Font("Calibri", Font.PLAIN, 16));
 		btnSalva.setActionCommand("OK");
-		btnSalva.setBounds(224, 423, 95, 36);
+		btnSalva.setBounds(10, 423, 152, 56);
 		contentPanel.add(btnSalva);
 		
-		JButton btnCancella = new JButton("Cancella");
-		btnCancella.addActionListener(new ActionListener() {
+		btnCancellaAttivita = new JButton("<html><div style='text-align: center;'>Cancella singola<br>attività</div></html>");
+		btnCancellaAttivita.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Event event = null;
 				LocalDate currentDay = calendar.selectDate();
 				
 				try {
-					event = c.removeEvent(edTitolo.getText(), currentDay, timeFieldDaOra.getText(), timeFieldAora.getText());
+					event = c.removeActivity(edTitolo.getText(), currentDay, timeFieldDaOra.getText(), timeFieldAora.getText());
 				} catch (EventNotFoundException e1) {
 					JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile cancellarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 				
 				EventView.this.setVisible(false);
 				if(event != null) {
-					calendar.updateUIRemoveEvent(currentDay, event);
+					 Set<Event> eventSet = new TreeSet<>(new ComparatorEvents());
+					 eventSet.add(event);
+					 calendar.updateUIRemoveEvent(currentDay, eventSet);
+					 controller.updateUIevents();
 				}
 			}
 		});
-		btnCancella.setFont(new Font("Calibri", Font.PLAIN, 16));
-		btnCancella.setActionCommand("Cancel");
-		btnCancella.setBounds(331, 423, 95, 36);
-		contentPanel.add(btnCancella);
+		btnCancellaAttivita.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCancellaAttivita.setActionCommand("Cancel");
+		btnCancellaAttivita.setBounds(324, 423, 152, 56);
+		contentPanel.add(btnCancellaAttivita);
 		
 		JLabel lbStato = new JLabel("Stato:");
 		lbStato.setFont(new Font("Calibri", Font.PLAIN, 20));
@@ -291,6 +297,41 @@ public class EventView extends JDialog {
         cmbStato.addItem("In corso");
         cmbStato.addItem("Concluso");
 		contentPanel.add(cmbStato);
+		
+		btnCancellaTuttoEvento = new JButton("Cancella evento");
+		btnCancellaTuttoEvento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Set<Event> eventRemove = null;
+				LocalDate currentDay = calendar.selectDate();
+				
+				try {
+					// DEVO RIMUOVERE L'EVENTO TOTALE. AVVISO PRIMA DI CANCELLARE.
+					int response = JOptionPane.showConfirmDialog(
+							    null, 
+							    "Stai cancellando tutte le attività collegate all'evento. Continuare?", 
+							    "", 
+							    JOptionPane.YES_NO_OPTION, 
+							    JOptionPane.QUESTION_MESSAGE
+					);
+
+					if (response == JOptionPane.YES_OPTION) {
+						eventRemove = c.removeEvents(edTitolo.getText(), currentDay, timeFieldDaOra.getText(), timeFieldAora.getText());
+						controller.updateUIevents();
+					} 
+				} catch (EventNotFoundException e1) {
+					JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile cancellarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				EventView.this.setVisible(false);
+				if(eventRemove != null && eventRemove.size() > 0) {
+					calendar.updateUIRemoveEvent(currentDay, eventRemove);
+				}
+			}
+		});
+		btnCancellaTuttoEvento.setFont(new Font("Calibri", Font.PLAIN, 16));
+		btnCancellaTuttoEvento.setActionCommand("Cancel");
+		btnCancellaTuttoEvento.setBounds(168, 423, 152, 56);
+		contentPanel.add(btnCancellaTuttoEvento);
 		
 		// Imposto un valore di default
 		stato = State.V;
@@ -309,6 +350,12 @@ public class EventView extends JDialog {
                 	stato = State.V;
             }
         });
+		
+		if(bNew) {
+			btnCancellaAttivita.setVisible(false);
+			btnCancellaTuttoEvento.setVisible(false);
+			btnSalva.setBounds(168, 423, 152, 56);
+		}
 	}
 	
 	public void setEventDetail(String nameEvent, LocalDate date, String daOra, String aOra, String desc, State state, String identifier) {
@@ -342,7 +389,9 @@ public class EventView extends JDialog {
 		 } else if(state.equals(State.CONCLUSO)) {
 			 stateToString = "Concluso";
 		 }
-		 cmbStato.setSelectedItem(stateToString);
+		 cmbStato.setSelectedItem(stateToString);		 
+			
+		 setCancelButton(identifier);
 	}
 	
 	public boolean isbNew() {
@@ -365,8 +414,29 @@ public class EventView extends JDialog {
     	String loadedText = "";
         if (descr != null) {
             loadedText = descr.replace("[|]", "\n");
-            System.out.println("loadedText " + loadedText);
             txtDescrizione.setText(loadedText);
         }
+    }
+    
+    private void setCancelButton(String identifier) {
+    	Set<Event> eventsToFile = controller.getAllEventToFile();	
+    	
+    	Set<Event> identifierEvents = eventsToFile.stream()
+												  .filter(e -> {
+												      if (e instanceof EventImpl) {													
+															return e.getIdentifier().equals(identifier);
+														}
+														return false;
+													})
+													.collect(Collectors.toSet());
+    	
+    	if(identifierEvents != null && identifierEvents.size() > 1) {
+    		btnCancellaTuttoEvento.setVisible(true);
+    		btnCancellaAttivita.setBounds(324, 423, 152, 56);
+    		btnCancellaTuttoEvento.setBounds(168, 423, 152, 56);
+    	} else if (identifierEvents.size() == 1) {
+    		btnCancellaTuttoEvento.setVisible(false);
+    		btnCancellaTuttoEvento.setBounds(302, 423, 152, 56);
+    	}
     }
 }

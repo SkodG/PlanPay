@@ -21,7 +21,7 @@ import javax.swing.border.LineBorder;
 
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
-import pp.projects.model.EventAdapter;
+import pp.projects.model.EventImpl;
 
 public class SelectedEventView extends JFrame {
 
@@ -34,7 +34,7 @@ public class SelectedEventView extends JFrame {
 	public SelectedEventView(ConsoleController controller, CalendarView calendar, LocalDate day, Set<Event> setEvents) {
 		
 		setTitle("EVENTI DI " + day.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getDayOfMonth() + " " + day.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getYear());
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 323, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -59,7 +59,7 @@ public class SelectedEventView extends JFrame {
 			gbc.gridy = GridBagConstraints.RELATIVE; // Aggiunge il pulsante nella prossima riga disponibile
             panelEvents.add(buttonEvent, gbc);
             
-            EventAdapter adapter = new EventAdapter(ev);
+            EventImpl eventImpl = (EventImpl) ev;
             
             // Aggiungi un ActionListener a ogni bottone
             buttonEvent.addActionListener(new ActionListener() {
@@ -67,7 +67,7 @@ public class SelectedEventView extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     // Apri la finestra dell'evento
                     EventView eventView = new EventView(false, day, controller, calendar);
-                    eventView.setEventDetail(adapter.getName(), day, ev.getDaOra(), ev.getAOra(), adapter.getDescription(), ev.getState(), ev.getIdentifier());
+                    eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
                     eventView.setVisible(true);
                     SelectedEventView.this.setVisible(false);
                 }

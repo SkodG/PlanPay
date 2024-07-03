@@ -210,7 +210,6 @@ public class ConsoleControllerImpl implements ConsoleController{
     
     private void modifyExistingEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
     								 String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
-		System.out.println("NEW DESC CONTROLLER : " + newdesc);
     	boolean modified = calendario.modifyEvent(name, desc, daData, aData, daOra, aOra, newName, newdesc, daData, newDaOra, newAora, stato, identifier);
 		if (!modified) {
 			throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
@@ -218,14 +217,20 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException  {
-		return calendario.removeEvent(name, date, daOra, aOra);
+	public Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException  {
+		return calendario.removeActivity(name, date, daOra, aOra);
+	}
+	
+	@Override
+	public Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException  {
+		return calendario.removeEvents(name, date, daOra, aOra);
 	}
 	
 	public void updateUIevents() {
 		controllerLogin.getConsolleView().updateEventsUI();
 	}
 	
+	@Override
 	public Set<Event> getAllEventToFile(){
 		this.calendario = new CalendarImpl(0, setNameController());
 		return calendario.getAllEvents();

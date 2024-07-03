@@ -69,19 +69,31 @@ class CalendarTest {
 	    EventImpl meeting11 = (EventImpl) meeting1;
 	    EventImpl meeting21 = (EventImpl) meeting2;
 	    EventImpl meeting31 = (EventImpl) meeting3;
+	    boolean success = false;
 
 	    // Modifica la descrizione degli eventi
-	    boolean success = calendario.modifyEvent(meeting11.getName(), meeting11.getDescription(), meeting11.getDate(), meeting11.getDate(),
-	    										 meeting11.getDaOra(), meeting11.getAOra(), meeting11.getName(), "Meeting di 3 giorni presso Fiera di Rimini", 
-	                                             meeting11.getDate(), meeting11.getDaOra(), meeting11.getAOra(), meeting11.getState(), meeting11.getIdentifier());
+	    success = calendario.modifyEvent(meeting11.getName(), meeting11.getDescription(), meeting11.getDate(), meeting11.getDate(),
+	    								 meeting11.getDaOra(), meeting11.getAOra(), meeting11.getName(), "In questa giornata è stato presentato ....", 
+	                                     meeting11.getDate(), meeting11.getDaOra(), meeting11.getAOra(), meeting11.getState(), meeting11.getIdentifier());
 
 	    // Verifica che l'operazione è andata a buon fine
 	    assertTrue(success);
 
 	    // Verifica che gli eventi originali siano stati aggiornati
-	    assertEquals("Meeting di 3 giorni presso Fiera di Rimini", meeting11.getDescription());
-	    assertEquals("Meeting di 3 giorni presso Fiera di Rimini", meeting21.getDescription());
-	    assertEquals("Meeting di 3 giorni presso Fiera di Rimini", meeting31.getDescription());
+	    assertEquals("In questa giornata è stato presentato ....", meeting11.getDescription());
+	    assertNotEquals("In questa giornata è stato presentato ....", meeting21.getDescription());
+	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting21.getDescription());
+	    
+	    success = calendario.modifyEvent(meeting21.getName(), meeting21.getDescription(), meeting21.getDate(), meeting21.getDate(),
+							    		 meeting21.getDaOra(), meeting21.getAOra(), meeting21.getName(), "Workshop relativo a....", 
+							    		 meeting21.getDate(), meeting21.getDaOra(), meeting21.getAOra(), meeting21.getState(), meeting21.getIdentifier());
+
+		// Verifica che l'operazione è andata a buon fine
+		assertTrue(success);
+		
+	    assertNotEquals("In questa giornata è stato presentato ....", meeting31.getDescription());
+	    assertNotEquals("Workshop relativo a....", meeting31.getDescription());
+	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting31.getDescription());
 	}
 	
 	@Test
@@ -121,9 +133,9 @@ class CalendarTest {
 	}
 	
     @Test
-    public void testDeleteEvent() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
+    public void testDeleteActivity() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
     	EventImpl event = (EventImpl) viaggio1;
-        calendario.removeEvent(event.getName(), event.getDate(), viaggio1.getDaOra(), viaggio1.getAOra());
+        calendario.removeActivity(event.getName(), event.getDate(), viaggio1.getDaOra(), viaggio1.getAOra());
         
         Set<Event> events = calendario.getAllEvents();
 
@@ -138,6 +150,29 @@ class CalendarTest {
         assertTrue(events.contains(presentaz2));
         assertTrue(events.contains(viaggio2));
         assertTrue(events.contains(viaggio3));
+    }
+    public void testDeleteEvent() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
+    	// Rimuovi tutti gli eventi con lo stesso identificatore
+    	Event event1 = calendario.newEvent("", LocalDate.now(), "00:00", "evento 1", "", "20:00", "21:00", State.IN_CORSO, "evento1 " + LocalDate.now().toString());
+    	Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento 2", "", "20:00", "21:00", State.IN_CORSO, "evento2 " + LocalDate.now().toString());
+    	Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento 3", "", "20:00", "21:00", State.IN_CORSO, "evento3 " + LocalDate.now().toString());
+	    
+    	EventImpl eventImpl = (EventImpl) event1;
+    	
+	    Set<Event> eventsToRemove = calendario.removeEvents(eventImpl.getName(), eventImpl.getDate(), eventImpl.getDaOra(), eventImpl.getAOra());
+	    Set<Event> events = calendario.getAllEvents();
+	
+	    // Verifico che tutti gli eventi con lo stesso identificatore siano stati rimossi
+	    for (Event evt : eventsToRemove) {
+	        assertFalse(events.contains(evt));
+	    }
+	
+	    // Verifico che gli altri eventi non siano stati rimossi
+	    assertTrue(events.contains(meeting1));
+	    assertTrue(events.contains(meeting2));
+	    assertTrue(events.contains(meeting3));
+	    assertTrue(events.contains(presentaz1));
+	    assertTrue(events.contains(presentaz2));
     }
     
 	@Test
@@ -164,14 +199,14 @@ class CalendarTest {
 		
 		// Test per EventNotFoundException durante la modifica di un evento non esistente
 		assertThrows(EventNotFoundException.class, () ->
-        				calendario.removeEvent("Discussione progetto", LocalDate.now(), "00:00", "01:00"));		
+        				calendario.removeActivity("Discussione progetto", LocalDate.now(), "00:00", "01:00"));		
 	}
 	   
     @Test
     public void testGetEventsInDate() {
         LocalDate date = LocalDate.now().plusDays(1);
-        calendarModel.setValueEvent(date, meeting1);
-        calendarModel.setValueEvent(date, presentaz2);
+        calendarModel.setValueAddEvent(date, meeting1);
+        calendarModel.setValueAddEvent(date, presentaz2);
 
         Set<Event> eventsInDate = calendarModel.getEventsInDate(date);
 
@@ -192,7 +227,7 @@ class CalendarTest {
         String event1Html = calendarModel.toHtml(meeting1) + meeting1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
         String event2Html = calendarModel.toHtml(presentaz1) + presentaz1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
 
-        String expectedHtml = "<html>29<br>" + event1Html + "<br>" + event2Html + "</html>";
+        String expectedHtml = "<html>4<br>" + event1Html + "<br>" + event2Html + "</html>";
         Object actualHtml = calendarModel.getValueAtDate(date, events);
         
         assertEquals(expectedHtml, actualHtml);

@@ -51,7 +51,9 @@ public interface CalendarP {
 	 * @return l'evento rimosso.
 	 * @throws EventNotFoundException 
 	 */
-	Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
+	Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
+	
+	Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 	
 	Set<Event> getAllEvents();
 	

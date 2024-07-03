@@ -130,13 +130,31 @@ public interface ConsoleController {
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
 	 * 
-	 * @param o = obbiettivo da eliminare
+	 * 
 	 * @throws EventNotFoundException 
 	 */
-	Event removeEvent(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
+	Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
+	
+	/**
+	 * 
+	 * @param name
+	 * @param date
+	 * 
+	 * 
+	 * 
+	 * @return
+	 * @throws EventNotFoundException
+	 */
+	Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 
 	/**
 	 * 
 	 */
 	void updateUIevents();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	Set<Event> getAllEventToFile();
 }
