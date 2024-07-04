@@ -25,28 +25,28 @@ public interface ConsoleController {
 	 * @param importo
 	 * @param tipo
 	 * @param nome
-	 * @param op
-	 * @return
+	 * @param op = operazione (servzio/obbiettivo)
+	 * @return risultato dell'operazione di update del conto
 	 * @throws IllegalOperationException
 	 */
 	boolean updateConto(double importo, boolean tipo, String nome, OperationType op) throws IllegalOperationException;
 	
 	/**
 	 * 
-	 * @return
+	 * @return la lista di tutti gli obbiettivi salvati (usata nella view consolle obbiettivi)
 	 */
 	List<Objective> getObjectiveList();
 	
 	/**
 	 * 
 	 * @param name
-	 * @return
+	 * @return l'bbiettivo con il nome specificato.
 	 */
 	Optional<Objective> getObjective(String name);
 	
 	/**
 	 * 
-	 * @param bNew
+	 * @param bNew = identifica se si è in modifica/aggiunta
 	 * @param nameObjective
 	 * @param newDescrOb
 	 * @param savingTarget
@@ -62,48 +62,47 @@ public interface ConsoleController {
 	
 	/**
 	 * 
-	 * @return
+	 * @return tutte le transazioni (obbiettivi e operazioni)
 	 */
 	List<Transaction> getAllTransactions();
 	
 	/**
 	 * 
-	 * @return
+	 * @return la stringa usata nella consolle controller per visualizzare le transazioni effettuate.
 	 */
 	List<String> getDatiTransazione();
 	
 	/**
 	 * 
-	 * @return
+	 * @return l'account.
 	 */
 	Account getAccount();
 	
 	/**
 	 * 
-	 * @return
+	 * @return il nuovo nome del controller.
 	 */
 	String setNameController();
 	
 	/**
 	 * 
-	 * @return
+	 * @return il riferimento alla classe CalendarModel. (x interfaccia)
 	 */
 	CalendarModel getCalendarModel();
 	
 	/**
 	 * 
-	 * @return
+	 * @return il riferimento alla classe CalendarView (x interfaccia).
 	 */
 	CalendarView drawCalendar();
 	
 	/**
 	 * 
-	 * @return
+	 * @return tutti gli eventi caricati dal file.
 	 */
 	Set<Event> loadEvents();
 	
 	/**
-	 * @return l'evento che è stato aggiunto/modificato
 	 * 
 	 * @param bNew = mi tiene traccia per sapere se creare l'evento o modificarlo
 	 * @param name = nome dell'evento
@@ -122,15 +121,20 @@ public interface ConsoleController {
 	 * @throws EventNotFoundException 
 	 * @throws EventAlreadyExistsException 
 	 * @throws InvalidParameterException 
+	 * 
+	 * @return tutti gli eventi dopo la modifica / aggiunta.
 	 */
 	 Set<Event> saveEvent(boolean bNew, String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra, 
 					    String newName, String newdesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, EventNotFoundException, InvalidParameterException;
 	
 	/**
-	 * elimina l'obbiettivo che gli viene passato 
 	 * 
-	 * 
-	 * @throws EventNotFoundException 
+	 * @param name
+	 * @param date
+	 * @param daOra
+	 * @param aOra
+	 * @return l'evento singolo rimosso.
+	 * @throws EventNotFoundException
 	 */
 	Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 	
@@ -138,22 +142,20 @@ public interface ConsoleController {
 	 * 
 	 * @param name
 	 * @param date
-	 * 
-	 * 
-	 * 
-	 * @return
 	 * @throws EventNotFoundException
+	 * 
+	 * @return il set di tutti gli eventi rimossi.
 	 */
 	Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 
 	/**
-	 * 
+	 * aggiorna la UI della consolle con gli eventi presenti nel calendario.
 	 */
 	void updateUIevents();
 	
 	/**
 	 * 
-	 * @return
+	 * @return tutti gli eventi presenti nel file.
 	 */
 	Set<Event> getAllEventToFile();
 }

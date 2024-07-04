@@ -23,7 +23,7 @@ import pp.projects.model.InvalidParameterException;
 import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
-import pp.projects.model.ServicesImpl;
+import pp.projects.model.Services;
 import pp.projects.model.State;
 import pp.projects.model.Transaction;
 import pp.projects.view.CalendarView;
@@ -40,7 +40,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.controllerLogin = cl;
 		this.account = new AccountImpl(controllerLogin.getUserName());
 		this.operationsList = new ArrayList<>();
-        this.operationsList.add(new ServicesImpl(account));
+        this.operationsList.add(new Services(account));
 	}
 		
 	@Override
@@ -76,7 +76,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		     }
 		  } else if (operType == OperationType.SERVIZIO) {
 		      for (AbstractOperations operation : operationsList) {
-		            if (operation instanceof ServicesImpl) {
+		            if (operation instanceof Services) {
 		                if (tipo) {		                    
 		                    bRes = operation.deposit(importo, nome);
 		                } else {
@@ -228,6 +228,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		return calendario.removeEvents(name, date, daOra, aOra);
 	}
 	
+	@Override
 	public void updateUIevents() {
 		controllerLogin.getConsolleView().updateEventsUI();
 	}
