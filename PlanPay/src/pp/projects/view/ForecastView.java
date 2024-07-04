@@ -108,7 +108,9 @@ public class ForecastView extends JFrame {
 						String formattedAmount = decFormat.format(parsedInput);
 						textAmount.setText(formattedAmount);
 					} catch(NumberFormatException ne) {
-						System.out.println(ne.getMessage());
+						JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!",
+								"Errore", JOptionPane.ERROR_MESSAGE);
+						
 						textAmount.setText("0,00");
 					}
 				}				

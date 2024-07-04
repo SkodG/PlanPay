@@ -39,10 +39,8 @@ public class ObjectiveView extends JFrame {
 	private JLabel lblDisplayBalance;
 	private double savingAmount;
 	private double balance;
-	private boolean	bNew;
 	private boolean	hasSaved;
 	private String description;
-	private String formatTarget;
 	private String nomeObbiettivo;
 	private Optional<ObjectiveImpl> optObjective;
 	
@@ -60,12 +58,11 @@ public class ObjectiveView extends JFrame {
 		
 		this.controller = controller;
 		this.nomeObbiettivo = nomeObbiettivo;
-		this.bNew  = bNew;
 		optObjective = controller.getObjective(nomeObbiettivo);
 		savingAmount = updateSavingAmount(nomeObbiettivo);		
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
-		System.out.println("soglia  risparmio =" +savingAmount);
+		System.out.println("soglia risparmio =" +savingAmount);
 		System.out.println("descrizione =" +description);
 		hasSaved = false;
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
@@ -136,7 +133,8 @@ public class ObjectiveView extends JFrame {
 						String formattedAmount = decFormat.format(parsedInput);
 						textAmount.setText(formattedAmount);
 					} catch(NumberFormatException ne) {
-						System.out.println(ne.getMessage());
+						JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!",
+								"Errore", JOptionPane.ERROR_MESSAGE);
 						textAmount.setText("0,00");
 					}					
 				}				
@@ -171,10 +169,6 @@ public class ObjectiveView extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					//String input = textAmount.getText().trim();
-					//String convInput = input.replace(".", "");
-					//convInput = convInput.replace(",", ".");
-					//savingAmount = Double.parseDouble(convInput);
 					System.out.println("Soglia impostata: "+savingAmount);
 					optObjective = controller.getObjective(textName.getText());
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
@@ -184,7 +178,7 @@ public class ObjectiveView extends JFrame {
 						//l'obbiettivo ha un nome nuovo
 						//controllo che il nome non sia già preso
 						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
-						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
+						System.out.println("nuovo nome obbiettivo: "+textName.getText());
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
 						System.out.println("nuova descrizione obbiettivo: "+description);
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
@@ -225,7 +219,8 @@ public class ObjectiveView extends JFrame {
 		btnOperation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnSave.doClick();
-				//apro il form di ServicesView solo se l'obbettivo è stato salvato e non sto creando un nuovo obbiettivo con lo stesso nome di un altro
+				// apro il form di ServicesView solo se l'obbettivo è stato salvato
+				// e non sto creando un nuovo obbiettivo con lo stesso nome di un obbiettivo già presente
 				if(!bNew || hasSaved) {
 					ServicesView serviceView = new ServicesView(OperationType.OBIETTIVO, textName.getText(), controller);
 					serviceView.setVisible(true);

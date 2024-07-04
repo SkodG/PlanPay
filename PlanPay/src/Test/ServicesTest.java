@@ -27,9 +27,11 @@ class ServicesTest {
 	}
 	
 	@Test
-	public void testClassOperations() {		
+	public void testOperations() {
+		//test del deposito di soldi dall'esterno verso il Conto
 		assertTrue(services.deposit(100.65, "rimborso spese"));
 		assertTrue(account.getBalance() == 100.65);
+		//verifico che venga creata 
 		assertTrue(services.getList().size() == 1);
 		
 		assertTrue(services.withdraw(100, "cena fuori"));

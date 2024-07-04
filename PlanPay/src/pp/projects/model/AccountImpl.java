@@ -17,7 +17,7 @@ public class AccountImpl implements Account{
 
 	@Override
 	public Double getBalance() {
-		return this.balance;
+		return Math.floor(balance*100) / 100;
 	}
 
 	@Override

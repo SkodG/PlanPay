@@ -9,7 +9,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 	private String description;
 	private double savedBalance;
 	private double savingTarget;
-	private LocalDate date; //type?
+	private LocalDate date; 
 	
     public ObjectiveImpl(Account accountRef, String name, String description, double savingTarget) {
         super(accountRef);
@@ -111,7 +111,8 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		double yearlyFrequency = 12 / monthsPerSaving;
 		double result = 0.0;
 		double frequency = 0.0;
-		if(monthsPerSaving > timeInMonths || monthsPerSaving <= 0 || timeInYears < 0 || targetAmount <= 0.0)
+		if(monthsPerSaving > timeInMonths || monthsPerSaving <= 0 ||
+				years < 0 || months < 0 || timeInYears < 0 || targetAmount <= 0.0)
 			throw new IllegalInputException("Input non valido! \n"+
 							"Inserire valori positivi e una frequenza inferiore al periodo temporale totale");
 		if( yearlyFrequency > 12)
