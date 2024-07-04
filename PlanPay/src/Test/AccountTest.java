@@ -17,7 +17,7 @@ class AccountTest {
 	}
 	
 	@Test
-	void testInitialization() {
+	public void testInitialization() {
 		//testo che l'account sia stato inizializzato con successo
 		assertTrue(account.getName().equals("Luca"));
 		assertTrue(account.getBalance() == 0.0);
@@ -25,7 +25,15 @@ class AccountTest {
 	}
 	
 	@Test
-	public void testAccountOperations(){
+	public void testEquals() {
+		/*AccountImpl sameAccount = new AccountImpl("Luca");
+		assertTrue(account.equals(sameAccount));*/
+		AccountImpl diffAccount = new AccountImpl("Sara");
+		assertFalse(account.equals(diffAccount));
+	}
+	
+	@Test
+	public void testOperations(){
 		//test sulle operazioni di aggiunta e sottrazione dal saldo dell'account
 		account.addBalance(100);
 		assertTrue(account.getBalance() == 100);
@@ -44,3 +52,4 @@ class AccountTest {
 	}
 	
 }
+

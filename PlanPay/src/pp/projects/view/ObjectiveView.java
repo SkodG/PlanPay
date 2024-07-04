@@ -16,7 +16,12 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
@@ -34,7 +39,6 @@ public class ObjectiveView extends JFrame {
 	private JLabel lblDisplayBalance;
 	private double savingAmount;
 	private double balance;
-	private boolean	bNew;
 	private boolean	hasSaved;
 	private String description;
 	private String nomeObbiettivo;
@@ -54,12 +58,11 @@ public class ObjectiveView extends JFrame {
 		
 		this.controller = controller;
 		this.nomeObbiettivo = nomeObbiettivo;
-		this.bNew  = bNew;
 		optObjective = controller.getObjective(nomeObbiettivo);
-		savingAmount = updateSavingAmount(nomeObbiettivo);
+		savingAmount = updateSavingAmount(nomeObbiettivo);		
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
-		System.out.println("soglia  risparmio =" +savingAmount);
+		System.out.println("soglia risparmio =" +savingAmount);
 		System.out.println("descrizione =" +description);
 		hasSaved = false;
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
@@ -108,10 +111,35 @@ public class ObjectiveView extends JFrame {
 		lblThreshold.setBounds(22, 120, 101, 14);
 		contentPane.add(lblThreshold);
 				
-		textAmount = new JTextField(Double.toString(savingAmount));
+		textAmount = new JTextField(Double.toString(savingAmount).replace(".", ","));
 		textAmount.setFont(new Font("Calibri", Font.PLAIN, 14));
 		textAmount.setColumns(10);
 		textAmount.setBounds(151, 117, 99, 20);
+		textAmount.addFocusListener(new FocusAdapter() {	
+			@Override
+			public void focusLost(FocusEvent e) {
+				String input = textAmount.getText().trim();
+				if(!input.isEmpty()) {
+					try {
+						String convInput = input.replace(".", "");
+						convInput = convInput.replace(",", ".");
+						double parsedInput = Double.parseDouble(convInput);	
+						savingAmount = parsedInput;
+						System.out.println("Ammontare inserito: "+ savingAmount);
+						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
+						sym.setDecimalSeparator(',');
+						sym.setGroupingSeparator('.');
+						DecimalFormat decFormat =  new DecimalFormat("#,##0.00", sym);
+						String formattedAmount = decFormat.format(parsedInput);
+						textAmount.setText(formattedAmount);
+					} catch(NumberFormatException ne) {
+						JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!",
+								"Errore", JOptionPane.ERROR_MESSAGE);
+						textAmount.setText("0,00");
+					}					
+				}				
+			}				
+		});
 		contentPane.add(textAmount);
 		
 		JTextArea textDescr = new JTextArea(description);
@@ -141,7 +169,7 @@ public class ObjectiveView extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					savingAmount = Double.parseDouble(textAmount.getText());
+					System.out.println("Soglia impostata: "+savingAmount);
 					optObjective = controller.getObjective(textName.getText());
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
 						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
@@ -150,18 +178,20 @@ public class ObjectiveView extends JFrame {
 						//l'obbiettivo ha un nome nuovo
 						//controllo che il nome non sia già preso
 						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
-						System.out.println("nuovo nome obbiettivo: "+textName.getText());//Optional.Empty -> non ha trovato l'obbiettivo
+						System.out.println("nuovo nome obbiettivo: "+textName.getText());
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
 						System.out.println("nuova descrizione obbiettivo: "+description);
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
 						hasSaved = true;
 						textName.setEditable(false);
+						savingAmount = updateSavingAmount(textName.getText());
 						setVisible(false);
 					}//altrimenti se l'obbiettivo è già stato creato ma viene modificato
 					else if((optObjective.get().getSavingTarget() != savingAmount) ||
 							 (optObjective.get().getDescription().equals(description))) {
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
+						savingAmount = updateSavingAmount(textName.getText());
 						setVisible(false);
 					}
 					else if(bNew && hasSaved == false){
@@ -170,7 +200,7 @@ public class ObjectiveView extends JFrame {
 				}
 				catch(NumberFormatException n) {
 					JOptionPane.showMessageDialog(null, "Inserire cifra numerica per la soglia di risparmio", "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0.00");
+					textAmount.setText("0,00");
 				}
 				catch(IllegalStateException l) {
 					JOptionPane.showMessageDialog(null, l.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
@@ -189,7 +219,8 @@ public class ObjectiveView extends JFrame {
 		btnOperation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnSave.doClick();
-				//apro il form di ServicesView solo se l'obbettivo è stato salvato e non sto creando un nuovo obbiettivo con lo stesso nome di un altro
+				// apro il form di ServicesView solo se l'obbettivo è stato salvato
+				// e non sto creando un nuovo obbiettivo con lo stesso nome di un obbiettivo già presente
 				if(!bNew || hasSaved) {
 					ServicesView serviceView = new ServicesView(OperationType.OBIETTIVO, textName.getText(), controller);
 					serviceView.setVisible(true);
