@@ -21,11 +21,11 @@ public class CalendarImpl implements CalendarP{
 	private String pathEvents;
 	private Login login;
 			
-	public CalendarImpl(int day, String user) {
+	public CalendarImpl(int day, String userName) {
 		this.setEvents = new TreeSet<>(new ComparatorEvents());
 		this.day = day;
 		this.login = new LoginImpl();
-		this.pathEvents = login.getEventsFilePath(user);
+		this.pathEvents = login.getEventsFilePath(userName);
 		
 		if(pathEvents != null)		
 			setEvents = loadEventsFromFile();
@@ -34,11 +34,10 @@ public class CalendarImpl implements CalendarP{
 	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException {
         validateEventParameters(newName, newDaOra, newAora);
 
-        Optional<Event> existingEvent = getExistingEvent(newName, currentDate, newDaOra, newAora);
+        Optional<Event> existingEvent = getExistingEvent(identifier, currentDate, newDaOra, newAora);
         
         if (existingEvent.isPresent()) {
-        	System.out.println("evento esistente : " + existingEvent.get().getIdentifier() + " - " + existingEvent.get().getDaOra() + " " + existingEvent.get().getAOra());
-            throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
+        	throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
         }
 
         Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato, identifier);
@@ -53,6 +52,11 @@ public class CalendarImpl implements CalendarP{
 
         if (eventsToModify.isEmpty()) {
             throw new EventNotFoundException("Evento inesistente! Impossibile modificarlo.");
+        }
+        
+        Optional<Event> existingEvent = getExistingEvent(identifier, currentDate, newDaOra, newAora);
+        if (existingEvent.isPresent()) {
+            throw new EventAlreadyExistsException("Esiste già un evento nell'intervallo di tempo specificato! Impossibile modificarlo.");
         }
 
         for (EventImpl eventImpl : eventsToModify) {
@@ -143,7 +147,7 @@ public class CalendarImpl implements CalendarP{
         return this.setEvents;
     }
 
-    private Optional<Event> getExistingEvent(String name, LocalDate currentDate, String daOra, String aOra) {
+    private Optional<Event> getExistingEvent(String identifier, LocalDate currentDate, String daOra, String aOra) {
 		LocalTime newStart = LocalTime.parse(daOra);
 	    LocalTime newEnd = LocalTime.parse(aOra);
 		
@@ -152,7 +156,7 @@ public class CalendarImpl implements CalendarP{
 							                    if (e instanceof EventImpl) {
 							                        EventImpl eventImpl = (EventImpl) e;
 							                        
-							                        return eventImpl.getDate().equals(currentDate);
+							                        return eventImpl.getDate().equals(currentDate) && !eventImpl.getIdentifier().equals(identifier);
 							                    }
 							                    return false;
 								    		})

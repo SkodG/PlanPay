@@ -136,48 +136,6 @@ public class CalendarModel extends AbstractTableModel {
         return cellData.get(date);
     }
     
-    private Set<Event> eventIdentifier(String identifier, Set<Event> setEvents) {
-        return setEvents.stream().filter(e -> ((EventImpl) e).getIdentifier().equals(identifier)).collect(Collectors.toSet());
-    }
-    
-    public void setValueModifyEvent(Set<Event> events, Event updateEvent) {
-        String identifier = updateEvent.getIdentifier();
-        Set<Event> identifierEvents = eventIdentifier(identifier, events);
-
-        for (Event even : identifierEvents) {
-            EventImpl ev = (EventImpl) even;
-            Set<Event> eventInDate = getEventsInDate(ev.getDate());
-
-            if (eventInDate != null) {
-                eventInDate.forEach(existingEvent -> {
-                    EventImpl existingEventImpl = (EventImpl) existingEvent;
-                    existingEventImpl.setName(((EventImpl) updateEvent).getName());
-                    existingEventImpl.setDaOra(((EventImpl) updateEvent).getDaOra());
-                    existingEventImpl.setAOra(((EventImpl) updateEvent).getAOra());
-                    existingEventImpl.setState(((EventImpl) updateEvent).getState());
-                    existingEventImpl.setIdentifier(((EventImpl) updateEvent).getIdentifier());
-                });
-                cellData.put(ev.getDate(), eventInDate);
-            }
-        }
-
-        LocalDate updateDate = ((EventImpl) updateEvent).getDate();
-        Set<Event> updatedEvents = getEventsInDate(updateDate);
-
-        if (updatedEvents != null) {
-            updatedEvents.stream()
-                .filter(existingEvent -> ((EventImpl) existingEvent).getIdentifier().equals(identifier))
-                .forEach(existingEvent -> {
-                    EventImpl existingEventImpl = (EventImpl) existingEvent;
-                    existingEventImpl.setDescription(((EventImpl) updateEvent).getDescription());
-                });
-
-            cellData.put(updateDate, updatedEvents);
-        }
-
-        setValueCalendarEvent(updateDate);
-    }
-    
     public boolean removeEvent(LocalDate date, Event event) {
         Set<Event> events = getEventsInDate(date);
         if (events != null) {

@@ -238,7 +238,7 @@ public class ConsolleView extends JFrame {
 														}
 														return false;
 													})
-													.collect(Collectors.toSet());
+													.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
 			if(eventsToday != null) {
 				eventListModel.clear();			
 				eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
@@ -261,7 +261,7 @@ public class ConsolleView extends JFrame {
 				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
 				for (Event event : nextEvents) {
 					EventImpl ev = (EventImpl) event;
-					eventListModel.addElement(ev.getDate() + " : " + ev.getInfoEventToString());
+					eventListModel.addElement(ev.getDate() + " >> " + ev.getInfoEventToString());
 	            }
 	        }
 		}

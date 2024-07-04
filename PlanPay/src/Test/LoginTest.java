@@ -59,25 +59,25 @@ public class LoginTest {
     
     @Test
     public void testLoadCredential() throws FileNotFoundException, IOException {
-        loginController.getLoginModel().saveCredential("existinguser", "password123", "existinguser");
+        loginController.getLoginModel().saveCredential("giuli95", "password123", "giulia");
         
         loginController.getLoginModel().loadCredential();
 
         Map<String, UserCredentials> credentials = loginController.getLoginModel().getCredential();        
-        assertTrue(credentials.containsKey("existinguser"));
-        assertEquals("password123", credentials.get("existinguser").getPassword());
-        assertEquals("existinguser", credentials.get("existinguser").getUserName());
+        assertTrue(credentials.containsKey("giuli95"));
+        assertEquals("password123", credentials.get("giuli95").getPassword());
+        assertEquals("giulia", credentials.get("giuli95").getUserName());
     }
 
     // success login
     @Test
     public void testSuccessfulLogin() throws AuthenticationException {
         try {
-            loginController.signupButtonClick("testuser", "password123", "Test User");
+            loginController.signupButtonClick("leo555", "password123", "leo");
         } catch (RegistrationException e) {
         }
 
-        boolean isAuthenticated = loginController.loginButtonClick("testuser", "password123");
+        boolean isAuthenticated = loginController.loginButtonClick("leo555", "password123");
         assertTrue(isAuthenticated);
     }
     

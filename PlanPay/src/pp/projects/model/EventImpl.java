@@ -109,4 +109,5 @@ public class EventImpl implements Event, Data{
 	public int hashCode() {
 	    return Objects.hash(name, description, daDate, daOra, aOra, eventState);
 	}
+	
 }

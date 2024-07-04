@@ -235,4 +235,5 @@ public class ConsoleControllerImpl implements ConsoleController{
 		this.calendario = new CalendarImpl(0, setNameController());
 		return calendario.getAllEvents();
 	}
+	
 }

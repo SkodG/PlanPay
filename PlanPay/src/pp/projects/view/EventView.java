@@ -232,7 +232,8 @@ public class EventView extends JDialog {
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
 						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, identifierEvent);
 						edTitolo.setEditable(false);
-						calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
+						//calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
+						calendar.updateUI(events);	
 						c.updateUIevents();
 		                calendar.updateLegenda(events);
 						EventView.this.setVisible(false);
@@ -243,7 +244,7 @@ public class EventView extends JDialog {
 					} catch (InvalidParameterException e1) {
 						JOptionPane.showMessageDialog(null, "Parametro non valido! Controlla i dati inseriti.", "Errore", JOptionPane.ERROR_MESSAGE);
 					} catch (RuntimeException e1) {
-					    JOptionPane.showMessageDialog(null, "Errore durante il salvataggio degli eventi. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
+					    JOptionPane.showMessageDialog(null, "Errore durante il salvataggio. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (ParseException ex) {
 					Date daOraDate = (Date) timeFieldAora.getValue();

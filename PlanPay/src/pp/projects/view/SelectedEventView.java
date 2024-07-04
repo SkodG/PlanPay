@@ -42,7 +42,9 @@ public class SelectedEventView extends JFrame {
 		
 		setContentPane(contentPane);
 		
-		panelEvents = new JPanel();
+		panelEvents = createEventPanel(setEvents, controller, calendar, day);
+		
+		/*panelEvents = new JPanel();
 		panelEvents.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panelEvents.setLayout(new GridBagLayout());
 		
@@ -53,7 +55,6 @@ public class SelectedEventView extends JFrame {
         gbc.weightx = 1.0;
         gbc.insets = new Insets(5, 5, 5, 5); // Aggiunge dei margini attorno ai pulsanti
 		
-		// creo tanti bottoni quanti sono gli eventi, in modo che spingendoci sopra possa aprire la form
 		for(Event ev : setEvents) {
 			buttonEvent = new JButton(ev.getInfoEventToString());
 			gbc.gridy = GridBagConstraints.RELATIVE; // Aggiunge il pulsante nella prossima riga disponibile
@@ -72,12 +73,70 @@ public class SelectedEventView extends JFrame {
                     SelectedEventView.this.setVisible(false);
                 }
             });
-		}
+		}*/
 		
         JScrollPane scrollPane = new JScrollPane(panelEvents);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         // Add the JScrollPane to the JFrame
         contentPane.add(scrollPane);
 	}
+	
+	private JPanel createEventPanel(Set<Event> setEvents, ConsoleController controller, CalendarView calendar, LocalDate day) {
+        JPanel panel = new JPanel();
+        panelEvents.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panelEvents.setLayout(new GridBagLayout());
+		
+        GridBagConstraints gbc = createGridBagConstraints();
+
+        setEvents.forEach(event -> {
+            JButton button = new JButton(event.getInfoEventToString());
+            button.addActionListener(createButtonActionListener(event, controller, calendar, day));
+            panel.add(button, gbc);
+        });
+
+        return panel;
+    }
+	
+	private GridBagConstraints createGridBagConstraints() {
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        
+        return gbc;
+    }
+
+    private ActionListener createButtonActionListener(Event event, ConsoleController controller, CalendarView calendar, LocalDate day) {
+        return e -> {
+            EventView eventView = new EventView(false, day, controller, calendar);
+            EventImpl eventImpl = (EventImpl) event;
+            eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
+            eventView.setVisible(true);
+            SelectedEventView.this.setVisible(false);
+        };
+        
+        /*
+         * for(Event ev : setEvents) {
+			buttonEvent = new JButton(ev.getInfoEventToString());
+			gbc.gridy = GridBagConstraints.RELATIVE; // Aggiunge il pulsante nella prossima riga disponibile
+            panelEvents.add(buttonEvent, gbc);
+            
+            EventImpl eventImpl = (EventImpl) ev;
+            
+            // Aggiungi un ActionListener a ogni bottone
+            buttonEvent.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Apri la finestra dell'evento
+                    EventView eventView = new EventView(false, day, controller, calendar);
+                    eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
+                    eventView.setVisible(true);
+                    SelectedEventView.this.setVisible(false);
+                }
+            });*/
+    }
 }
 

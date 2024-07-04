@@ -32,9 +32,6 @@ public class LoginView extends JFrame {
 	private String username;
 	private String password;
 
-	/**
-	 * Create the frame.
-	 */
 	public LoginView(LoginControllerImpl controller) {
 		setForeground(UIManager.getColor("activeCaption"));
 		this.username = "";

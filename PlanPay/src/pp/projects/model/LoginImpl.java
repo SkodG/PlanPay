@@ -80,14 +80,14 @@ public class LoginImpl implements Login{
 			return false;
 		}
 		
-		pathEvents = "src/resource/" + utente + "_events.txt";
+		pathEvents = "src/resource/" + nomeUser.trim() + "_events.txt";
 		credentials.put(utente, new UserCredentials(password, nomeUser, pathEvents));
 		saveCredential(utente, password, nomeUser);
 		return true;
 	}
 	
 	@Override
-	public void saveCredential(String utente, String password, String nomeUer) {
+	public void saveCredential(String utente, String password, String nomeUser) {
 		// Percorso relativo al file nel progetto
         File file = new File(path);
 
@@ -99,7 +99,7 @@ public class LoginImpl implements Login{
 			if(pathEvents.trim() == "")
 				// sono nella fase di test e restituisco il percorso del file di test
 				pathEvents = "test_events";
-			writer.write(nomeUer + " " + utente + " " + password +  " " + pathEvents);
+			writer.write(nomeUser + " " + utente + " " + password +  " " + pathEvents);
 			writer.newLine();
 		} catch (IOException e) {
             System.out.print("Problemi al salvataggio del file: " + e);
@@ -132,11 +132,14 @@ public class LoginImpl implements Login{
 	}
 	
 	@Override
-    public String getEventsFilePath(String user) {
-        UserCredentials cred = credentials.get(user);
-        if (cred != null) {
-            return cred.getEventsFilePath();
-        }
+    public String getEventsFilePath(String userName) {
+		for (Map.Entry<String, UserCredentials> entry : credentials.entrySet()) {
+	        UserCredentials value = entry.getValue();
+	        
+	        if (value.getUserName().equals(userName)) {
+	            return value.getEventsFilePath();
+	        }
+		}
         return null;
     }
 }

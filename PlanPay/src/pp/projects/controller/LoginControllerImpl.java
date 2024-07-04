@@ -31,21 +31,18 @@ public class LoginControllerImpl implements LoginController{
 	public boolean loginButtonClick(String user, String passw) throws IllegalArgumentException, AuthenticationException{
 		boolean isAuthenticated = false;
 		
-		// controllo che i dati siano stati inseriti
-		if(!user.trim().equals("") && 
-		   !passw.trim().equals("")) {
-			// richiamo la funzione per sapere se i dati sono corretti
-			isAuthenticated = loginModel.valideAuthenticate(user, passw);
-			if(isAuthenticated) {
-				this.userName = loginModel.getAccountName();
-				consolleView.setVisible(true);
-				return true;
-			 } else {
-	                throw new AuthenticationException("Credenziali non valide.");
-	         }
-	     } else {
-	         throw new IllegalArgumentException("Nome utente e password non possono essere vuoti.");
-	     }
+		if (isValidString(user) && isValidString(passw)) {
+            isAuthenticated = loginModel.valideAuthenticate(user, passw);
+            if (isAuthenticated) {
+                this.userName = loginModel.getAccountName();
+                consolleView.setVisible(true);
+                return true;
+            } else {
+                throw new AuthenticationException("Credenziali non valide.");
+            }
+        } else {
+            throw new IllegalArgumentException("Nome utente e password non possono essere vuoti o contenere spazi.");
+        }
 	}
 	
 	@Override
@@ -58,18 +55,16 @@ public class LoginControllerImpl implements LoginController{
 	public boolean signupButtonClick(String user, String passw, String name) throws IllegalArgumentException, RegistrationException {
 		boolean isRegistred = false;
 		
-		if(!user.trim().equals("") && 
-		   !passw.trim().equals("") && 
-		   !name.trim().equals("")) {
-			  isRegistred = loginModel.registration(user, passw, name);
-			  if(isRegistred) {
-				  return true;
-	          } else {
-	                throw new RegistrationException("Registrazione non riuscita.");
-	          }
-	     } else {
-	         throw new IllegalArgumentException("Nome utente, password e nome non possono essere vuoti.");
-	     }
+		if (isValidString(user) && isValidString(passw) && isValidString(name)) {
+            isRegistred = loginModel.registration(user, passw, name);
+            if (isRegistred) {
+                return true;
+            } else {
+                throw new RegistrationException("Registrazione non riuscita.");
+            }
+        } else {
+            throw new IllegalArgumentException("Nome utente, password e nome non possono essere vuoti o contenere spazi.");
+        }
 	}
 	
 	@Override
@@ -80,6 +75,10 @@ public class LoginControllerImpl implements LoginController{
 	@Override
 	public ConsolleView getConsolleView() {
 		return this.consolleView;
+	}
+	
+	private boolean isValidString(String str) {
+	     return str != null && !str.trim().isEmpty() && !str.contains(" ");
 	}
 	
 	public Login getLoginModel() {

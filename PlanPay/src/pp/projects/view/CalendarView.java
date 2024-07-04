@@ -206,20 +206,20 @@ public class CalendarView extends JFrame {
 		JPanel pnState_daAvviare = new JPanel();
 		pnState_daAvviare.setBackground(new Color(255, 51, 0));
 		pnState_daAvviare.setBounds(10, 10, 25, 25);
-		
+
+		pnLegenda.add(pnState_daAvviare);
 		pnLegenda.add(pnState_inCorso);
 		pnLegenda.add(pnState_concluso);
-		pnLegenda.add(pnState_daAvviare);
     }
     
-    private void addLegendaLabels(JPanel pnLegenda) {
-        lbNeventi_concluso = createLabel("0 attività da avviare", 45, 10, 168, 25, 14);
+    private void addLegendaLabels(JPanel pnLegenda) {        
+        lbNeventi_daAvviare = createLabel("0 attività da avviare", 45, 10, 168, 25, 14);
         lbNeventi_incorso = createLabel("0 attività in corso", 45, 38, 168, 25, 14);
-        lbNeventi_daAvviare = createLabel("0 attività concluse", 45, 66, 168, 25, 14);
+        lbNeventi_concluso = createLabel("0 attività concluse", 45, 66, 168, 25, 14);
 
-        pnLegenda.add(lbNeventi_concluso);
-        pnLegenda.add(lbNeventi_incorso);
         pnLegenda.add(lbNeventi_daAvviare);
+        pnLegenda.add(lbNeventi_incorso);
+        pnLegenda.add(lbNeventi_concluso);
     }
     
     public void updateLegenda(Set<Event> events) {
@@ -248,10 +248,9 @@ public class CalendarView extends JFrame {
                 }
             }
         }
-
-        lbNeventi_concluso.setText(eventiConclusi + " attività conclus" + (eventiConclusi == 1 ? "a" : "e"));
-        lbNeventi_incorso.setText(eventiIncorso + " attività in corso");
         lbNeventi_daAvviare.setText(eventiDaAvviare + " attività da avviare");
+        lbNeventi_incorso.setText(eventiIncorso + " attività in corso");
+        lbNeventi_concluso.setText(eventiConclusi + " attività conclus" + (eventiConclusi == 1 ? "a" : "e"));
     }
 
     public LocalDate selectDate() {
@@ -260,20 +259,22 @@ public class CalendarView extends JFrame {
         return calendarModel.getDateAt(indexRow, indexColumn);
     }
     
-    public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
-        if (!bDelete) {
+    //public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
+        /*if (!bDelete) {
             events.forEach(event -> {
                 EventImpl eventImpl = (EventImpl) event;
                 if (eventView.isbNew()) {
                     calendarModel.setValueAddEvent(eventImpl.getDate(), event);
-                } else {
-                    calendarModel.setValueModifyEvent(controller.loadEvents(), event);
-                }
+                } 
             });
+            if (!eventView.isbNew())
+            	calendarModel.loadEvents(events);
         } else {
             eventView.setVisible(false);
-            calendarModel.setValueAddEvent(aData, null);
-        }
+            calendarModel.removeEvent(aData, null);
+        }*/
+    public void updateUI(Set<Event> events) {
+    	calendarModel.loadEvents(events);
         refreshUI();
     }
     

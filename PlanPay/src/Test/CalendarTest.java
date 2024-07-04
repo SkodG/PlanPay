@@ -31,6 +31,8 @@ class CalendarTest {
 	private Event viaggio1;
 	private Event viaggio2;
 	private Event viaggio3;
+	private Event eventTest;
+	private Event eventTest2;
 	
 	@BeforeEach
 	 public void setUp() throws EventAlreadyExistsException, InvalidParameterException {
@@ -48,6 +50,10 @@ class CalendarTest {
 	    viaggio1 = calendario.newEvent("", LocalDate.of(2024, 04, 25), "00:00", "00:00", "Viaggio Parigi", "12:00", "15:00", State.CONCLUSO, "Viaggio Parigi " + LocalDate.of(2024, 04, 25).toString());
 	    viaggio2 = calendario.newEvent("", LocalDate.of(2024, 04, 26), "00:00", "00:00", "Viaggio Parigi", "12:00", "15:00", State.CONCLUSO, "Viaggio Parigi " + LocalDate.of(2024, 04, 25).toString());
 	    viaggio3 = calendario.newEvent("", LocalDate.of(2024, 04, 27), "00:00", "00:00", "Viaggio Parigi", "12:00", "15:00", State.CONCLUSO, "Viaggio Parigi " + LocalDate.of(2024, 04, 25).toString());
+	
+    	eventTest = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento Test", "", "10:00", "12:00", State.IN_CORSO, "eventoTest " + LocalDate.now().plusDays(1).toString());
+        eventTest2 = calendario.newEvent("", LocalDate.now(), "00:00", "evento Test2", "", "15:00", "18:00", State.CONCLUSO, "eventoTest2 " + LocalDate.now().toString());
+    	
 	}
 	
 	@Test
@@ -134,38 +140,48 @@ class CalendarTest {
 	
     @Test
     public void testDeleteActivity() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
-    	EventImpl event = (EventImpl) viaggio1;
-        calendario.removeActivity(event.getName(), event.getDate(), viaggio1.getDaOra(), viaggio1.getAOra());
-        
+    	Event event1 = calendario.newEvent("", LocalDate.now(), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
+        Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
+        Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
+    	
+    	EventImpl event2Impl = (EventImpl) event2;
+    	
+        // Rimuovere solo un giorno dell'evento
+        calendario.removeActivity(event2Impl.getName(), event2Impl.getDate(), event2Impl.getDaOra(), event2Impl.getAOra());
+
         Set<Event> events = calendario.getAllEvents();
 
-        // Verifico che viaggio1 sia stato rimosso
-        assertFalse(events.contains(viaggio1));
+        // Verificare che solo il giorno specificato sia stato rimosso
+        assertFalse(events.contains(event2));
+        assertTrue(events.contains(event1));
+        assertTrue(events.contains(event3));
 
-        // Verifico che gli altri eventi siano ancora presenti
+        // Verificare che gli altri eventi siano ancora presenti
         assertTrue(events.contains(meeting1));
         assertTrue(events.contains(meeting2));
         assertTrue(events.contains(meeting3));
         assertTrue(events.contains(presentaz1));
         assertTrue(events.contains(presentaz2));
-        assertTrue(events.contains(viaggio2));
+        assertTrue(events.contains(viaggio1));
         assertTrue(events.contains(viaggio3));
     }
+
     public void testDeleteEvent() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
     	// Rimuovi tutti gli eventi con lo stesso identificatore
-    	Event event1 = calendario.newEvent("", LocalDate.now(), "00:00", "evento 1", "", "20:00", "21:00", State.IN_CORSO, "evento1 " + LocalDate.now().toString());
-    	Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento 2", "", "20:00", "21:00", State.IN_CORSO, "evento2 " + LocalDate.now().toString());
-    	Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento 3", "", "20:00", "21:00", State.IN_CORSO, "evento3 " + LocalDate.now().toString());
-	    
-    	EventImpl eventImpl = (EventImpl) event1;
+    	Event event1 = calendario.newEvent("", LocalDate.now(), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
+        Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
+        Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
     	
-	    Set<Event> eventsToRemove = calendario.removeEvents(eventImpl.getName(), eventImpl.getDate(), eventImpl.getDaOra(), eventImpl.getAOra());
-	    Set<Event> events = calendario.getAllEvents();
-	
-	    // Verifico che tutti gli eventi con lo stesso identificatore siano stati rimossi
-	    for (Event evt : eventsToRemove) {
-	        assertFalse(events.contains(evt));
-	    }
+    	EventImpl event3Impl = (EventImpl) event3;
+    	
+        // Rimuovere solo un giorno dell'evento
+    	Set<Event> eventsToRemove = calendario.removeEvents(event3Impl.getName(), event3Impl.getDate(), event3Impl.getDaOra(), event3Impl.getAOra());
+    	Set<Event> events = calendario.getAllEvents();
+
+        // Verificare che solo il giorno specificato sia stato rimosso
+        assertFalse(events.contains(event2));
+        assertTrue(events.contains(event1));
+        assertTrue(events.contains(event3));
 	
 	    // Verifico che gli altri eventi non siano stati rimossi
 	    assertTrue(events.contains(meeting1));
@@ -197,9 +213,12 @@ class CalendarTest {
         				calendario.modifyEvent("Laurea", "", LocalDate.of(2024, 10, 25), LocalDate.now().plusDays(1), "08:00", "20:00", "Malattia", 
         									   "Proclamazione tesi", LocalDate.now().plusDays(1), "00:00", "18:00", State.DA_AVVIARE, "Laurea " + LocalDate.of(2024, 10, 25).toString()));
 		
-		// Test per EventNotFoundException durante la modifica di un evento non esistente
+		// Test per EventNotFoundException durante la rimozione di un evento non esistente
 		assertThrows(EventNotFoundException.class, () ->
         				calendario.removeActivity("Discussione progetto", LocalDate.now(), "00:00", "01:00"));		
+		assertThrows(EventNotFoundException.class, () ->
+						calendario.removeEvents("Evento inesistente", LocalDate.now().plusDays(1), "23:00", "00:00"));		
+
 	}
 	   
     @Test
@@ -221,13 +240,13 @@ class CalendarTest {
         LocalDate date = LocalDate.now().plusDays(1);
 
         Set<Event> events = new HashSet<>();
-        events.add(meeting1);
-        events.add(presentaz1);
+        events.add(eventTest);
+        events.add(eventTest2);
 
-        String event1Html = calendarModel.toHtml(meeting1) + meeting1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
-        String event2Html = calendarModel.toHtml(presentaz1) + presentaz1.getInfoEventToString().replace("\n", " ").replace("\r", " ");
+        String event1Html = calendarModel.toHtml(eventTest) + eventTest.getInfoEventToString().replace("\n", " ").replace("\r", " ");
+        String event2Html = calendarModel.toHtml(eventTest2) + eventTest2.getInfoEventToString().replace("\n", " ").replace("\r", " ");
 
-        String expectedHtml = "<html>4<br>" + event1Html + "<br>" + event2Html + "</html>";
+        String expectedHtml = "<html>5<br>" + event1Html + "<br>" + event2Html + "</html>";
         Object actualHtml = calendarModel.getValueAtDate(date, events);
         
         assertEquals(expectedHtml, actualHtml);
