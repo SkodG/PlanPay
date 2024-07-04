@@ -6,17 +6,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pp.projects.model.AbstractOperations;
+import pp.projects.model.Account;
 import pp.projects.model.AccountImpl;
-import pp.projects.model.ServicesImpl;
+import pp.projects.model.Services;
 
 class ServicesTest {
-	private ServicesImpl services;
-	private AccountImpl account;
+	private Services services;
+	private Account account;
 	
 	@BeforeEach
 	public void setUp() {
 		account = new AccountImpl("Laura");
-		services = new ServicesImpl(account);		
+		services = new Services(account);		
 	}
 	
 	@Test

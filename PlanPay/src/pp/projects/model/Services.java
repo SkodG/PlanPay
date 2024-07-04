@@ -1,11 +1,11 @@
 package pp.projects.model;
 
 
-public class ServicesImpl extends AbstractOperations {
+public class Services extends AbstractOperations {
 	
 	
 
-	public ServicesImpl(Account account) {
+	public Services(Account account) {
 		super(account);
 	}
 

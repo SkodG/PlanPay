@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pp.projects.controller.ConsoleController;
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.controller.LoginControllerImpl;
 import pp.projects.model.IllegalOperationException;
@@ -17,7 +18,7 @@ import pp.projects.model.Transaction;
 
 class TransactionTest {
 	
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 
 	@BeforeEach
 	void setUp() {
@@ -80,10 +81,10 @@ class TransactionTest {
 		assertTrue(trList.get(4).getAmount() == 99.99);
 		
 		assertTrue(trList.get(0).getName().equals("Servizio Deposito Vendita vecchia auto"));
-		assertTrue(trList.get(1).getName().equals("Obbiettivo Friggitrice modello 9xT4 Deposito "));
-		assertTrue(trList.get(2).getName().equals("Obbiettivo Friggitrice modello 9xT4 Deposito "));
-		assertTrue(trList.get(3).getName().equals("Obbiettivo Friggitrice modello 9xT4 Deposito "));
-		assertTrue(trList.get(4).getName().equals("Obbiettivo Friggitrice modello 9xT4 Prelievo "));
+		assertTrue(trList.get(1).getName().equals("Obbiettivo Friggitrice Deposito "));
+		assertTrue(trList.get(2).getName().equals("Obbiettivo Friggitrice Deposito "));
+		assertTrue(trList.get(3).getName().equals("Obbiettivo Friggitrice Deposito "));
+		assertTrue(trList.get(4).getName().equals("Obbiettivo Friggitrice Prelievo "));
 		
 		// Verifico la data delle transazioni
 		LocalDate actualDate = LocalDate.now();

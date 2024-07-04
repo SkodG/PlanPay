@@ -4,9 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.ObjectiveImpl;
-
+import pp.projects.controller.ConsoleController;
+import pp.projects.model.Objective;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import java.awt.Font;
@@ -25,22 +24,20 @@ public class ConsolleObjectiveView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panel;
-	private List<ObjectiveImpl> objectiveList;
-	private ConsoleControllerImpl consoleController;
+	private List<Objective> objectiveList;
+	private ConsoleController consoleController;
 	private LocalDate date;
 	private JScrollPane scrollPane;
 
 	/**
 	 * Create the frame.
 	 */
-	public ConsolleObjectiveView(ConsoleControllerImpl controller) {
+	public ConsolleObjectiveView(ConsoleController controller) {
 		setTitle("OBBIETTIVI");
 		this.consoleController = controller;
 		this.date = LocalDate.now();
 		objectiveList = consoleController.getObjectiveList();
-		//provvisorio->  andrebbe nel testing della classe		
-		System.out.println("LISTA OBBIETTIVI:");
-		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()).forEach(System.out::println);
+
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 448, 318);
 		contentPane = new JPanel();
@@ -77,7 +74,7 @@ public class ConsolleObjectiveView extends JFrame {
 					JOptionPane.showMessageDialog(null, "Nessun elemento da eliminare", "Attenzione", JOptionPane.ERROR_MESSAGE);
 				else {
 					panel.removeAll();
-					for(ObjectiveImpl o : objectiveList)
+					for(Objective o : objectiveList)
 						controller.removeObjective(o.getName());
 					updateUI();
 				}					
@@ -94,9 +91,6 @@ public class ConsolleObjectiveView extends JFrame {
 		panel.removeAll();
 		//aggiorno la lista degli obbiettivi
 		objectiveList = consoleController.getObjectiveList();
-		//test
-		System.out.println("LISTA OBBIETTIVI AGGIORNATA:");
-		objectiveList.stream().map(o ->"Obbiettivo: "+ o.getName()+" Saldo:"+o.getBalance()).forEach(System.out::println);
 		//reinserisco nel panel tutti gli elementi della lista obbiettivi
 		objectiveList.stream().forEach(o -> panel.add(new ListObjectiveView(o.getName(), o.getBalance(), date, consoleController, this)));
 	    // Richiamo il metodo revalidate() e repaint() per aggiornare l'interfaccia

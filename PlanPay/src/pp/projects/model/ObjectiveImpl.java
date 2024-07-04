@@ -2,7 +2,7 @@ package pp.projects.model;
 
 import java.time.LocalDate;
 
-public class ObjectiveImpl extends AbstractOperations implements Objective, Data {
+public class ObjectiveImpl extends AbstractOperations implements Objective {
 	
 	
 	private String name;
@@ -61,18 +61,6 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		this.savingTarget = newTarget;
 	}
 	
-	/**
-	 * 
-	 * @return true se il risparmio è uguale o superiore al valore fissato come obbiettivo,
-	 *  altrimenti false
-	 */
-	public boolean isTargetMet() {
-		if(savedBalance >= savingTarget)
-			return true;		
-		else
-			return false;
-	}
-	
 	@Override
 	public String getName() {
 		return this.name;
@@ -125,5 +113,13 @@ public class ObjectiveImpl extends AbstractOperations implements Objective, Data
 		else
 			result = (targetAmount)/frequency;
 		return result;
+	}
+
+	@Override
+	public boolean isTargetMet() {
+		if(savedBalance >= savingTarget)
+			return true;		
+		else
+			return false;
 	}
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import pp.projects.controller.ConsoleController;
 import pp.projects.controller.ConsoleControllerImpl;
 import pp.projects.controller.LoginControllerImpl;
 import pp.projects.model.AccountImpl;
@@ -14,7 +15,7 @@ import pp.projects.model.OperationType;
 
 class ControllerOperationTest {
 	
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 	
 	@BeforeEach
 	 public void setUp() {

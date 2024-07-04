@@ -3,7 +3,8 @@ package pp.projects.view;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
-import pp.projects.controller.ConsoleControllerImpl;
+
+import pp.projects.controller.ConsoleController;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.BorderFactory;
@@ -26,7 +27,7 @@ public class ListObjectiveView extends JPanel {
 	 *
 	 *
 	 */
-	public ListObjectiveView(String name, double balance, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consolleObj) {
+	public ListObjectiveView(String name, double balance, LocalDate date, ConsoleController controller, ConsolleObjectiveView consolleObj) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		

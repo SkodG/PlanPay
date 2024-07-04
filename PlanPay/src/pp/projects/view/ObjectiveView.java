@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.ConsoleControllerImpl;
-import pp.projects.model.ObjectiveImpl;
+import pp.projects.controller.ConsoleController;
+import pp.projects.model.Objective;
 import pp.projects.model.OperationType;
 
 import javax.swing.JLabel;
@@ -35,14 +35,14 @@ public class ObjectiveView extends JFrame {
 	private JPanel contentPane;
 	private JTextField textName;
 	private JTextField textAmount;
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 	private JLabel lblDisplayBalance;
 	private double savingAmount;
 	private double balance;
 	private boolean	hasSaved;
 	private String description;
 	private String nomeObbiettivo;
-	private Optional<ObjectiveImpl> optObjective;
+	private Optional<Objective> optObjective;
 	
 	
 	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
@@ -54,7 +54,7 @@ public class ObjectiveView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ObjectiveView(boolean bNew, String nomeObbiettivo, LocalDate date, ConsoleControllerImpl controller, ConsolleObjectiveView consObj) {
+	public ObjectiveView(boolean bNew, String nomeObbiettivo, LocalDate date, ConsoleController controller, ConsolleObjectiveView consObj) {
 		
 		this.controller = controller;
 		this.nomeObbiettivo = nomeObbiettivo;

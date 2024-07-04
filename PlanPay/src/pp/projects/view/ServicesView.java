@@ -4,9 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.controller.ConsoleController;
 import pp.projects.model.IllegalOperationException;
-import pp.projects.model.ObjectiveImpl;
+import pp.projects.model.Objective;
 import pp.projects.model.OperationType;
 
 import javax.swing.JTextField;
@@ -35,12 +35,12 @@ public class ServicesView extends JFrame {
 	private JTextField textName;
 	private LocalDate date;
 	private double Amount;
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 
 	/**
 	 * Create the frame.
 	 */
-	public ServicesView(OperationType operationType, String operationName, ConsoleControllerImpl controller) {
+	public ServicesView(OperationType operationType, String operationName, ConsoleController controller) {
 		
 		date = LocalDate.now();
 		this.controller = controller;
@@ -202,10 +202,6 @@ public class ServicesView extends JFrame {
 						}										
 					}**/
 				} 
-				catch(NumberFormatException n) {//TODO forse inutile
-					JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", "Errore", JOptionPane.ERROR_MESSAGE);
-					textAmount.setText("0,00");
-				} 
 				catch(IllegalArgumentException | IllegalOperationException i){
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 					textAmount.setText("0,00");
@@ -227,6 +223,9 @@ public class ServicesView extends JFrame {
 	private void DoOperation(Double Amount, Boolean operationSign, String operationName, OperationType operationType) 
 			throws IllegalOperationException
 	{
+		if(Amount <= 0)
+			throw new IllegalOperationException("Inserire una cifra positiva per l'operazione!");
+		
 		String inputTextName = textName.getText().trim();
 		switch(operationType) {
 			case  SERVIZIO :
@@ -242,7 +241,7 @@ public class ServicesView extends JFrame {
 			
 			case OBIETTIVO :
 				//cerco nella lista degli obbiettivi 
-				Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
+				Optional<Objective> optObjective = controller.getObjective(operationName);
 				//se trovo l'obbiettivo posso eseguire l'operazione
 				if(optObjective.isPresent()) {
 					System.out.println("deposito in "+optObjective.get().getName());

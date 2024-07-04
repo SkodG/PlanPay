@@ -4,9 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.controller.ConsoleController;
 import pp.projects.model.IllegalInputException;
-import pp.projects.model.ObjectiveImpl;
+import pp.projects.model.Objective;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -47,13 +47,13 @@ public class ForecastView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ForecastView(ConsoleControllerImpl controller, String objectiveName) {
+	public ForecastView(ConsoleController controller, String objectiveName) {
 		years = 0;
 		months = 0;
 		result = 0.00;
 		target = 0.00;
 		String[] freqSelection = {"Nessuna","Mensile","Semestrale","Annuale", "Altro"};
-		Optional<ObjectiveImpl> optObjective = controller.getObjective(objectiveName);
+		Optional<Objective> optObjective = controller.getObjective(objectiveName);
 		if(optObjective.isPresent()) 
 			target = optObjective.get().getSavingTarget();
 		else

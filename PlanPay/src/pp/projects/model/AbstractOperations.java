@@ -15,7 +15,7 @@ public abstract class AbstractOperations {
         this.transactionList = new ArrayList<>();
     }
 
-    public boolean deposit(double amount, String desc) /*throws IllegalInputException */{
+    public boolean deposit(double amount, String desc) {
     	//if(amount < 0.0)
     		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doDeposit(amount);
@@ -27,7 +27,7 @@ public abstract class AbstractOperations {
         
     }
 
-    public boolean withdraw(double amount, String desc) /*throws IllegalInputException */{
+    public boolean withdraw(double amount, String desc) {
     	//if(amount < 0.0)
     		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doWithdraw(amount);

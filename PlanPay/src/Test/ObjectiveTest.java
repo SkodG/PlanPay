@@ -8,15 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import pp.projects.model.AbstractOperations;
+import pp.projects.model.Account;
 import pp.projects.model.AccountImpl;
 import pp.projects.model.IllegalInputException;
+import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
 
 class ObjectiveTest {
 	
-	private ObjectiveImpl objective1,
+	private Objective objective1,
 						  objective2;
-	private AccountImpl account;
+	private Account account;
 	private LocalDate actualDayMonth;
 
 	@BeforeEach
