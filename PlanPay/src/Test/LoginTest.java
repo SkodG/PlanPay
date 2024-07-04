@@ -95,8 +95,6 @@ public class LoginTest {
 
         // Verifico che il nome dell'account sia impostato correttamente
         assertEquals("testuser", loginController.getUserName());
-        
-        //TODO Come gestisco il Nome?
     }
 
     @Test
@@ -121,6 +119,7 @@ public class LoginTest {
 		assertThrows(AuthenticationException.class, () -> loginController.loginButtonClick("wronguser", "password123"));
 		assertThrows(AuthenticationException.class, () -> loginController.loginButtonClick("wronguser", "wrongpassword"));
 		
+		/*** Test per IllegalArgumentException ***/
 		// Login con credenziali vuote
 		assertThrows(IllegalArgumentException.class, () -> loginController.loginButtonClick("", ""));
 		

@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import javax.swing.table.AbstractTableModel;
 
 public class CalendarModel extends AbstractTableModel {
@@ -151,8 +149,7 @@ public class CalendarModel extends AbstractTableModel {
     public void loadEvents(Set<Event> events) {
     	cellData.clear(); // Pulisci la mappa per evitare duplicazioni
         for (Event event : events) {
-            EventImpl eventImpl = (EventImpl) event;
-            LocalDate date = eventImpl.getDate();
+            LocalDate date = event.getDate();
             setValueAddEvent(date, event);
         }
         fireTableDataChanged();

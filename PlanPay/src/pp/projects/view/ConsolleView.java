@@ -7,7 +7,6 @@ import pp.projects.model.Account;
 import pp.projects.model.ComparatorEvents;
 import pp.projects.model.OperationType;
 import pp.projects.model.Event;
-import pp.projects.model.EventImpl;
 
 import java.awt.Font;
 import java.awt.Image;
@@ -231,13 +230,7 @@ public class ConsolleView extends JFrame {
 		Set<Event> eventsToFile = controller.getAllEventToFile();	
 		if(!eventsToFile.isEmpty()) {
 			Set<Event> eventsToday = eventsToFile.stream()
-												  .filter(e -> {
-												      if (e instanceof EventImpl) {
-															EventImpl ev = (EventImpl) e;													
-															return ev.getDate().equals(LocalDate.now());
-														}
-														return false;
-													})
+												  .filter(e -> e.getDate().equals(LocalDate.now()))
 													.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
 			if(eventsToday != null) {
 				eventListModel.clear();			
@@ -248,11 +241,7 @@ public class ConsolleView extends JFrame {
 	        }
 			
 			Set<Event> nextEvents = eventsToFile.stream()
-									            .filter(event -> {
-									                EventImpl eventImpl = (EventImpl) event;
-									                LocalDate eventDate = eventImpl.getDate(); // Assuming getDate() returns the start date
-									                return eventDate.isAfter(LocalDate.now());
-									            })
+									            .filter(event -> event.getDate().isAfter(LocalDate.now()))
 									            .collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
 		    
 			if(nextEvents != null && nextEvents.size() > 0) {		
@@ -260,8 +249,7 @@ public class ConsolleView extends JFrame {
 				eventListModel.addElement("<html><body style='font-size: 16px;'>" + "<u>Prossimi eventi: </u></body></html>");
 				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
 				for (Event event : nextEvents) {
-					EventImpl ev = (EventImpl) event;
-					eventListModel.addElement(ev.getDate() + " >> " + ev.getInfoEventToString());
+					eventListModel.addElement(event.getDate() + " >> " + event.getInfoEventToString());
 	            }
 	        }
 		}

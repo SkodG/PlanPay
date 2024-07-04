@@ -12,8 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginImpl implements Login{
-	
-	/* Campi della classe */
+
 	private BufferedReader reader;
 	private BufferedWriter writer;
     private Map<String, UserCredentials> credentials;

@@ -14,7 +14,6 @@ import pp.projects.model.CalendarModel;
 import pp.projects.model.CalendarP;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
-import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
@@ -53,11 +52,10 @@ class CalendarTest {
 	
     	eventTest = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento Test", "", "10:00", "12:00", State.IN_CORSO, "eventoTest " + LocalDate.now().plusDays(1).toString());
         eventTest2 = calendario.newEvent("", LocalDate.now(), "00:00", "evento Test2", "", "15:00", "18:00", State.CONCLUSO, "eventoTest2 " + LocalDate.now().toString());
-    	
 	}
 	
 	@Test
-    public void testCreateEvent() throws EventAlreadyExistsException, InvalidParameterException {
+    public void testCreateEvent() throws EventAlreadyExistsException, InvalidParameterException {		
         Set<Event> events = calendario.getAllEvents();
         assertTrue(events.contains(meeting1));
         assertTrue(events.contains(meeting2));
@@ -71,71 +69,58 @@ class CalendarTest {
 
 	@Test
 	public void testModifyEventDesc() throws EventAlreadyExistsException, InvalidParameterException, EventNotFoundException {
-	    // Creazione eventi direttamente come EventImpl
-	    EventImpl meeting11 = (EventImpl) meeting1;
-	    EventImpl meeting21 = (EventImpl) meeting2;
-	    EventImpl meeting31 = (EventImpl) meeting3;
 	    boolean success = false;
 
 	    // Modifica la descrizione degli eventi
-	    success = calendario.modifyEvent(meeting11.getName(), meeting11.getDescription(), meeting11.getDate(), meeting11.getDate(),
-	    								 meeting11.getDaOra(), meeting11.getAOra(), meeting11.getName(), "In questa giornata è stato presentato ....", 
-	                                     meeting11.getDate(), meeting11.getDaOra(), meeting11.getAOra(), meeting11.getState(), meeting11.getIdentifier());
+	    success = calendario.modifyEvent(meeting1.getName(), meeting1.getDescription(), meeting1.getDate(), meeting1.getDate(),
+	    		  						 meeting1.getDaOra(), meeting1.getAOra(), meeting1.getName(), "In questa giornata è stato presentato ....", 
+	    		  						 meeting1.getDate(), meeting1.getDaOra(), meeting1.getAOra(), meeting1.getState(), meeting1.getIdentifier());
 
 	    // Verifica che l'operazione è andata a buon fine
 	    assertTrue(success);
 
 	    // Verifica che gli eventi originali siano stati aggiornati
-	    assertEquals("In questa giornata è stato presentato ....", meeting11.getDescription());
-	    assertNotEquals("In questa giornata è stato presentato ....", meeting21.getDescription());
-	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting21.getDescription());
+	    assertEquals("In questa giornata è stato presentato ....", meeting1.getDescription());
+	    assertNotEquals("In questa giornata è stato presentato ....", meeting2.getDescription());
+	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting2.getDescription());
 	    
-	    success = calendario.modifyEvent(meeting21.getName(), meeting21.getDescription(), meeting21.getDate(), meeting21.getDate(),
-							    		 meeting21.getDaOra(), meeting21.getAOra(), meeting21.getName(), "Workshop relativo a....", 
-							    		 meeting21.getDate(), meeting21.getDaOra(), meeting21.getAOra(), meeting21.getState(), meeting21.getIdentifier());
+	    success = calendario.modifyEvent(meeting2.getName(), meeting2.getDescription(), meeting2.getDate(), meeting2.getDate(),
+	    								 meeting2.getDaOra(), meeting2.getAOra(), meeting2.getName(), "Workshop relativo a....", 
+	    								 meeting2.getDate(), meeting2.getDaOra(), meeting2.getAOra(), meeting2.getState(), meeting2.getIdentifier());
 
 		// Verifica che l'operazione è andata a buon fine
 		assertTrue(success);
 		
-	    assertNotEquals("In questa giornata è stato presentato ....", meeting31.getDescription());
-	    assertNotEquals("Workshop relativo a....", meeting31.getDescription());
-	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting31.getDescription());
+	    assertNotEquals("In questa giornata è stato presentato ....", meeting3.getDescription());
+	    assertNotEquals("Workshop relativo a....", meeting3.getDescription());
+	    assertEquals("Metting di 3 giorni presso il palacongressi di Riccione.", meeting3.getDescription());
 	}
 	
 	@Test
 	public void testModifyEventTime() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
-	    // Creazione eventi direttamente come EventImpl
-	    EventImpl presentaz11 = (EventImpl) presentaz1;
-	    EventImpl presentaz21 = (EventImpl) presentaz2;
-	   
-	    // Modifica l'ora dell'evento
-	    boolean success = calendario.modifyEvent(presentaz11.getName(), presentaz11.getDescription(), presentaz11.getDate(), presentaz11.getDate(), 
-	    					   					 presentaz11.getDaOra(), presentaz11.getAOra(), presentaz11.getName(), presentaz11.getDescription(), 
-	    					   					 presentaz11.getDate(), "09:00", "10:00", presentaz11.getState(), presentaz11.getIdentifier());
+	    boolean success = calendario.modifyEvent(presentaz1.getName(), presentaz1.getDescription(), presentaz1.getDate(), presentaz1.getDate(), 
+	    										 presentaz1.getDaOra(), presentaz1.getAOra(), presentaz1.getName(), presentaz1.getDescription(), 
+	    										 presentaz1.getDate(), "09:00", "10:00", presentaz1.getState(), presentaz1.getIdentifier());
 	    
 	    // Verifica che l'operazione è andata a buon fine
 	    assertTrue(success);
 	    
 	    // Verifica che l'ora sia stata modificata per presentaz1 e presentaz2
-	    assertEquals("09:00", presentaz11.getDaOra());
-	    assertEquals("10:00", presentaz11.getAOra());
-	    assertEquals("09:00", presentaz21.getDaOra());
-	    assertEquals("10:00", presentaz21.getAOra());
+	    assertEquals("09:00", presentaz1.getDaOra());
+	    assertEquals("10:00", presentaz1.getAOra());
+	    assertEquals("09:00", presentaz2.getDaOra());
+	    assertEquals("10:00", presentaz2.getAOra());
 	}
 	
 	@Test
 	public void testModifyEventState() throws EventNotFoundException, EventAlreadyExistsException, InvalidParameterException {
-	    // Creazione eventi direttamente come EventImpl
-	    EventImpl presentaz = (EventImpl) presentaz1;
-	   
-	    // Modifica l'ora dell'evento
-	    calendario.modifyEvent(presentaz.getName(), presentaz.getDescription(), presentaz.getDate(), presentaz.getDate(), 
-	    					   presentaz.getDaOra(), presentaz.getAOra(), presentaz.getName(), presentaz.getDescription(), 
-	    					   presentaz.getDate(), presentaz.getDaOra(), presentaz.getAOra(), State.CONCLUSO, presentaz.getIdentifier());
+	    calendario.modifyEvent(presentaz1.getName(), presentaz1.getDescription(), presentaz1.getDate(), presentaz1.getDate(), 
+	    					   presentaz1.getDaOra(), presentaz1.getAOra(), presentaz1.getName(), presentaz1.getDescription(), 
+	    					   presentaz1.getDate(), presentaz1.getDaOra(), presentaz1.getAOra(), State.CONCLUSO, presentaz1.getIdentifier());
 	    
 	    // Verifica che l'ora sia stata modificata per presentaz1 e presentaz2
 	    assertEquals(State.CONCLUSO, presentaz1.getState());
-	    assertEquals(State.CONCLUSO, presentaz1.getState());
+	    assertEquals(State.CONCLUSO, presentaz2.getState());
 	}
 	
     @Test
@@ -144,10 +129,8 @@ class CalendarTest {
         Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
         Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
     	
-    	EventImpl event2Impl = (EventImpl) event2;
-    	
         // Rimuovere solo un giorno dell'evento
-        calendario.removeActivity(event2Impl.getName(), event2Impl.getDate(), event2Impl.getDaOra(), event2Impl.getAOra());
+        calendario.removeActivity(event2.getName(), event2.getDate(), event2.getDaOra(), event2.getAOra());
 
         Set<Event> events = calendario.getAllEvents();
 
@@ -171,17 +154,15 @@ class CalendarTest {
     	Event event1 = calendario.newEvent("", LocalDate.now(), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
         Event event2 = calendario.newEvent("", LocalDate.now().plusDays(1), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
         Event event3 = calendario.newEvent("", LocalDate.now().plusDays(2), "00:00", "evento multiplo", "", "20:00", "21:00", State.IN_CORSO, "eventoMultiplo " + LocalDate.now().toString());
-    	
-    	EventImpl event3Impl = (EventImpl) event3;
-    	
+
         // Rimuovere solo un giorno dell'evento
-    	Set<Event> eventsToRemove = calendario.removeEvents(event3Impl.getName(), event3Impl.getDate(), event3Impl.getDaOra(), event3Impl.getAOra());
+    	calendario.removeEvents(event3.getName(), event3.getDate(), event3.getDaOra(), event3.getAOra());
     	Set<Event> events = calendario.getAllEvents();
 
-        // Verificare che solo il giorno specificato sia stato rimosso
+        // Verificare che tutti gli eventi collegati siano rimossi
         assertFalse(events.contains(event2));
-        assertTrue(events.contains(event1));
-        assertTrue(events.contains(event3));
+        assertFalse(events.contains(event1));
+        assertFalse(events.contains(event3));
 	
 	    // Verifico che gli altri eventi non siano stati rimossi
 	    assertTrue(events.contains(meeting1));
@@ -233,6 +214,7 @@ class CalendarTest {
         assertNotNull(eventsInDate);
         assertTrue(eventsInDate.contains(meeting1));
         assertTrue(eventsInDate.contains(presentaz2));
+        assertFalse(eventsInDate.contains(viaggio1));
     }
 
     @Test

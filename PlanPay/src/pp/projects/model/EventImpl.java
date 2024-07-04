@@ -3,7 +3,7 @@ package pp.projects.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class EventImpl implements Event, Data{
+public class EventImpl implements Event{
 	
 	private String name;
     private String description;
@@ -88,10 +88,12 @@ public class EventImpl implements Event, Data{
         this.identifier = identifier;
     }
 	
+	@Override
 	public void setDaOra(String da) {
 		this.daOra = da;
 	}
 	
+	@Override
 	public void setAOra(String a) {
 		this.aOra = a;
 	}
@@ -100,9 +102,9 @@ public class EventImpl implements Event, Data{
 	public boolean equals(Object o) {
 	    if (this == o) return true;
 	    if (o == null || getClass() != o.getClass()) return false;
-	    EventImpl event = (EventImpl) o;
-	    return Objects.equals(identifier, event.identifier) &&
-	           eventState == event.eventState;
+	    Event event = (Event) o;
+	    return Objects.equals(identifier, event.getIdentifier()) &&
+	           eventState == event.getState();
 	}
 	
 	@Override

@@ -5,11 +5,8 @@ import java.util.Comparator;
 public class ComparatorEvents implements Comparator<Event>{
 
 	@Override
-	public int compare(Event o1, Event o2) {
-		EventImpl event1 = (EventImpl) o1;
-        EventImpl event2 = (EventImpl) o2;
-		
-		int dateComparison = event1.getDate().compareTo(event2.getDate());
+	public int compare(Event o1, Event o2) {		
+		int dateComparison = o1.getDate().compareTo(o2.getDate());
         if (dateComparison != 0) {
             return dateComparison;
         }
@@ -19,6 +16,6 @@ public class ComparatorEvents implements Comparator<Event>{
             return startTimeComparison;
         }
         // se sia le date che gli orari di inizio sono uguali, gli eventi vengono confrontati per nome.
-        return event1.getName().compareTo(event2.getName());
+        return o1.getName().compareTo(o2.getName());
 	}
 }

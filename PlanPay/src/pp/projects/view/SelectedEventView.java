@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -21,7 +20,6 @@ import javax.swing.border.LineBorder;
 
 import pp.projects.controller.ConsoleController;
 import pp.projects.model.Event;
-import pp.projects.model.EventImpl;
 
 public class SelectedEventView extends JFrame {
 
@@ -29,8 +27,6 @@ public class SelectedEventView extends JFrame {
 	private JPanel contentPane;
 	private JPanel panelEvents;
 	
-	private JButton buttonEvent;
-
 	public SelectedEventView(ConsoleController controller, CalendarView calendar, LocalDate day, Set<Event> setEvents) {
 		
 		setTitle("EVENTI DI " + day.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getDayOfMonth() + " " + day.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN).toUpperCase() + " " + day.getYear());
@@ -44,47 +40,15 @@ public class SelectedEventView extends JFrame {
 		
 		panelEvents = createEventPanel(setEvents, controller, calendar, day);
 		
-		/*panelEvents = new JPanel();
-		panelEvents.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelEvents.setLayout(new GridBagLayout());
-		
-		// definisco come i componenti sono disposti all'interno del contenitore
-		GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;		// riempimento orizzontale
-        gbc.gridx = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(5, 5, 5, 5); // Aggiunge dei margini attorno ai pulsanti
-		
-		for(Event ev : setEvents) {
-			buttonEvent = new JButton(ev.getInfoEventToString());
-			gbc.gridy = GridBagConstraints.RELATIVE; // Aggiunge il pulsante nella prossima riga disponibile
-            panelEvents.add(buttonEvent, gbc);
-            
-            EventImpl eventImpl = (EventImpl) ev;
-            
-            // Aggiungi un ActionListener a ogni bottone
-            buttonEvent.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Apri la finestra dell'evento
-                    EventView eventView = new EventView(false, day, controller, calendar);
-                    eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
-                    eventView.setVisible(true);
-                    SelectedEventView.this.setVisible(false);
-                }
-            });
-		}*/
-		
         JScrollPane scrollPane = new JScrollPane(panelEvents);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        // Add the JScrollPane to the JFrame
         contentPane.add(scrollPane);
 	}
 	
 	private JPanel createEventPanel(Set<Event> setEvents, ConsoleController controller, CalendarView calendar, LocalDate day) {
         JPanel panel = new JPanel();
-        panelEvents.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panelEvents.setLayout(new GridBagLayout());
+        panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel.setLayout(new GridBagLayout());
 		
         GridBagConstraints gbc = createGridBagConstraints();
 
@@ -112,31 +76,10 @@ public class SelectedEventView extends JFrame {
     private ActionListener createButtonActionListener(Event event, ConsoleController controller, CalendarView calendar, LocalDate day) {
         return e -> {
             EventView eventView = new EventView(false, day, controller, calendar);
-            EventImpl eventImpl = (EventImpl) event;
-            eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
+            eventView.setEventDetail(event.getName(), day, event.getDaOra(), event.getAOra(), event.getDescription(), event.getState(), event.getIdentifier());
             eventView.setVisible(true);
             SelectedEventView.this.setVisible(false);
         };
-        
-        /*
-         * for(Event ev : setEvents) {
-			buttonEvent = new JButton(ev.getInfoEventToString());
-			gbc.gridy = GridBagConstraints.RELATIVE; // Aggiunge il pulsante nella prossima riga disponibile
-            panelEvents.add(buttonEvent, gbc);
-            
-            EventImpl eventImpl = (EventImpl) ev;
-            
-            // Aggiungi un ActionListener a ogni bottone
-            buttonEvent.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Apri la finestra dell'evento
-                    EventView eventView = new EventView(false, day, controller, calendar);
-                    eventView.setEventDetail(eventImpl.getName(), day, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
-                    eventView.setVisible(true);
-                    SelectedEventView.this.setVisible(false);
-                }
-            });*/
     }
 }
 

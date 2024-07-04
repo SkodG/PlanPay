@@ -14,11 +14,13 @@ import pp.projects.model.Account;
 import pp.projects.model.AccountImpl;
 import pp.projects.model.CalendarImpl;
 import pp.projects.model.CalendarModel;
+import pp.projects.model.CalendarP;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.IllegalOperationException;
 import pp.projects.model.InvalidParameterException;
+import pp.projects.model.Objective;
 import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
 import pp.projects.model.ServicesImpl;
@@ -28,13 +30,13 @@ import pp.projects.view.CalendarView;
 
 public class ConsoleControllerImpl implements ConsoleController{
 
-	private LoginControllerImpl controllerLogin;					// Non uso interfaccia perchè ho dei metodi nella classe astratta, che devo richiamare.
+	private LoginController controllerLogin;					// Non uso interfaccia perchè ho dei metodi nella classe astratta, che devo richiamare.
 	private Account account;
 	private List<AbstractOperations> operationsList;
-	private CalendarImpl calendario;
+	private CalendarP calendario;
 	
 	// costruttore
-	public ConsoleControllerImpl(LoginControllerImpl cl) {
+	public ConsoleControllerImpl(LoginController cl) {
 		this.controllerLogin = cl;
 		this.account = new AccountImpl(controllerLogin.getUserName());
 		this.operationsList = new ArrayList<>();
@@ -61,13 +63,13 @@ public class ConsoleControllerImpl implements ConsoleController{
 		// Tipo false indica un prelievo (withdraw)
 		if (operType == OperationType.OBIETTIVO) {
 		    for (AbstractOperations operation : operationsList) {
-		         if (operation instanceof ObjectiveImpl) {
+		         if (operation instanceof Objective) {
 		        	 // prendo la lista di tutti gli obbiettivi
 		        	 if(operation.nome().equals(nome)) {
 			              if (tipo) {    	
-			                  bRes = operation.deposit(importo, "");
+			                  bRes = operation.deposit(importo, "'" + nome + "'");
 			              } else {
-			                  bRes = operation.withdraw(importo, "");
+			                  bRes = operation.withdraw(importo, "'" + nome + "'");
 			              }
 		              }
 		          }
@@ -92,17 +94,17 @@ public class ConsoleControllerImpl implements ConsoleController{
     }
     
     // Metodo per modificare un obbiettivo esistente
-	private void modifyObjective(ObjectiveImpl objective, String newNameOb, String newDescrOb, double savingTarget) {
+	private void modifyObjective(Objective objective, String newNameOb, String newDescrOb, double savingTarget) {
 		objective.setDescription(newDescrOb);
 		objective.setName(newNameOb);
 		objective.setSavingTarget(savingTarget);
 	}
 	
 	@Override
-	public Optional<ObjectiveImpl> getObjective(String name) {
+	public Optional<Objective> getObjective(String name) {
 		return operationsList.stream()
-			   .filter(oper -> oper instanceof ObjectiveImpl)
-	           .map(oper -> (ObjectiveImpl) oper)
+			   .filter(oper -> oper instanceof Objective)
+	           .map(oper -> (Objective) oper)
 	           .filter(o -> o.getName().equals(name))
 	           .findFirst();
 
@@ -110,7 +112,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	@Override
 	public void saveObjective(boolean bNew, String nameObjective, String newDescrOb, double savingTarget) throws IllegalStateException {
-		Optional<ObjectiveImpl> objective = getObjective(nameObjective);
+		Optional<Objective> objective = getObjective(nameObjective);
 		// Se sono su nuovo creo un nuovo obbiettivo > tanto l'id lo incremento alla creazione, quindi non può già esistere.
 		if(bNew) {
 			if(objective.isPresent()) {
@@ -127,7 +129,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	@Override
 	public void removeObjective(String name) throws IllegalStateException {
-		Optional<ObjectiveImpl> objective = getObjective(name);
+		Optional<Objective> objective = getObjective(name);
 		
 		if (!objective.isPresent()) {
 	        throw new IllegalStateException("Obbiettivo inesistente! Impossibile cancellarlo.");
@@ -136,10 +138,10 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public List<ObjectiveImpl> getObjectiveList() {
+	public List<Objective> getObjectiveList() {
 		return operationsList.stream()
-							 .filter(oper -> oper instanceof ObjectiveImpl)
-							 .map(oper -> (ObjectiveImpl) oper)
+							 .filter(oper -> oper instanceof Objective)
+							 .map(oper -> (Objective) oper)
 							 .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 	}
 	

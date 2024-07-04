@@ -1,6 +1,6 @@
 package pp.projects.model;
 
-public interface Event {
+public interface Event extends Data{
 	/**
 	 * @return dello stato
 	 */
@@ -40,4 +40,8 @@ public interface Event {
 	String getIdentifier();
 	
 	void setIdentifier(String identifier);
+	
+	void setDaOra(String da);
+	
+	void setAOra(String da);
 }

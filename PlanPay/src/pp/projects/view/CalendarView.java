@@ -8,7 +8,6 @@ import pp.projects.controller.ConsoleController;
 import pp.projects.model.CalendarModel;
 import pp.projects.model.DayCellRenderer;
 import pp.projects.model.Event;
-import pp.projects.model.EventImpl;
 
 import javax.swing.JTable;
 import java.awt.Font;
@@ -158,11 +157,10 @@ public class CalendarView extends JFrame {
 	                    } else if(events.size() == 1) {
 	                    	// se c'è un evento lo visualizzo su eventView
 	                    	for(Event event : events) {
-	                    		EventImpl eventImpl = (EventImpl) event;
 	                    		isSelectingEvent = true; 
 	                    		eventView = new EventView(false, date, controller, CalendarView.this);
 	                    		// passo i valori che mi serviranno per la modifica/cancellazione dell'evento.
-	                    		eventView.setEventDetail(eventImpl.getName(), date, eventImpl.getDaOra(), eventImpl.getAOra(), eventImpl.getDescription(), eventImpl.getState(), eventImpl.getIdentifier());
+	                    		eventView.setEventDetail(event.getName(), date, event.getDaOra(), event.getAOra(), event.getDescription(), event.getState(), event.getIdentifier());
 	                    		eventView.setVisible(true);
 	                    		isSelectingEvent = false;
 	                    	}
@@ -229,8 +227,7 @@ public class CalendarView extends JFrame {
         eventiConclusi = 0;
 
         for (Event event : events) {
-            EventImpl eventImpl = (EventImpl) event;
-            String key = eventImpl.getName() + eventImpl.getDaOra() + eventImpl.getAOra() + eventImpl.getState();
+            String key = event.getName() + event.getDaOra() + event.getAOra() + event.getState();
 
             if (!uniqueEvents.contains(key)) {
                 uniqueEvents.add(key);
@@ -245,6 +242,8 @@ public class CalendarView extends JFrame {
                     case CONCLUSO:
                         eventiConclusi++;
                         break;
+				default:
+					break;
                 }
             }
         }
@@ -258,21 +257,7 @@ public class CalendarView extends JFrame {
         int indexColumn = tblCalendario.getSelectedColumn();
         return calendarModel.getDateAt(indexRow, indexColumn);
     }
-    
-    //public void updateUI(LocalDate daData, LocalDate aData, String daOra, String aOra, Set<Event> events, boolean bDelete) {
-        /*if (!bDelete) {
-            events.forEach(event -> {
-                EventImpl eventImpl = (EventImpl) event;
-                if (eventView.isbNew()) {
-                    calendarModel.setValueAddEvent(eventImpl.getDate(), event);
-                } 
-            });
-            if (!eventView.isbNew())
-            	calendarModel.loadEvents(events);
-        } else {
-            eventView.setVisible(false);
-            calendarModel.removeEvent(aData, null);
-        }*/
+
     public void updateUI(Set<Event> events) {
     	calendarModel.loadEvents(events);
         refreshUI();
@@ -280,8 +265,7 @@ public class CalendarView extends JFrame {
     
     public void updateUIRemoveEvent(LocalDate date, Set<Event> setEvent) {
     	for(Event event : setEvent) {
-    		EventImpl ev = (EventImpl) event;
-    		calendarModel.removeEvent(ev.getDate(), ev);
+    		calendarModel.removeEvent(event.getDate(), event);
         	refreshUI();
     	}
     }

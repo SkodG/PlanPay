@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.io.IOException;
 
 import pp.projects.controller.LoginControllerImpl;
+import pp.projects.controller.LoginController;
 import pp.projects.view.LoginView;
 
 public class Main {
@@ -13,7 +14,7 @@ public class Main {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		LoginControllerImpl lc = new LoginControllerImpl();
+		LoginController lc = new LoginControllerImpl();
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

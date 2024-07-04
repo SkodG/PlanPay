@@ -15,7 +15,6 @@ import pp.projects.controller.ConsoleController;
 import pp.projects.model.ComparatorEvents;
 import pp.projects.model.Event;
 import pp.projects.model.EventAlreadyExistsException;
-import pp.projects.model.EventImpl;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.InvalidParameterException;
 import pp.projects.model.State;
@@ -423,13 +422,8 @@ public class EventView extends JDialog {
     	Set<Event> eventsToFile = controller.getAllEventToFile();	
     	
     	Set<Event> identifierEvents = eventsToFile.stream()
-												  .filter(e -> {
-												      if (e instanceof EventImpl) {													
-															return e.getIdentifier().equals(identifier);
-														}
-														return false;
-													})
-													.collect(Collectors.toSet());
+												  .filter(e -> e.getIdentifier().equals(identifier))
+												  .collect(Collectors.toSet());
     	
     	if(identifierEvents != null && identifierEvents.size() > 1) {
     		btnCancellaTuttoEvento.setVisible(true);

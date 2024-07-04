@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import pp.projects.controller.LoginControllerImpl;
+import pp.projects.controller.LoginController;
 import pp.projects.model.AuthenticationException;
 
 import java.awt.Font;
@@ -32,7 +32,7 @@ public class LoginView extends JFrame {
 	private String username;
 	private String password;
 
-	public LoginView(LoginControllerImpl controller) {
+	public LoginView(LoginController controller) {
 		setForeground(UIManager.getColor("activeCaption"));
 		this.username = "";
 		this.password = "";	

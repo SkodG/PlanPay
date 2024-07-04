@@ -12,7 +12,7 @@ import pp.projects.model.EventAlreadyExistsException;
 import pp.projects.model.EventNotFoundException;
 import pp.projects.model.IllegalOperationException;
 import pp.projects.model.InvalidParameterException;
-import pp.projects.model.ObjectiveImpl;
+import pp.projects.model.Objective;
 import pp.projects.model.OperationType;
 import pp.projects.model.State;
 import pp.projects.model.Transaction;
@@ -35,14 +35,14 @@ public interface ConsoleController {
 	 * 
 	 * @return
 	 */
-	List<ObjectiveImpl> getObjectiveList();
+	List<Objective> getObjectiveList();
 	
 	/**
 	 * 
 	 * @param name
 	 * @return
 	 */
-	Optional<ObjectiveImpl> getObjective(String name);
+	Optional<Objective> getObjective(String name);
 	
 	/**
 	 * 
@@ -57,7 +57,6 @@ public interface ConsoleController {
 	/**
 	 * elimina l'obbiettivo che gli viene passato 
 	 * 
-	 * @param o = obbiettivo da eliminare
 	 */
 	void removeObjective(String name) throws IllegalStateException;
 	
