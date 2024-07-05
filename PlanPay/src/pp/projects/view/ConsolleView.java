@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -57,10 +55,6 @@ public class ConsolleView extends JFrame {
 	private ConsolleObjectiveView consolleObjectiveView;
 	private Account account;
 	
-	/**
-	 * Create the frame.
-	 * @throws IOException 
-	 */
 	public ConsolleView(ConsoleControllerImpl c, Account account) throws IOException {
 		setTitle("CONSOLLE");
 		this.controller = c;
@@ -68,117 +62,57 @@ public class ConsolleView extends JFrame {
 		this.consolleObjectiveView = new ConsolleObjectiveView(c);		
 		this.account = account;
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 772, 490);
-		contentPane = new JPanel();
-		contentPane.setForeground(SystemColor.control);
-		contentPane.setBackground(new Color(245, 245, 245));
-		contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		initComponents();
+        initListeners();
+	}
+	
+    private void initComponents() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 772, 490);
+        contentPane = new JPanel();
+        contentPane.setForeground(SystemColor.control);
+        contentPane.setBackground(new Color(245, 245, 245));
+        contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
 
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		lbUsername = new JLabel("");
-		lbUsername.setFont(new Font("Calibri", Font.PLAIN, 38));
-		lbUsername.setBounds(31, 24, 461, 42);
-		contentPane.add(lbUsername);
-		
-		btnServices = new JButton("SERVIZI");
-		btnServices.setBackground(new Color(255, 255, 255));
-		setButtonIcon(btnServices, "/images/payment.png");
-		
-		btnServices.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				servicesView.setVisible(true);
-			}
-		});
-		btnServices.setFont(new Font("Calibri", Font.PLAIN, 36));
-		btnServices.setBounds(414, 275, 320, 100);
-		contentPane.add(btnServices);
-		
-		lbImp = new JLabel("Importo:");
-		lbImp.setFont(new Font("Calibri", Font.PLAIN, 33));
-		lbImp.setBounds(31, 76, 134, 42);
-		contentPane.add(lbImp);
-		
-		lblmporto = new JLabel("0,00 €");
-		lblmporto.setFont(new Font("Calibri", Font.PLAIN, 34));
-		lblmporto.setBounds(175, 76, 373, 42);
-		contentPane.add(lblmporto);
-		       
-		lbTransactions = new JLabel("Transazioni");
-		lbTransactions.setFont(new Font("Calibri", Font.PLAIN, 36));
-		lbTransactions.setBounds(31, 385, 597, 42);
-		contentPane.add(lbTransactions);
-		
-		btnCalendar = new JButton();
-		try {
-			btnCalendar.setIcon(new ImageIcon(this.getClass().getResource("/images/calendar.png")));
-		} catch (Exception ex) {
-		    System.out.println(ex);
-		}
-		btnCalendar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				calendarView = c.drawCalendar();
-				calendarView.setVisible(true);
-			}
-		});
-		btnCalendar.setBounds(600, 25, 134, 108);	
-		contentPane.add(btnCalendar);
-		
-		btnTransactions = new JButton();
-		try {
-		    btnTransactions.setIcon(new ImageIcon(this.getClass().getResource("/images/freccia.png")));
-		} catch (Exception ex) {
-		    System.out.println(ex);
-		}
-		btnTransactions.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				count += 1;
-				if (count % 2 == 0) {
-					if(updateTransactionsUI()) {
-						transactionList.setVisible(false);
-				        scrollPane.setVisible(false);
-						setBounds(100, 100, 772, 490);
-					}
-				} else {
-					if(updateTransactionsUI()) {
-						transactionList.setVisible(true);
-				        scrollPane.setVisible(true);
-						setBounds(100, 100, 772, 722);
-					}
-				}
-			}
-		});
-		btnTransactions.setBounds(672, 385, 62, 42);
-		contentPane.add(btnTransactions);
-		
-		btnObjectives = new JButton("OBBIETTIVI");
-		btnObjectives.setBackground(new Color(255, 255, 255));
-		btnObjectives.setFont(new Font("Calibri", Font.PLAIN, 36));
-		btnObjectives.setBounds(414, 155, 320, 100);
-		contentPane.add(btnObjectives);
-		setButtonIcon(btnObjectives, "/images/objective.png");
-		
-		btnObjectives.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				consolleObjectiveView.setVisible(true);
-			}
-		});
-		
-        // Inizializza la JList e lo JScrollPane
+        lbUsername = createLabel("", new Font("Calibri", Font.PLAIN, 38), 31, 24, 461, 42);
+        contentPane.add(lbUsername);
+
+        btnServices = createButton("SERVIZI", new Font("Calibri", Font.PLAIN, 36), 414, 275, 320, 100);
+        setButtonIcon(btnServices, "/images/payment.png");
+        contentPane.add(btnServices);
+
+        lbImp = createLabel("Importo:", new Font("Calibri", Font.PLAIN, 33), 31, 76, 134, 42);
+        contentPane.add(lbImp);
+
+        lblmporto = createLabel("0,00 €", new Font("Calibri", Font.PLAIN, 34), 175, 76, 373, 42);
+        contentPane.add(lblmporto);
+
+        lbTransactions = createLabel("Transazioni", new Font("Calibri", Font.PLAIN, 36), 31, 385, 597, 42);
+        contentPane.add(lbTransactions);
+
+        btnCalendar = createIconButton("/images/calendar.png", 600, 25, 134, 108);
+        contentPane.add(btnCalendar);
+
+        btnTransactions = createIconButton("/images/freccia.png", 672, 385, 62, 42);
+        contentPane.add(btnTransactions);
+
+        btnObjectives = createButton("OBBIETTIVI", new Font("Calibri", Font.PLAIN, 36), 414, 155, 320, 100);
+        setButtonIcon(btnObjectives, "/images/objective.png");
+        contentPane.add(btnObjectives);
+
         transactionListModel = new DefaultListModel<>();
         transactionList = new JList<>(transactionListModel);
         transactionList.setFont(new Font("Calibri", Font.PLAIN, 19));
         transactionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
         scrollPane = new JScrollPane(transactionList);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setBounds(31, 433, 703, 249);
         contentPane.add(scrollPane);
         transactionList.setVisible(false);
         scrollPane.setVisible(false);
-        
+
         eventListModel = new DefaultListModel<>();
         eventListToday = new JList<>(eventListModel);
         eventListToday.setForeground(SystemColor.DARK_GRAY);
@@ -186,89 +120,132 @@ public class ConsolleView extends JFrame {
         eventListToday.setFont(new Font("Calibri", Font.PLAIN, 16));
         eventListToday.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         eventListToday.setBackground(new Color(245, 245, 245));
-        
-        headerText =  "<html><body style='font-size: 16px;'>" +
-		                "<u>Eventi di oggi " + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
-		                LocalDate.now().getDayOfMonth() + " " +
-		                LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
-		                LocalDate.now().getYear() + "</u></body></html>";
+
+        headerText = "<html><body style='font-size: 16px;'>" +
+                     "<u>Eventi di oggi " + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
+                     LocalDate.now().getDayOfMonth() + " " +
+                     LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN) + " " +
+                     LocalDate.now().getYear() + "</u></body></html>";
         eventListModel.addElement(headerText);
-        
+
         JScrollPane scrollPaneEv = new JScrollPane(eventListToday);
         scrollPaneEv.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPaneEv.setBounds(31, 155, 373, 220);
         contentPane.add(scrollPaneEv);
-        		
-		// WindowListener per gestire l'evento "windowOpened"
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                lbUsername.setText(c.setNameController().toUpperCase());
+                lbUsername.setText(controller.setNameController().toUpperCase());
                 updateEventsUI();
             }
         });
-	}
-	
-	public boolean updateTransactionsUI() {
-		List<String> transactions = controller.getDatiTransazione();	
-		
-		if(transactions != null) {	        
-            transactionListModel.clear(); 	// Pulisce il modello prima di aggiungere nuovi elementi
-            transactionListModel.addElement("<html><div style='height:1px;'></div></html>"); 
-            
+    }
+    
+    private void initListeners() {
+        btnServices.addActionListener(e -> servicesView.setVisible(true));
+
+        btnCalendar.addActionListener(e -> {
+            calendarView = controller.drawCalendar();
+            calendarView.setVisible(true);
+        });
+
+        btnTransactions.addActionListener(e -> {
+            count++;
+            if (count % 2 == 0) {
+                if (updateTransactionsUI()) {
+                    transactionList.setVisible(false);
+                    scrollPane.setVisible(false);
+                    setBounds(100, 100, 772, 490);
+                }
+            } else {
+                if (updateTransactionsUI()) {
+                    transactionList.setVisible(true);
+                    scrollPane.setVisible(true);
+                    setBounds(100, 100, 772, 722);
+                }
+            }
+        });
+
+        btnObjectives.addActionListener(e -> consolleObjectiveView.setVisible(true));
+    }
+
+    private JLabel createLabel(String text, Font font, int x, int y, int width, int height) {
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        label.setBounds(x, y, width, height);
+        return label;
+    }
+
+    private JButton createButton(String text, Font font, int x, int y, int width, int height) {
+        JButton button = new JButton(text);
+        button.setFont(font);
+        button.setBackground(Color.WHITE);
+        button.setBounds(x, y, width, height);
+        return button;
+    }
+
+    private JButton createIconButton(String iconPath, int x, int y, int width, int height) {
+        JButton button = new JButton();
+        try {
+            button.setIcon(new ImageIcon(this.getClass().getResource(iconPath)));
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        button.setBounds(x, y, width, height);
+        return button;
+    }
+
+    public boolean updateTransactionsUI() {
+        List<String> transactions = controller.getDatiTransazione();
+        if (transactions != null) {
+            transactionListModel.clear();
+            transactionListModel.addElement("<html><div style='height:1px;'></div></html>");
             for (String transaction : transactions) {
                 transactionListModel.addElement(transaction);
             }
-            
-            return !transactions.isEmpty(); // Restituisce true se ci sono transazioni
+            return !transactions.isEmpty();
         }
-		
-		return false;
-	}
-	
-	public void updateEventsUI() {
-		Set<Event> eventsToFile = controller.getAllEventToFile();	
+        return false;
+    }
+
+    public void updateEventsUI() {
+    	Set<Event> eventsToFile = controller.getAllEventToFile();	
 		if(!eventsToFile.isEmpty()) {
-			Set<Event> eventsToday = eventsToFile.stream()
-												  .filter(e -> e.getDate().equals(LocalDate.now()))
-													.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
-			if(eventsToday != null) {
-				eventListModel.clear();			
-				eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
-				for (Event event : eventsToday) {
-					eventListModel.addElement(event.getInfoEventToString());
-	            }
-	        }
-			
-			Set<Event> nextEvents = eventsToFile.stream()
-									            .filter(event -> event.getDate().isAfter(LocalDate.now()))
-									            .collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
-		    
-			if(nextEvents != null && nextEvents.size() > 0) {		
-				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
-				eventListModel.addElement("<html><body style='font-size: 16px;'>" + "<u>Prossimi eventi: </u></body></html>");
-				eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
-				for (Event event : nextEvents) {
-					eventListModel.addElement(event.getDate() + " >> " + event.getInfoEventToString());
-	            }
-	        }
+			filterEventsByDate(eventsToFile);
+			filterFutureEvents(eventsToFile);			
 		}
     }
-	
-	public void updateUIconto() {
-		lblmporto.setText(formattedImport(account.getBalance()) + " €");
-		consolleObjectiveView.updateUI();
-	}
-	
-	private String formattedImport(double amount) {
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
-        symbols.setGroupingSeparator('.');
-        symbols.setDecimalSeparator(',');
-        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
-        return decimalFormat.format(amount);
-	}
-	
-	private void setButtonIcon(JButton button, String path) {
+
+    private void filterEventsByDate(Set<Event> eventsToFile) {
+    	Set<Event> eventsToday = eventsToFile.stream()
+				  							 .filter(e -> e.getDate().equals(LocalDate.now()))
+				  							 .collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
+		if(eventsToday != null) {
+			eventListModel.clear();			
+			eventListModel.addElement(headerText + "<html><div style='height:3px;'></div></html>"); 
+			for (Event event : eventsToday) {
+				eventListModel.addElement(event.getInfoEventToString());
+			}
+		}
+    }
+
+    private void filterFutureEvents(Set<Event> eventsToFile) {
+    	Set<Event> nextEvents = eventsToFile.stream()
+	            							.filter(event -> event.getDate().isAfter(LocalDate.now()))
+	            							.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
+
+		if(nextEvents != null && nextEvents.size() > 0) {		
+			eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
+			eventListModel.addElement("<html><body style='font-size: 16px;'>" + "<u>Prossimi eventi: </u></body></html>");
+			eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
+			for (Event event : nextEvents) {
+				eventListModel.addElement(event.getDate() + " >> " + event.getInfoEventToString());
+			}
+		}
+    }
+    
+    private void setButtonIcon(JButton button, String path) {
 		Image scaledImg;
         try {
             ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
@@ -285,4 +262,17 @@ public class ConsolleView extends JFrame {
             System.out.println(ex);
         }
     }
+    
+    public void updateUIconto() {
+		lblmporto.setText(formattedImport(account.getBalance()) + " €");
+		consolleObjectiveView.updateUI();
+	}
+    
+    private String formattedImport(double amount) {
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+        return decimalFormat.format(amount);
+	}
 }

@@ -37,11 +37,27 @@ public interface Event extends Data{
 	 */
 	String getInfoEventToFile();
 	
+	/**
+	 * 
+	 * @return l'identificatore, usato per identificare un evento su più giornate.
+	 */
 	String getIdentifier();
 	
+	/**
+	 * 
+	 * @param identifier
+	 */
 	void setIdentifier(String identifier);
 	
-	void setDaOra(String da);
+	/**
+	 * 
+	 * @param daOra
+	 */
+	void setDaOra(String daOra);
 	
-	void setAOra(String da);
+	/**
+	 * 
+	 * @param aOra
+	 */
+	void setAOra(String aOra);
 }

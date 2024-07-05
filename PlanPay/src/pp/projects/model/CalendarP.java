@@ -15,7 +15,7 @@ public interface CalendarP {
 	 * @param newDesc = descrizione dell'evento.
 	 * @param newDaOra = da ora evento.
 	 * @param newAora = a ora evento.
-	 * @return nuovo evento.
+	 * @return nuovo evento. (Mi serve per i test)
 	 * @throws InvalidParameterException 
 	 * @throws EventAlreadyExistsException 
 	 */
@@ -43,7 +43,7 @@ public interface CalendarP {
 			 		  String newName, String newDesc, LocalDate currentDate, String newDaOra, String newAora, State stato, String identifier) throws EventNotFoundException, EventAlreadyExistsException;
 	
 	/**
-	 * Rimozione di un evento.
+	 * Rimozione di un evento di un giorno singolo.
 	 * 
 	 * @param name
 	 * @param date
@@ -53,13 +53,39 @@ public interface CalendarP {
 	 */
 	Event removeActivity(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 	
+	/**
+	 * Rimozione di un evento su più giornate.
+	 * 
+	 * @param name
+	 * @param date
+	 * @param daOra
+	 * @param aOra
+	 * @return tutti gli eventi rimossi.
+	 * @throws EventNotFoundException
+	 */
 	Set<Event> removeEvents(String name, LocalDate date, String daOra, String aOra) throws EventNotFoundException;
 	
+	/**
+	 * 
+	 * @return tutti gli eventi
+	 */
 	Set<Event> getAllEvents();
 	
+	/**
+	 * 
+	 * @return se il salvataggio su file è avvenuto con successo.
+	 */
 	boolean saveEventsToFile();
 	
+	/**
+	 * 
+	 * @return tutti gli eventi caricati dal file.
+	 */
 	Set<Event> loadEventsFromFile();
 	
+	/**
+	 * 
+	 * @param path
+	 */
 	void setPathEvents(String path);
 }

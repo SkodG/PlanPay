@@ -39,9 +39,6 @@ import java.text.DateFormat;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
-/**
- * Creazione di una JDialog per la capacità di essere modale. Usata per interazioni secondarie.
- */
 public class EventView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -55,6 +52,7 @@ public class EventView extends JDialog {
 	private JComboBox<String> cmbStato;
 	private JButton btnCancellaAttivita;
 	private JButton btnCancellaTuttoEvento;
+	private DateFormat timeFormat;	
 	
 	private String name;
 	private String desc;
@@ -64,14 +62,14 @@ public class EventView extends JDialog {
 	private LocalDate selectedDateA;
 	private boolean bNew;
 	private ConsoleController controller;
+	private LocalDate dateL;
 	
-	/**
-	 * Create the dialog.
-	 */
 	public EventView(boolean bNew, LocalDate date, ConsoleController c, CalendarView calendar) {		
 		this.name = new String();
 		this.bNew = bNew;
 		this.controller = c;
+		this.stato = State.V;
+		this.dateL = date;
 		
 		setTitle("EVENTO");
 		setBounds(100, 100, 500, 526);
@@ -80,114 +78,7 @@ public class EventView extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
-		JLabel lbTitolo = new JLabel("Titolo:");
-		lbTitolo.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbTitolo.setBounds(10, 168, 84, 27);
-		contentPanel.add(lbTitolo);
-		
-		JLabel lbDescrizione = new JLabel("Descrizione:");
-		lbDescrizione.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbDescrizione.setBounds(10, 205, 120, 27);
-		contentPanel.add(lbDescrizione);
-		
-		edTitolo = new JTextField();
-		edTitolo.setFont(new Font("Calibri", Font.PLAIN, 15));
-		edTitolo.setBounds(104, 158, 372, 36);
-		contentPanel.add(edTitolo);
-		edTitolo.setColumns(10);
-		this.name = edTitolo.getText();
-		
-		txtDescrizione = new JTextArea();
-		txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
-		txtDescrizione.setBounds(10, 242, 466, 171);
-		contentPanel.add(txtDescrizione);		
-        this.desc = txtDescrizione.getText();
-        
-		JLabel lbAOra = new JLabel("Ora:");
-		lbAOra.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbAOra.setBounds(305, 58, 41, 27);
-		contentPanel.add(lbAOra);
-		
-		JLabel lbDaOra = new JLabel("Ora:");
-		lbDaOra.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbDaOra.setBounds(305, 20, 41, 27);
-		contentPanel.add(lbDaOra);
-		
-		DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-		DateFormatter timeFormatter = new DateFormatter(timeFormat);
-        timeFormatter.setAllowsInvalid(false);  // Non permette valori invalidi
-        timeFormatter.setOverwriteMode(true);   // Sovrascrive il testo durante la digitazione
-                
-        timeFieldDaOra = new JFormattedTextField(timeFormatter);
-		timeFieldDaOra.setFont(new Font("Calibri", Font.PLAIN, 16));
-		timeFieldDaOra.setBounds(356, 20, 120, 30);
-		timeFieldDaOra.setColumns(5);
-	    contentPanel.add(timeFieldDaOra);  
-	        
-		timeFieldAora = new JFormattedTextField(timeFormatter);
-		timeFieldAora.setFont(new Font("Calibri", Font.PLAIN, 16));
-		timeFieldAora.setBounds(356, 53, 120, 30);
-		timeFieldAora.setColumns(5);
-	    contentPanel.add(timeFieldAora);     
-
-        try {
-            Date midnight = timeFormat.parse("00:00");
-            timeFieldAora.setValue(midnight);  // Imposta mezzanotte come valore predefinito
-            timeFieldDaOra.setValue(midnight);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-		
-		JLabel lbDaGiorno = new JLabel("Da giorno:");
-		lbDaGiorno.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbDaGiorno.setBounds(10, 20, 95, 27);
-		contentPanel.add(lbDaGiorno);
-		
-		JLabel lbAGiorno = new JLabel("A giorno:");
-		lbAGiorno.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbAGiorno.setBounds(10, 58, 95, 27);
-		contentPanel.add(lbAGiorno);
-        	
-        dateChooserDa = new JDateChooser();
-        dateChooserDa.setFont(new Font("Calibri", Font.PLAIN, 15));
-        dateChooserDa.setBounds(104, 20, 120, 30);
-        dateChooserDa.setVisible(true); // Nascondi il JDateChooser inizialmente
-        contentPanel.add(dateChooserDa);
-        
-        dateChooserA = new JDateChooser();
-        dateChooserA.setFont(new Font("Calibri", Font.PLAIN, 15));
-        dateChooserA.setBounds(104, 55, 120, 30);
-        dateChooserA.setVisible(true); 
-        contentPanel.add(dateChooserA);
-                
-        selectedDateDa = date;
-        selectedDateA = date;
-        
-        // Setta la data sul JDateChooser per la creazione di un nuovo evento
-        dateChooserDa.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        dateChooserA.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-
-        /* -----  ActionListener per il JDateChooser serve a catturare e gestire i cambiamenti di data selezionati dall'utente.
-        	è utile per aggiornare automaticamente altre parti dell' applicazione. ------- */
-        dateChooserDa.addPropertyChangeListener("date", evt -> {
-        	if (!calendar.getSelectingEvent()) {
-	            Date selectedDate = dateChooserDa.getDate();
-	            if (selectedDate != null) {
-	                // Converti Date a LocalDate
-	            	selectedDateDa = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	            }
-        	}
-        });
-        
-        dateChooserA.addPropertyChangeListener("date", evt -> {
-        	if (!calendar.getSelectingEvent()) {
-	            Date selectedDate = dateChooserA.getDate();
-	            if (selectedDate != null) {
-	                // Converti Date a LocalDate
-	            	selectedDateA = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	            }
-        	}
-        });
+		initComponents(calendar);        	
         
 		JButton btnSalva = new JButton("Salva");
 		btnSalva.addActionListener(new ActionListener() {
@@ -231,7 +122,6 @@ public class EventView extends JDialog {
 						events = c.saveEvent(bNew, name, desc, selectedDateDa, selectedDateA, newDaOra, newAora,
 						        			 edTitolo.getText(), saveDescription(), newDaOra, newAora, stato, identifierEvent);
 						edTitolo.setEditable(false);
-						//calendar.updateUI(selectedDateDa, selectedDateA, newDaOra, newAora, events, false);	
 						calendar.updateUI(events);	
 						c.updateUIevents();
 		                calendar.updateLegenda(events);
@@ -285,19 +175,6 @@ public class EventView extends JDialog {
 		btnCancellaAttivita.setBounds(324, 423, 152, 56);
 		contentPanel.add(btnCancellaAttivita);
 		
-		JLabel lbStato = new JLabel("Stato:");
-		lbStato.setFont(new Font("Calibri", Font.PLAIN, 20));
-		lbStato.setBounds(10, 110, 95, 27);
-		contentPanel.add(lbStato);
-		
-		cmbStato = new JComboBox<>();
-		cmbStato.setBounds(104, 107, 120, 30);
-		cmbStato.addItem(" ");
-        cmbStato.addItem("Da avviare");
-        cmbStato.addItem("In corso");
-        cmbStato.addItem("Concluso");
-		contentPanel.add(cmbStato);
-		
 		btnCancellaTuttoEvento = new JButton("Cancella evento");
 		btnCancellaTuttoEvento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -332,30 +209,12 @@ public class EventView extends JDialog {
 		btnCancellaTuttoEvento.setActionCommand("Cancel");
 		btnCancellaTuttoEvento.setBounds(168, 423, 152, 56);
 		contentPanel.add(btnCancellaTuttoEvento);
-		
-		// Imposto un valore di default
-		stato = State.V;
-		
-		cmbStato.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	String statoString = (String) cmbStato.getSelectedItem();
-                if(statoString.equals("Da avviare"))
-                	stato = State.DA_AVVIARE;
-                else if(statoString.equals("In corso"))
-                	stato = State.IN_CORSO;
-                else if(statoString.equals("Concluso"))
-                	stato = State.CONCLUSO;
-                else
-                	stato = State.V;
-            }
-        });
-		
+				
 		if(bNew) {
 			btnCancellaAttivita.setVisible(false);
 			btnCancellaTuttoEvento.setVisible(false);
 			btnSalva.setBounds(168, 423, 152, 56);
-		}
+		}		
 	}
 	
 	public void setEventDetail(String nameEvent, LocalDate date, String daOra, String aOra, String desc, State state, String identifier) {
@@ -434,4 +293,130 @@ public class EventView extends JDialog {
     		btnCancellaTuttoEvento.setBounds(302, 423, 152, 56);
     	}
     }
+	
+	 private void initComponents(CalendarView calendar) {
+	     createLabels();
+	     createTextFields();
+	     createDateChoosers(calendar);
+	     createComboBox();
+	     //createButtons(calendar);
+	 }
+
+	 private void createLabels() {
+	     contentPanel.add(createLabel("Titolo:", 10, 168, 84, 27, 20));
+	     contentPanel.add(createLabel("Descrizione:", 10, 205, 120, 27, 20));
+	     contentPanel.add(createLabel("Ora:", 305, 58, 41, 27, 20));
+	     contentPanel.add(createLabel("Ora:", 305, 20, 41, 27, 20));
+	     contentPanel.add(createLabel("Da giorno:", 10, 20, 95, 27, 20));
+	     contentPanel.add(createLabel("A giorno:", 10, 58, 95, 27, 20));
+	     contentPanel.add(createLabel("Stato:", 10, 110, 95, 27, 20));
+	 }
+
+	 private JLabel createLabel(String text, int x, int y, int width, int height, int fontSize) {
+	     JLabel label = new JLabel(text);
+	     label.setFont(new Font("Calibri", Font.PLAIN, fontSize));
+	     label.setBounds(x, y, width, height);
+	     return label;
+	 }
+
+	 private void createTextFields() {
+	     edTitolo = new JTextField();
+	     edTitolo.setFont(new Font("Calibri", Font.PLAIN, 15));
+	     edTitolo.setBounds(104, 158, 372, 36);
+	     contentPanel.add(edTitolo);
+	     edTitolo.setColumns(10);
+	     this.name = edTitolo.getText();
+
+	     txtDescrizione = new JTextArea();
+	     txtDescrizione.setFont(new Font("Calibri", Font.PLAIN, 15));
+	     txtDescrizione.setBounds(10, 242, 466, 171);
+	     contentPanel.add(txtDescrizione);
+	     this.desc = txtDescrizione.getText();
+
+	     timeFormat = new SimpleDateFormat("HH:mm");
+	     DateFormatter timeFormatter = new DateFormatter(timeFormat);
+	     timeFormatter.setAllowsInvalid(false);
+	     timeFormatter.setOverwriteMode(true);	     
+	     
+	     timeFieldDaOra = new JFormattedTextField(timeFormatter);
+	     timeFieldDaOra.setFont(new Font("Calibri", Font.PLAIN, 16));
+	     timeFieldDaOra.setBounds(356, 20, 120, 30);
+	     timeFieldDaOra.setColumns(5);
+	     contentPanel.add(timeFieldDaOra);
+
+	     timeFieldAora = new JFormattedTextField(timeFormatter);
+	     timeFieldAora.setFont(new Font("Calibri", Font.PLAIN, 16));
+	     timeFieldAora.setBounds(356, 53, 120, 30);
+	     timeFieldAora.setColumns(5);
+	     contentPanel.add(timeFieldAora);
+
+	     try {
+	       Date midnight = timeFormat.parse("00:00");
+	       timeFieldAora.setValue(midnight);
+	       timeFieldDaOra.setValue(midnight);
+	     } catch (ParseException e) {
+	       e.printStackTrace();
+	     }
+	  }
+
+	  private void createDateChoosers(CalendarView calendar) {
+	  	  dateChooserDa = new JDateChooser();
+	      dateChooserDa.setFont(new Font("Calibri", Font.PLAIN, 15));
+	      dateChooserDa.setBounds(104, 20, 120, 30);
+	      dateChooserDa.setVisible(true); // Nascondi il JDateChooser inizialmente
+	      contentPanel.add(dateChooserDa);
+	       
+	      dateChooserA = new JDateChooser();
+	      dateChooserA.setFont(new Font("Calibri", Font.PLAIN, 15));
+	      dateChooserA.setBounds(104, 55, 120, 30);
+	      dateChooserA.setVisible(true); 
+	      contentPanel.add(dateChooserA);
+	       
+	      selectedDateDa = dateL;
+	      selectedDateA = dateL;
+	        
+	      // Setta la data sul JDateChooser per la creazione di un nuovo evento
+	      dateChooserDa.setDate(Date.from(dateL.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+	      dateChooserA.setDate(Date.from(dateL.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+	      dateChooserDa.addPropertyChangeListener("date", evt -> updateSelectedDate(dateChooserDa, calendar));
+	      dateChooserA.addPropertyChangeListener("date", evt -> updateSelectedDate(dateChooserA, calendar));
+	  }
+
+	  private void updateSelectedDate(JDateChooser dateChooser, CalendarView calendar) {
+	     if (!calendar.getSelectingEvent()) {
+	         Date selectedDate = dateChooser.getDate();
+	         if (selectedDate != null) {
+	             LocalDate localDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	             if (dateChooser == dateChooserDa) {
+	                 selectedDateDa = localDate;
+	             } else {
+	                 selectedDateA = localDate;
+	             }
+	         }
+	     }
+	  }
+
+	  private void createComboBox() {
+	      cmbStato = new JComboBox<>();
+	      cmbStato.setBounds(104, 107, 120, 30);
+	      cmbStato.addItem(" ");
+	      cmbStato.addItem("Da avviare");
+	      cmbStato.addItem("In corso");
+	      cmbStato.addItem("Concluso");
+	      contentPanel.add(cmbStato);
+
+	      cmbStato.addActionListener(e -> updateState());
+	  }
+
+	  private void updateState() {
+	      String statoString = (String) cmbStato.getSelectedItem();
+	      stato = switch (statoString) {
+	          case "Da avviare" -> State.DA_AVVIARE;
+	          case "In corso" -> State.IN_CORSO;
+	          case "Concluso" -> State.CONCLUSO;
+	          default -> State.V;
+	      };
+	  }
+
 }

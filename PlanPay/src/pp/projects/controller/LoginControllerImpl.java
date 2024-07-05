@@ -31,7 +31,7 @@ public class LoginControllerImpl implements LoginController{
 	public boolean loginButtonClick(String user, String passw) throws IllegalArgumentException, AuthenticationException{
 		boolean isAuthenticated = false;
 		
-		if (isValidString(user) && isValidString(passw)) {
+		if (isValidString(user) && isValidString(passw) && !user.contains(" ")) {
             isAuthenticated = loginModel.valideAuthenticate(user, passw);
             if (isAuthenticated) {
                 this.userName = loginModel.getAccountName();
@@ -55,7 +55,7 @@ public class LoginControllerImpl implements LoginController{
 	public boolean signupButtonClick(String user, String passw, String name) throws IllegalArgumentException, RegistrationException {
 		boolean isRegistred = false;
 		
-		if (isValidString(user) && isValidString(passw) && isValidString(name)) {
+		if (isValidString(user) && isValidString(passw) && isValidString(name) && !user.contains(" ")) {
             isRegistred = loginModel.registration(user, passw, name);
             if (isRegistred) {
                 return true;
@@ -78,7 +78,7 @@ public class LoginControllerImpl implements LoginController{
 	}
 	
 	private boolean isValidString(String str) {
-	     return str != null && !str.trim().isEmpty() && !str.contains(" ");
+	     return str != null && !str.trim().isEmpty();
 	}
 	
 	public Login getLoginModel() {

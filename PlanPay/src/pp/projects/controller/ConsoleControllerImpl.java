@@ -197,7 +197,7 @@ public class ConsoleControllerImpl implements ConsoleController{
         if (!calendario.saveEventsToFile()) {
             throw new RuntimeException("Errore durante il salvataggio degli eventi.");
         }
-
+        
         return calendario.getAllEvents();
     }
 

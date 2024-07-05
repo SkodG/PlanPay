@@ -32,18 +32,17 @@ public class CalendarImpl implements CalendarP{
 	}
 	
 	public Event newEvent(String name, LocalDate currentDate, String daOra, String newName, String newDesc, String newDaOra, String newAora, State stato, String identifier) throws EventAlreadyExistsException, InvalidParameterException {
-        validateEventParameters(newName, newDaOra, newAora);
-
+		validateEventParameters(newName, newDaOra, newAora);
         Optional<Event> existingEvent = getExistingEvent(identifier, currentDate, newDaOra, newAora);
         
         if (existingEvent.isPresent()) {
         	throw new EventAlreadyExistsException("Evento già esistente nell'intervallo di tempo specificato! Impossibile crearlo.");
         }
-
+  
         Event newEvent = new EventImpl(newName, newDesc, currentDate, newDaOra, newAora, stato, identifier);
         setEvents.add(newEvent);
-
-        return newEvent;
+        
+       return newEvent;
     }
 
     public boolean modifyEvent(String name, String desc, LocalDate daData, LocalDate aData, String daOra, String aOra,
@@ -110,7 +109,7 @@ public class CalendarImpl implements CalendarP{
     @Override
     public boolean saveEventsToFile() {
         if (pathEvents == null) return false;
-
+        
         File file = new File(pathEvents);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
             file.getParentFile().mkdirs();

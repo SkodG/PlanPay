@@ -12,8 +12,6 @@ import pp.projects.controller.LoginController;
 import pp.projects.model.AuthenticationException;
 
 import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import java.awt.Color;
 import javax.swing.UIManager;
@@ -22,13 +20,8 @@ public class LoginView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JButton btnLogin;
-	private JLabel lbUser;
-	private JLabel lbPassword;
 	private JTextField edUser;
 	private JTextField edPassword;
-	private JButton btnNew;
-	private JLabel lbNew; 
 	private String username;
 	private String password;
 
@@ -42,69 +35,74 @@ public class LoginView extends JFrame {
 		setBounds(100, 100, 395, 428);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setContentPane(contentPane);
 		
-		lbUser = new JLabel(" User");
-		lbUser.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lbUser.setBounds(10, 35, 90, 21);
-		contentPane.add(lbUser);
-		
-		lbPassword = new JLabel(" Password");
-		lbPassword.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lbPassword.setBounds(10, 129, 90, 21);
-		contentPane.add(lbPassword);
-		
-		edUser = new JTextField();
-		edUser.setFont(new Font("Calibri", Font.PLAIN, 16));
-		edUser.setBounds(10, 64, 361, 33);
-		contentPane.add(edUser);
-		
-		edPassword = new JTextField();
-		edPassword.setFont(new Font("Calibri", Font.PLAIN, 16));
-		edPassword.setBounds(10, 156, 361, 33);
-		contentPane.add(edPassword);
-		
-		btnLogin = new JButton("\r\nLogin");
-		btnLogin.setBackground(new Color(41, 235, 20));
-		btnLogin.setFont(new Font("Calibri", Font.PLAIN, 28));
-		btnLogin.setForeground(new Color(255, 255, 255));
-		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				username = edUser.getText();
-				password = edPassword.getText();
-				try {
-					if(controller.loginButtonClick(username, password)) {
-						LoginView.this.setVisible(false);
-					} 
-				} catch (IllegalArgumentException e1) {
-					JOptionPane.showMessageDialog(null, "Nome utente e password non possono essere vuoti.", "Errore", JOptionPane.ERROR_MESSAGE);
-				} catch (AuthenticationException e1) {
-					JOptionPane.showMessageDialog(null, "Autenticazione fallita. Credenziali non valide. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
-				} 
-			}
-		});
-		btnLogin.setBounds(99, 219, 207, 52);
-		contentPane.add(btnLogin);
-		
-		btnNew = new JButton("\r\nSign Up");
-		btnNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				edUser.setText("");
-				edPassword.setText("");
-				controller.newSignupButtonClick();
-			}
-		});
-		btnNew.setForeground(new Color(255, 255, 255));
-		btnNew.setFont(new Font("Calibri", Font.PLAIN, 22));
-		btnNew.setBackground(SystemColor.activeCaption);
-		btnNew.setBounds(146, 311, 108, 42);
-		contentPane.add(btnNew);
-		
-		lbNew = new JLabel("Non ho un account! ");
-		lbNew.setFont(new Font("Calibri", Font.PLAIN, 16));
-		lbNew.setBounds(10, 334, 153, 21);
-		contentPane.add(lbNew);
+		initComponents(controller);
 	}
+	
+	private void initComponents(LoginController controller) {
+        JLabel lbUser = createLabel("User", 10, 35, 90, 21, 16);
+        JLabel lbPassword = createLabel("Password", 10, 129, 90, 21, 16);
+
+        edUser = createTextField(10, 64, 361, 33, 16);
+        edPassword = createTextField(10, 156, 361, 33, 16);
+
+        JButton btnLogin = createButton("Login", 99, 219, 207, 52, 28, new Color(41, 235, 20), Color.WHITE);
+        btnLogin.addActionListener(e -> handleLogin(controller));
+
+        JButton btnNew = createButton("Sign Up", 146, 311, 108, 42, 22, SystemColor.activeCaption, Color.WHITE);
+        btnNew.addActionListener(e -> {
+            edUser.setText("");
+            edPassword.setText("");
+            controller.newSignupButtonClick();
+        });
+
+        JLabel lbNew = createLabel("Non ho un account!", 10, 334, 153, 21, 16);
+
+        contentPane.add(lbUser);
+        contentPane.add(lbPassword);
+        contentPane.add(edUser);
+        contentPane.add(edPassword);
+        contentPane.add(btnLogin);
+        contentPane.add(btnNew);
+        contentPane.add(lbNew);
+    }
+
+    private JLabel createLabel(String text, int x, int y, int width, int height, int fontSize) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Calibri", Font.PLAIN, fontSize));
+        label.setBounds(x, y, width, height);
+        return label;
+    }
+
+    private JTextField createTextField(int x, int y, int width, int height, int fontSize) {
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Calibri", Font.PLAIN, fontSize));
+        textField.setBounds(x, y, width, height);
+        return textField;
+    }
+
+    private JButton createButton(String text, int x, int y, int width, int height, int fontSize, Color bg, Color fg) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Calibri", Font.PLAIN, fontSize));
+        button.setBackground(bg);
+        button.setForeground(fg);
+        button.setBounds(x, y, width, height);
+        return button;
+    }
+
+    private void handleLogin(LoginController controller) {
+        String username = edUser.getText().trim();
+        String password = edPassword.getText().trim();
+        try {
+            if (controller.loginButtonClick(username, password)) {
+                this.setVisible(false);
+            }
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Nome utente e password non possono essere vuoti o contenere spazi.", "Errore", JOptionPane.ERROR_MESSAGE);
+        } catch (AuthenticationException e) {
+            JOptionPane.showMessageDialog(null, "Autenticazione fallita. Credenziali non valide o spazi presenti. Riprova.", "Errore", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

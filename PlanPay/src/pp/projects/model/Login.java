@@ -2,10 +2,6 @@ package pp.projects.model;
 
 import java.util.Map;
 
-/*
- * interfaccia per identificare l'utente
- */
-
 public interface Login {
 	
 	/**
@@ -60,7 +56,7 @@ public interface Login {
 	/**
 	 * 
 	 * @param user
-	 * @return
+	 * @return il percorso del file collegato all'utente.
 	 */
 	String getEventsFilePath(String user);
 }
