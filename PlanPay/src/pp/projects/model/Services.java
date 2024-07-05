@@ -23,7 +23,7 @@ public class Services extends AbstractOperations {
 
 	@Override
 	protected String getTransactionType() {
-		return "Servizio";
+		return "Servizio ";
 	}
 
 	@Override

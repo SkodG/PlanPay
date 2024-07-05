@@ -62,8 +62,6 @@ public class ObjectiveView extends JFrame {
 		savingAmount = updateSavingAmount(nomeObbiettivo);		
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
-		System.out.println("soglia risparmio =" +savingAmount);
-		System.out.println("descrizione =" +description);
 		hasSaved = false;
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -125,7 +123,6 @@ public class ObjectiveView extends JFrame {
 						convInput = convInput.replace(",", ".");
 						double parsedInput = Double.parseDouble(convInput);	
 						savingAmount = parsedInput;
-						System.out.println("Ammontare inserito: "+ savingAmount);
 						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
 						sym.setDecimalSeparator(',');
 						sym.setGroupingSeparator('.');
@@ -169,7 +166,6 @@ public class ObjectiveView extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					System.out.println("Soglia impostata: "+savingAmount);
 					optObjective = controller.getObjective(textName.getText());
 					if(textAmount.getText().isBlank() || textName.getText().isBlank())
 						JOptionPane.showMessageDialog(null, "Inserire nome obbiettivo"+
@@ -177,10 +173,7 @@ public class ObjectiveView extends JFrame {
 					else if(optObjective.isEmpty()){
 						//l'obbiettivo ha un nome nuovo
 						//controllo che il nome non sia già preso
-						System.out.println("vecchio nome obbiettivo: "+nomeObbiettivo);
-						System.out.println("nuovo nome obbiettivo: "+textName.getText());
 						description = textDescr.getText().isEmpty()? updateDescription(textName.getText()): textDescr.getText();
-						System.out.println("nuova descrizione obbiettivo: "+description);
 						controller.saveObjective(bNew, textName.getText(), description, savingAmount);
 						hasSaved = true;
 						textName.setEditable(false);
@@ -225,7 +218,6 @@ public class ObjectiveView extends JFrame {
 					ServicesView serviceView = new ServicesView(OperationType.OBIETTIVO, textName.getText(), controller);
 					serviceView.setVisible(true);
 					setVisible(false);
-					System.out.println("Deposita/preleva da: "+ textName.getText());
 				}
 				
 			}		

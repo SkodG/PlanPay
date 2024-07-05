@@ -44,7 +44,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective {
 	
 	@Override
 	protected String getTransactionType() {
-		return "Obbiettivo "+ getDescription();
+		return "Obbiettivo " + getDescription()+" ";
 	}
 	
 	
@@ -109,7 +109,8 @@ public class ObjectiveImpl extends AbstractOperations implements Objective {
 			frequency = Math.floor(yearlyFrequency*timeInYears);
 		
 		if(isBalanceAccounted)
-			result = (targetAmount - this.getBalance())/frequency;
+			result = this.getBalance()  < targetAmount? (targetAmount - this.getBalance())/frequency :
+											0.00;
 		else
 			result = (targetAmount)/frequency;
 		return result;

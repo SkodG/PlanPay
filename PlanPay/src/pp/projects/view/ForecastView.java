@@ -100,7 +100,6 @@ public class ForecastView extends JFrame {
 						convInput = convInput.replace(",", ".");
 						double parsedInput = Double.parseDouble(convInput);	
 						target = parsedInput;
-						System.out.println("Ammontare inserito: "+ target);
 						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
 						sym.setDecimalSeparator(',');
 						sym.setGroupingSeparator('.');
@@ -132,7 +131,6 @@ public class ForecastView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) comboBox.getSelectedItem();
                 handleComboBoxSelection(selected);
-                System.out.println("frequency selected: "+monthsPerSaving);
             }
         });
 

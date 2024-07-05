@@ -20,7 +20,7 @@ public abstract class AbstractOperations {
     		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doDeposit(amount);
         if(success) {
-        	transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Deposito "+desc, amount));
+        	transactionList.add(new Transaction(LocalDate.now(), " Deposito "+ getTransactionType() + desc, amount));
         }
         return success;
         
@@ -32,7 +32,7 @@ public abstract class AbstractOperations {
     		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doWithdraw(amount);
         if (success) {
-            transactionList.add(new Transaction(LocalDate.now(), getTransactionType() + " Prelievo "+desc, amount));
+            transactionList.add(new Transaction(LocalDate.now(), " Prelievo "+ getTransactionType() + desc, amount));
         }
         return success;
     }

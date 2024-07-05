@@ -49,18 +49,18 @@ class TransactionTest {
 		assertTrue(trList.get(1).getAmount() == 40.8);
 		assertTrue(trList.get(2).getAmount() == 11.0);
 		
-		assertTrue(trList.get(0).getName().equals("Servizio Deposito vendita bici usata"));
-		assertTrue(trList.get(1).getName().equals("Servizio Prelievo Cena Fuori"));
+		assertTrue(trList.get(0).getName().equals(" Deposito Servizio vendita bici usata"));
+		assertTrue(trList.get(1).getName().equals(" Prelievo Servizio Cena Fuori"));
 		
-		assertFalse(trList.get(2).getName().equals("Servizio Deposito Abbonamento Netflix"));
-		assertTrue(trList.get(2).getName().equals("Servizio Prelievo Abbonamento Netflix"));
+		assertFalse(trList.get(2).getName().equals(" Servizio Deposito Abbonamento Netflix"));
+		assertTrue(trList.get(2).getName().equals(" Prelievo Servizio Abbonamento Netflix"));
 		
 		}
 	
 	@Test
 	public void testObjectiveTransaction() {
 		//effettuo operazioni su un obbiettivo per creare relative transazioni
-		controller.saveObjective(true, "Friggitrice", "Friggitrice modello 9xT4", 99.99);
+		controller.saveObjective(true, "Friggitrice", "modello 9xT4", 99.99);
 		try {
 			controller.updateConto(1000.0, true, "Vendita vecchia auto", OperationType.SERVIZIO);
 			controller.updateConto(20.01, true, "Friggitrice", OperationType.OBIETTIVO);
@@ -80,11 +80,11 @@ class TransactionTest {
 		assertTrue(trList.get(3).getAmount() == 9.98);
 		assertTrue(trList.get(4).getAmount() == 99.99);
 		
-		assertTrue(trList.get(0).getName().equals("Servizio Deposito Vendita vecchia auto"));
-		assertTrue(trList.get(1).getName().equals("Obbiettivo Friggitrice Deposito "));
-		assertTrue(trList.get(2).getName().equals("Obbiettivo Friggitrice Deposito "));
-		assertTrue(trList.get(3).getName().equals("Obbiettivo Friggitrice Deposito "));
-		assertTrue(trList.get(4).getName().equals("Obbiettivo Friggitrice Prelievo "));
+		assertTrue(trList.get(0).getName().equals(" Deposito Servizio Vendita vecchia auto"));
+		assertTrue(trList.get(1).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
+		assertTrue(trList.get(2).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
+		assertTrue(trList.get(3).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
+		assertTrue(trList.get(4).getName().equals(" Prelievo Obbiettivo modello 9xT4 'Friggitrice'"));
 		
 		// Verifico la data delle transazioni
 		LocalDate actualDate = LocalDate.now();

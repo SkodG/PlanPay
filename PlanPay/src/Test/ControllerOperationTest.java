@@ -3,6 +3,8 @@ package Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +34,36 @@ class ControllerOperationTest {
 		assertTrue(controller.getAllTransactions().isEmpty());
 		assertTrue(controller.getObjectiveList().isEmpty());
 		assertTrue(controller.getDatiTransazione().isEmpty());
+	}
+	
+	@Test
+	public void testObjectiveList() {
+		assertTrue(controller.getObjective("Nuovo Frigo").isEmpty());
+		
+		// Verifico il salvataggio di un obbiettivo in lista Obbiettivi
+		controller.saveObjective(true, "Nuovo Frigo", "Classe Energetica B", 890);
+		assertTrue(controller.getObjective("Nuovo Frigo").isPresent());
+		assertTrue(controller.getObjectiveList().size() == 1);		
+		assertTrue(controller.getObjectiveList().get(0).getName().equals("Nuovo Frigo") &&
+					controller.getObjectiveList().get(0).getBalance() == 0.0 &&
+					controller.getObjectiveList().get(0).getDate().equals(LocalDate.now()) &&
+					controller.getObjectiveList().get(0).getDescription().equals("Classe Energetica B") &&
+					controller.getObjectiveList().get(0).getSavingTarget() == 890.0);
+		
+		// Verifico la modifica di un Obbiettivo salvato in lista
+		controller.saveObjective(false, "Nuovo Frigo", "Classe Energetica C", 990);
+		assertTrue(controller.getObjective("Nuovo Frigo").isPresent() &&
+					controller.getObjective("Nuovo Frigo").get().getDescription().equals("Classe Energetica C") &&
+					controller.getObjective("Nuovo Frigo").get().getSavingTarget() == 990.0);
+		
+		// Verifico le exception
+		assertThrows(IllegalStateException.class, 
+				() -> controller.saveObjective(true, "Nuovo Frigo", "Classe Energetica B", 890));	
+		assertThrows(IllegalStateException.class, 
+				() -> controller.saveObjective(false, "Nuovo Portatile", "con SSD da 1TB", 950));
+		
+		assertThrows(IllegalStateException.class, 
+				() -> controller.removeObjective(""));		
 	}
 	
 	@Test

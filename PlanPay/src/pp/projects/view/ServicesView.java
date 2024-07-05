@@ -77,7 +77,6 @@ public class ServicesView extends JFrame {
 						convInput = convInput.replace(",", ".");
 						double parsedInput = Double.parseDouble(convInput);	
 						Amount = parsedInput;
-						System.out.println("Ammontare inserito: "+ Amount);
 						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.ITALY);
 						sym.setDecimalSeparator(',');
 						sym.setGroupingSeparator('.');
@@ -148,8 +147,8 @@ public class ServicesView extends JFrame {
 								"Errore", JOptionPane.ERROR_MESSAGE);
 						}				
 					} **/
-				}catch( IllegalOperationException n1) {
-					JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi nel Conto insufficienti!", "Errore", JOptionPane.ERROR_MESSAGE);
+				}catch( IllegalOperationException i) {
+					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -244,7 +243,6 @@ public class ServicesView extends JFrame {
 				Optional<Objective> optObjective = controller.getObjective(operationName);
 				//se trovo l'obbiettivo posso eseguire l'operazione
 				if(optObjective.isPresent()) {
-					System.out.println("deposito in "+optObjective.get().getName());
 					controller.updateConto(Amount, operationSign, operationName, operationType);
 					setVisible(false);
 					textAmount.setText("0,00");
