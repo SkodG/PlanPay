@@ -15,7 +15,7 @@ import pp.projects.model.InvalidParameterException;
 import pp.projects.model.Objective;
 import pp.projects.model.OperationType;
 import pp.projects.model.State;
-import pp.projects.model.TransactionImpl;
+import pp.projects.model.Transaction;
 import pp.projects.view.CalendarView;
 
 public interface ConsoleController {
@@ -64,7 +64,7 @@ public interface ConsoleController {
 	 * 
 	 * @return tutte le transazioni (obbiettivi e operazioni)
 	 */
-	List<TransactionImpl> getAllTransactions();
+	List<Transaction> getAllTransactions();
 	
 	/**
 	 * 

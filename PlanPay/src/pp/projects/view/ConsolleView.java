@@ -212,12 +212,12 @@ public class ConsolleView extends JFrame {
     public void updateEventsUI() {
     	Set<Event> eventsToFile = controller.getAllEventToFile();	
 		if(!eventsToFile.isEmpty()) {
-			filterEventsByDate(eventsToFile);
-			filterFutureEvents(eventsToFile);			
+			Set<Event> eventsToday = filterEventsByDate(eventsToFile);
+			filterFutureEvents(eventsToFile, eventsToday);
 		}
     }
 
-    private void filterEventsByDate(Set<Event> eventsToFile) {
+    private Set<Event> filterEventsByDate(Set<Event> eventsToFile) {
     	Set<Event> eventsToday = eventsToFile.stream()
 				  							 .filter(e -> e.getDate().equals(LocalDate.now()))
 				  							 .collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
@@ -227,14 +227,21 @@ public class ConsolleView extends JFrame {
 			for (Event event : eventsToday) {
 				eventListModel.addElement(event.getInfoEventToString());
 			}
-		}
+		} 
+		
+		return eventsToday;
     }
 
-    private void filterFutureEvents(Set<Event> eventsToFile) {
-    	Set<Event> nextEvents = eventsToFile.stream()
-	            							.filter(event -> event.getDate().isAfter(LocalDate.now()))
-	            							.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
+    private void filterFutureEvents(Set<Event> eventsToFile, Set<Event> todayEvents) {
+    	Set<String> todayIdentifiers = todayEvents.stream()
+									                .map(Event::getIdentifier)
+									                .collect(Collectors.toSet());
 
+    	Set<Event> nextEvents = eventsToFile.stream()
+	            							.filter(event -> event.getDate().isAfter(LocalDate.now()) 
+	            											&& !todayIdentifiers.contains(event.getIdentifier()))
+	            							.collect(Collectors.toCollection(() -> new TreeSet<>(new ComparatorEvents())));
+    	
 		if(nextEvents != null && nextEvents.size() > 0) {		
 			eventListModel.addElement("<html><div style='height:3px;'></div></html>"); 
 			eventListModel.addElement("<html><body style='font-size: 16px;'>" + "<u>Prossimi eventi: </u></body></html>");

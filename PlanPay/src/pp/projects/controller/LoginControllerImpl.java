@@ -30,7 +30,6 @@ public class LoginControllerImpl implements LoginController{
 	@Override
 	public boolean loginButtonClick(String user, String passw) throws IllegalArgumentException, AuthenticationException{
 		boolean isAuthenticated = false;
-		
 		if (isValidString(user) && isValidString(passw) && !user.contains(" ")) {
             isAuthenticated = loginModel.valideAuthenticate(user, passw);
             if (isAuthenticated) {

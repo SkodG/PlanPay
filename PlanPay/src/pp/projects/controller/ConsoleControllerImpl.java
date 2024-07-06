@@ -25,7 +25,7 @@ import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
 import pp.projects.model.Services;
 import pp.projects.model.State;
-import pp.projects.model.TransactionImpl;
+import pp.projects.model.Transaction;
 import pp.projects.view.CalendarView;
 
 public class ConsoleControllerImpl implements ConsoleController{
@@ -134,6 +134,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 		if (!objective.isPresent()) {
 	        throw new IllegalStateException("Obbiettivo inesistente! Impossibile cancellarlo.");
 	    }
+		objective.get().delete();
 	    operationsList.remove(objective.get());
 	}
 	
@@ -146,7 +147,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public List<TransactionImpl> getAllTransactions() {
+	public List<Transaction> getAllTransactions() {
 		return operationsList.stream()
 							  .flatMap(operat -> operat.getList().stream())
 							  .collect(Collectors.toList());

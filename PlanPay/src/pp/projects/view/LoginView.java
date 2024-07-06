@@ -53,7 +53,8 @@ public class LoginView extends JFrame {
         edPassword = new JPasswordField(16);
         edPassword.setBounds(10, 156, 328, 33);
 
-        JButton btnShowPassword = new JButton(new ImageIcon("/images/show_pwd.png"));
+        JButton btnShowPassword = new JButton(new ImageIcon("src/images/show_pwd.png"));
+        btnShowPassword.setBackground(new Color(255, 255, 255));
         btnShowPassword.setBounds(341, 156, 45, 33);
         btnShowPassword.addActionListener(new ActionListener() {
             private boolean showingPassword = false;
@@ -116,8 +117,8 @@ public class LoginView extends JFrame {
     }
 
     private void handleLogin(LoginController controller) {
-        String username = edUser.getText().trim();
-        String password = edPassword.getText().trim();
+        username = edUser.getText().trim();
+        password = edPassword.getText().trim();
         try {
             if (controller.loginButtonClick(username, password)) {
                 this.setVisible(false);

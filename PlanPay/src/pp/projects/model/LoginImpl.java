@@ -39,7 +39,7 @@ public class LoginImpl implements Login{
 			
 			String input;
 			while ((input = reader.readLine()) != null) {
-				String[] arrayCredentials = input.split(" ");
+				String[] arrayCredentials = input.split("\\[\\]");
 				credentials.put(arrayCredentials[1], new UserCredentials(arrayCredentials[2], arrayCredentials[0], arrayCredentials[3]));
 			}
 		} catch (FileNotFoundException e) {
@@ -60,7 +60,6 @@ public class LoginImpl implements Login{
 	
 	@Override
 	public boolean valideAuthenticate(String utente, String password) {
-		// Controlla che la chiave sia contenuta in "credentials".
 		// In caso positivo prende la password da utente e la confronta con la password fornita come argomento.
 		if (credentials.containsKey(utente)) {
 			UserCredentials cred = credentials.get(utente);
@@ -79,7 +78,7 @@ public class LoginImpl implements Login{
 			return false;
 		}
 		
-		pathEvents = "src/resource/" + nomeUser.trim() + "_events.txt";
+		pathEvents = "src/resource/" + (nomeUser.contains(" ") ? nomeUser.replace(" ", "") : nomeUser) + "_events.txt";
 		credentials.put(utente, new UserCredentials(password, nomeUser, pathEvents));
 		saveCredential(utente, password, nomeUser);
 		return true;
@@ -98,7 +97,7 @@ public class LoginImpl implements Login{
 			if(pathEvents.trim() == "")
 				// sono nella fase di test e restituisco il percorso del file di test
 				pathEvents = "test_events";
-			writer.write(nomeUser + " " + utente + " " + password +  " " + pathEvents);
+			writer.write(nomeUser + "[]" + utente + "[]" + password +  "[]" + pathEvents);
 			writer.newLine();
 		} catch (IOException e) {
             System.out.print("Problemi al salvataggio del file: " + e);
@@ -134,7 +133,6 @@ public class LoginImpl implements Login{
     public String getEventsFilePath(String userName) {
 		for (Map.Entry<String, UserCredentials> entry : credentials.entrySet()) {
 	        UserCredentials value = entry.getValue();
-	        
 	        if (value.getUserName().equals(userName)) {
 	            return value.getEventsFilePath();
 	        }

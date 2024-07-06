@@ -63,11 +63,19 @@ public class CalendarModel extends AbstractTableModel {
     }
     
     public void nextMonth() {
-        setYearMonth(yearMonth.getYear(), yearMonth.getMonthValue() + 1);
+        if (yearMonth.getMonthValue() == 12) {
+            setYearMonth(yearMonth.getYear() + 1, 1);
+        } else {
+            setYearMonth(yearMonth.getYear(), yearMonth.getMonthValue() + 1);
+        }
     }
 
     public void previousMonth() {
-        setYearMonth(yearMonth.getYear(), yearMonth.getMonthValue() - 1);
+    	if (yearMonth.getMonthValue() == 1) {
+            setYearMonth(yearMonth.getYear() - 1, 12);
+        } else {
+            setYearMonth(yearMonth.getYear(), yearMonth.getMonthValue() - 1);
+        }
     }
     
     @Override

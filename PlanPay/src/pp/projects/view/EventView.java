@@ -167,6 +167,7 @@ public class EventView extends JDialog {
 					 eventSet.add(event);
 					 calendar.updateUIRemoveEvent(currentDay, eventSet);
 					 controller.updateUIevents();
+					 calendar.updateLegenda(controller.getAllEventToFile());
 				}
 			}
 		});
@@ -194,14 +195,14 @@ public class EventView extends JDialog {
 					if (response == JOptionPane.YES_OPTION) {
 						eventRemove = c.removeEvents(edTitolo.getText(), currentDay, timeFieldDaOra.getText(), timeFieldAora.getText());
 						controller.updateUIevents();
+						EventView.this.setVisible(false);
+						if(eventRemove != null && eventRemove.size() > 0) {
+							calendar.updateUIRemoveEvent(currentDay, eventRemove);
+							calendar.updateLegenda(controller.getAllEventToFile());
+						}
 					} 
 				} catch (EventNotFoundException e1) {
 					JOptionPane.showMessageDialog(null, "Evento inesistente! Impossibile cancellarlo.", "Errore", JOptionPane.ERROR_MESSAGE);
-				}
-				
-				EventView.this.setVisible(false);
-				if(eventRemove != null && eventRemove.size() > 0) {
-					calendar.updateUIRemoveEvent(currentDay, eventRemove);
 				}
 			}
 		});
@@ -237,6 +238,9 @@ public class EventView extends JDialog {
 		        e.printStackTrace();
 		        JOptionPane.showMessageDialog(this, "Errore nella formattazione dell'ora: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 		    }
+		 
+		 dateChooserDa.setEnabled(false);
+		 dateChooserA.setEnabled(false);
 		
 		 loadDescription(desc);
 		 
@@ -298,8 +302,7 @@ public class EventView extends JDialog {
 	     createLabels();
 	     createTextFields();
 	     createDateChoosers(calendar);
-	     createComboBox();
-	     //createButtons(calendar);
+	     createComboBox(calendar);
 	 }
 
 	 private void createLabels() {
@@ -397,7 +400,7 @@ public class EventView extends JDialog {
 	     }
 	  }
 
-	  private void createComboBox() {
+	  private void createComboBox(CalendarView calendar) {
 	      cmbStato = new JComboBox<>();
 	      cmbStato.setBounds(104, 107, 120, 30);
 	      cmbStato.addItem(" ");
@@ -406,10 +409,10 @@ public class EventView extends JDialog {
 	      cmbStato.addItem("Concluso");
 	      contentPanel.add(cmbStato);
 
-	      cmbStato.addActionListener(e -> updateState());
+	      cmbStato.addActionListener(e -> updateState(calendar));
 	  }
 
-	  private void updateState() {
+	  private void updateState(CalendarView calendar) {
 	      String statoString = (String) cmbStato.getSelectedItem();
 	      stato = switch (statoString) {
 	          case "Da avviare" -> State.DA_AVVIARE;
@@ -417,6 +420,7 @@ public class EventView extends JDialog {
 	          case "Concluso" -> State.CONCLUSO;
 	          default -> State.V;
 	      };
+	      calendar.updateLegenda(controller.getAllEventToFile());
 	  }
 
 }
