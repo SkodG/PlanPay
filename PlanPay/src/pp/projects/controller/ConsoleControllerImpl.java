@@ -25,7 +25,7 @@ import pp.projects.model.ObjectiveImpl;
 import pp.projects.model.OperationType;
 import pp.projects.model.Services;
 import pp.projects.model.State;
-import pp.projects.model.Transaction;
+import pp.projects.model.TransactionImpl;
 import pp.projects.view.CalendarView;
 
 public class ConsoleControllerImpl implements ConsoleController{
@@ -146,7 +146,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	}
 	
 	@Override
-	public List<Transaction> getAllTransactions() {
+	public List<TransactionImpl> getAllTransactions() {
 		return operationsList.stream()
 							  .flatMap(operat -> operat.getList().stream())
 							  .collect(Collectors.toList());

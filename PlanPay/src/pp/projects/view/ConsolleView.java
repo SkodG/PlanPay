@@ -2,7 +2,7 @@ package pp.projects.view;
 
 import javax.swing.*;
 
-import pp.projects.controller.ConsoleControllerImpl;
+import pp.projects.controller.ConsoleController;
 import pp.projects.model.Account;
 import pp.projects.model.ComparatorEvents;
 import pp.projects.model.OperationType;
@@ -49,13 +49,13 @@ public class ConsolleView extends JFrame {
 	private int count;
 	private String headerText;
 	
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 	private CalendarView calendarView;
 	private ServicesView servicesView;
 	private ConsolleObjectiveView consolleObjectiveView;
 	private Account account;
 	
-	public ConsolleView(ConsoleControllerImpl c, Account account) throws IOException {
+	public ConsolleView(ConsoleController c, Account account) throws IOException {
 		setTitle("CONSOLLE");
 		this.controller = c;
 		this.servicesView = new ServicesView(OperationType.SERVIZIO, "", c);//modificato costruttore

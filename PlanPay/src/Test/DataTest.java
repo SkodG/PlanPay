@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 
 import pp.projects.model.EventImpl;
 import pp.projects.model.State;
-import pp.projects.model.Transaction;
+import pp.projects.model.TransactionImpl;
 
 class DataTest {
 
 	private EventImpl event;
-	private Transaction transaction;
+	private TransactionImpl transaction;
 	
 	@BeforeEach
     public void setUp() {
 		event = new EventImpl("Urbino", "Consegna progetto PMO", LocalDate.of(2024, 07, 12), "09:00", "12:00", State.DA_AVVIARE, "Urbino " + LocalDate.of(2024, 07, 12).toString());
-		transaction = new Transaction(LocalDate.now(), "Deposito Obbiettivo viaggio", 100.0);
+		transaction = new TransactionImpl(LocalDate.now(), "Deposito Obbiettivo viaggio", 100.0);
 	}
 	
 	@Test

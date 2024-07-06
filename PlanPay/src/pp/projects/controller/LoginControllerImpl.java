@@ -16,7 +16,7 @@ public class LoginControllerImpl implements LoginController{
 	private SignupView signupView;
 	private String userName;
 	private ConsolleView consolleView;
-	private ConsoleControllerImpl controller;
+	private ConsoleController controller;
 	
 	public LoginControllerImpl() throws IOException {
 		this.loginModel = new LoginImpl();

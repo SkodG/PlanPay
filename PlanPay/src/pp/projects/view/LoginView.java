@@ -1,10 +1,12 @@
 package pp.projects.view;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -13,6 +15,8 @@ import pp.projects.model.AuthenticationException;
 
 import java.awt.Font;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Color;
 import javax.swing.UIManager;
 
@@ -21,7 +25,7 @@ public class LoginView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField edUser;
-	private JTextField edPassword;
+	private JPasswordField edPassword;
 	private String username;
 	private String password;
 
@@ -32,7 +36,7 @@ public class LoginView extends JFrame {
 		
 		setTitle("LOGIN");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 395, 428);
+		setBounds(100, 100, 410, 428);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -46,8 +50,26 @@ public class LoginView extends JFrame {
         JLabel lbPassword = createLabel("Password", 10, 129, 90, 21, 16);
 
         edUser = createTextField(10, 64, 361, 33, 16);
-        edPassword = createTextField(10, 156, 361, 33, 16);
+        edPassword = new JPasswordField(16);
+        edPassword.setBounds(10, 156, 328, 33);
 
+        JButton btnShowPassword = new JButton(new ImageIcon("/images/show_pwd.png"));
+        btnShowPassword.setBounds(341, 156, 45, 33);
+        btnShowPassword.addActionListener(new ActionListener() {
+            private boolean showingPassword = false;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (showingPassword) {
+                	edPassword.setEchoChar('*');
+                } else {
+                	edPassword.setEchoChar((char) 0);
+                }
+                showingPassword = !showingPassword;
+            }
+        });
+
+        
         JButton btnLogin = createButton("Login", 99, 219, 207, 52, 28, new Color(41, 235, 20), Color.WHITE);
         btnLogin.addActionListener(e -> handleLogin(controller));
 
@@ -64,6 +86,7 @@ public class LoginView extends JFrame {
         contentPane.add(lbPassword);
         contentPane.add(edUser);
         contentPane.add(edPassword);
+        contentPane.add(btnShowPassword);
         contentPane.add(btnLogin);
         contentPane.add(btnNew);
         contentPane.add(lbNew);
@@ -79,7 +102,7 @@ public class LoginView extends JFrame {
     private JTextField createTextField(int x, int y, int width, int height, int fontSize) {
         JTextField textField = new JTextField();
         textField.setFont(new Font("Calibri", Font.PLAIN, fontSize));
-        textField.setBounds(x, y, width, height);
+        textField.setBounds(10, 64, 376, 33);
         return textField;
     }
 

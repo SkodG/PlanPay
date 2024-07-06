@@ -7,7 +7,7 @@ import java.util.List;
 public abstract class AbstractOperations {
 	
 	
-    protected List<Transaction> transactionList;
+    protected List<TransactionImpl> transactionList;
     protected Account accountRef;
 
     public AbstractOperations(Account accountRef) {
@@ -16,11 +16,9 @@ public abstract class AbstractOperations {
     }
 
     public boolean deposit(double amount, String desc) {
-    	//if(amount < 0.0)
-    		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doDeposit(amount);
         if(success) {
-        	transactionList.add(new Transaction(LocalDate.now(), " Deposito "+ getTransactionType() + desc, amount));
+        	transactionList.add(new TransactionImpl(LocalDate.now(), " Deposito "+ getTransactionType() + desc, amount));
         }
         return success;
         
@@ -28,11 +26,9 @@ public abstract class AbstractOperations {
     }
 
     public boolean withdraw(double amount, String desc) {
-    	//if(amount < 0.0)
-    		//throw new IllegalInputException("Valore negativo non valido!");
         boolean success = doWithdraw(amount);
         if (success) {
-            transactionList.add(new Transaction(LocalDate.now(), " Prelievo "+ getTransactionType() + desc, amount));
+            transactionList.add(new TransactionImpl(LocalDate.now(), " Prelievo "+ getTransactionType() + desc, amount));
         }
         return success;
     }
@@ -41,7 +37,7 @@ public abstract class AbstractOperations {
     protected abstract boolean doWithdraw(double amount);
     protected abstract String getTransactionType();
 
-    public List<Transaction> getList() {
+    public List<TransactionImpl> getList() {
         return transactionList;
     }
     
