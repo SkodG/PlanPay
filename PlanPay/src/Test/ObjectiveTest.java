@@ -89,7 +89,7 @@ class ObjectiveTest {
 		assertTrue(objective2.isTargetMet());
 		assertTrue(objective2.withdraw(250.0, "Ritiro la differenza"));
 	}
-	//TODO  assertEquals(objective1.hashCode(), sameObjective1.hashCode());
+
 	@Test
 	public void testSavingForecast() {
 		assertThrows(IllegalInputException.class, 
@@ -112,15 +112,19 @@ class ObjectiveTest {
 	
 	@Test
 	public void testDelete() {
-		account.addBalance(4000.0);
+		account.addBalance(40000.0);
+		objective1.deposit(30000.0, "vendita Tesla");
 		objective2.deposit(700, "vendita Ps5");
-		assertTrue(account.getBalance() == 3300.0);
+		assertTrue(account.getBalance() == 9300.0);
 		objective2.reset();
-		assertTrue(account.getBalance() == 4000.0);
-		assertTrue(account.getTransactionList().size() == 2 &&
-					account.getTransactionList().get(1).getName().equals(" Prelievo Obbiettivo 'Gaming' cancellato"));
+		assertTrue(account.getBalance() == 10000.0);
+		assertTrue(account.getTransactionList().size() == 3 &&
+					account.getTransactionList().get(2).getName().equals(" Prelievo Obbiettivo 'Gaming' cancellato"));
 		objective2.reset();
-		assertTrue(account.getBalance() == 4000.0);
-		assertTrue(account.getTransactionList().size() == 2);
+		assertTrue(account.getBalance() == 10000.0);
+		assertTrue(account.getTransactionList().size() == 3);
+		objective1.reset();
+		assertTrue(account.getBalance() == 40000.0);
+		assertTrue(account.getTransactionList().size() == 4);
 	}
 }

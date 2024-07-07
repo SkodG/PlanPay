@@ -36,7 +36,7 @@ class TransactionTest {
 			controller.updateConto(125.0, true, "vendita bici usata", OperationType.SERVIZIO);
 			controller.updateConto(40.8, false, "Cena Fuori", OperationType.SERVIZIO);
 			controller.updateConto(11.0, false, "Abbonamento Netflix", OperationType.SERVIZIO);
-		} //TODO Fare operazioni anche su obbbiettivi per testare le transazioni su obbiettivi
+		}
 		catch(IllegalOperationException e) {
 			e.printStackTrace();
 		}
@@ -81,10 +81,10 @@ class TransactionTest {
 		assertTrue(trList.get(4).getAmount() == 99.99);
 		
 		assertTrue(trList.get(0).getName().equals(" Deposito Servizio Vendita vecchia auto"));
-		assertTrue(trList.get(1).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
-		assertTrue(trList.get(2).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
-		assertTrue(trList.get(3).getName().equals(" Deposito Obbiettivo modello 9xT4 'Friggitrice'"));
-		assertTrue(trList.get(4).getName().equals(" Prelievo Obbiettivo modello 9xT4 'Friggitrice'"));
+		assertTrue(trList.get(1).getName().equals(" Deposito Obbiettivo 'Friggitrice'"));
+		assertTrue(trList.get(2).getName().equals(" Deposito Obbiettivo 'Friggitrice'"));
+		assertTrue(trList.get(3).getName().equals(" Deposito Obbiettivo 'Friggitrice'"));
+		assertTrue(trList.get(4).getName().equals(" Prelievo Obbiettivo 'Friggitrice'"));
 		
 		// Verifico la data delle transazioni
 		LocalDate actualDate = LocalDate.now();
