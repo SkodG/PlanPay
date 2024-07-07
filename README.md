@@ -1,5 +1,5 @@
 # PlanPay
-Repository per il progetto 'PlanPay' per la sessione estiva dell'a.a. 2023/2024
+Repository per il progetto d'esame di PMO 'PlanPay' per la sessione estiva dell'a.a. 2023/2024
 ## Partecipanti:
 
 - Alesandro Scodavolpe 296151
