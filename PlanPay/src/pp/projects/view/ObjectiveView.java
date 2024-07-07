@@ -56,6 +56,7 @@ public class ObjectiveView extends JFrame {
 		description = updateDescription(nomeObbiettivo);
 		balance = updateBalance(nomeObbiettivo);
 		hasSaved = false;
+		
 		setTitle("OBBIETTIVO "+nomeObbiettivo+" - Data: "+date.toString());		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 484, 225);

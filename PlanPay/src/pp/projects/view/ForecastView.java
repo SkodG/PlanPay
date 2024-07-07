@@ -195,7 +195,7 @@ public class ForecastView extends JFrame {
 		btnCalculate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(optObjective.isPresent()) {//TODO sostituire con un  excpetion? es ObjectiveNotFoundException
+					if(optObjective.isPresent()) {
 						years = Integer.parseInt(textYears.getText());
 						months = Integer.parseInt(textMonths.getText());						
 						if(comboBox.getSelectedItem().equals("Altro")) 

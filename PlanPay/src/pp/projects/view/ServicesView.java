@@ -87,8 +87,7 @@ public class ServicesView extends JFrame {
 						JOptionPane.showMessageDialog(null, "Inserire un valore numerico  per l'operazione!", 
 								"Errore", JOptionPane.ERROR_MESSAGE);
 						textAmount.setText("0,00");
-					}
-					
+					}					
 				}				
 			}				
 		});
@@ -186,7 +185,7 @@ public class ServicesView extends JFrame {
 				else
 					//messaggio di errore 
 					JOptionPane.showMessageDialog(null, 
-							"Obbiettivo non trovato! creare obbiettivo "+ operationName +" prima di effettuare un'operazione!",
+							"Obbiettivo non trovato! creare obbiettivo '"+ operationName +"' prima di effettuare un'operazione!",
 							"Errore", JOptionPane.ERROR_MESSAGE);
 			break;				
 		} 

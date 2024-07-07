@@ -48,9 +48,7 @@ public class ListObjectiveView extends JPanel {
         		ObjectiveView newObjective = new ObjectiveView(false, name, date, controller, consolleObj);
         		newObjective.setVisible(true);
         	}
-        
-        });
-        
+        });        
         add(btnNewButton);
         
         JLabel lblBalance = new JLabel("Saldo: "+ Double.toString(balance)+"€");
@@ -58,7 +56,6 @@ public class ListObjectiveView extends JPanel {
         lblBalance.setVerticalAlignment(SwingConstants.BOTTOM);
         lblBalance.setFont(new Font("Calibri", Font.PLAIN, 14));
         add(lblBalance);
-        
         
         JButton btnNewButton_1 = new JButton("Elimina");
         btnNewButton_1.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -68,9 +65,7 @@ public class ListObjectiveView extends JPanel {
         		consolleObj.updateUI();
         	}
         });
-        add(btnNewButton_1);
-        
-        
+        add(btnNewButton_1);      
         setVisible(true);
 	}
 }

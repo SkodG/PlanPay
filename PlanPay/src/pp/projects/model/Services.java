@@ -9,7 +9,9 @@ public class Services extends AbstractOperations {
 		super(account);
 	}
 	/**
-	 * effettua la richiesta di deposito all'Account
+	 * Effettua richiesta di deposito al saldo di Account
+	 * @param amount
+     * @return true se la richiesta di deposito viene accettata, false in caso contrario
 	 */
 	@Override
 	protected boolean doDeposit(double amount) {
@@ -17,7 +19,9 @@ public class Services extends AbstractOperations {
 		return true;
 	}
 	/**
-	 * effettua la richiesta di prelievo all'Account
+	 * Effettua richiesta di prelievo al saldo di Account
+	 * @param amount
+     * @return true se la richiesta di prelievo viene accettata, false in caso contrario
 	 */
 	@Override
 	protected boolean doWithdraw(double amount) {

@@ -34,7 +34,7 @@ public interface Objective extends Data {
 	 */
 	public void setSavingTarget(double newTarget);	
 	/**
-	 * se il saldo dell'obbiiettivo non è nullo, resetta la soglia di risparmio e restituisce all'Account
+	 * se il saldo dell'obbiettivo non è nullo, resetta la soglia di risparmio e restituisce all'Account
 	 * tutto l'ammontare versato
 	 */
 	public void reset();

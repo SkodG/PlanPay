@@ -71,11 +71,11 @@ public class ConsolleObjectiveView extends JFrame {
 				objectiveList = consoleController.getObjectiveList();
 				//reset del panel e della lista
 				if(objectiveList.isEmpty())
-					JOptionPane.showMessageDialog(null, "Nessun elemento da eliminare", "Attenzione", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Nessun elemento da eliminare", 
+							"Attenzione", JOptionPane.ERROR_MESSAGE);
 				else {
 					panel.removeAll();
-					for(Objective o : objectiveList)
-						controller.removeObjective(o.getName());
+					objectiveList.stream().forEach(o -> controller.removeObjective(o.getName()));
 					updateUI();
 				}					
 			}
