@@ -1,7 +1,5 @@
 package pp.projects.model;
 
-import java.util.List;
-
 public interface Objective extends Data {
 	/**
 	 * 
@@ -20,13 +18,41 @@ public interface Objective extends Data {
 	 *  altrimenti false
 	 */
 	public boolean isTargetMet();
-	
+	/**
+	 * 
+	 * @return balance = il bilancio attuale dell'Obbiettivo
+	 */
 	public double getBalance();
-	public double getSavingTarget();	
+	/**
+	 * 
+	 * @return savingTarget = la soglia di risparmio dell'obbiettivo
+	 */
+	public double getSavingTarget();
+	/**
+	 * modifica la soglia di risparmio dell'obbiettivo
+	 * @param newTarget
+	 */
 	public void setSavingTarget(double newTarget);	
-	
-    public List<Transaction> getList();
+	/**
+	 * se il saldo dell'obbiiettivo non è nullo, resetta la soglia di risparmio e restituisce all'Account
+	 * tutto l'ammontare versato
+	 */
+	public void reset();
+    /**
+     * Richiede di effettuare un deposito ad Account tramite doWithDraw(amount)
+     * Se la richiesta è accettata aggiunge una nuova transazione alla lista dell'Account
+     * @param amount
+     * @param desc = causale
+     * @return true se l'operazione va a buon fine, false se viene rifiutata
+     */
     public boolean deposit(double amount, String desc);
+    /**
+     * Richiede di effettuare un prelievo ad Account tramite doWithDraw(amount)
+     * Se la richiesta è accettata aggiunge una nuova transazione alla lista dell'Account
+     * @param amount
+     * @param desc = causale
+     * @return true se l'operazione va a buon fine, false se viene rifiutata
+     */
     public boolean withdraw(double amount, String desc);
 }
 

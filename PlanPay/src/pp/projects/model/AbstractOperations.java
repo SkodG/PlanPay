@@ -1,45 +1,51 @@
 package pp.projects.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractOperations {
 	
 	
-    protected List<TransactionImpl> transactionList;
     protected Account accountRef;
 
     public AbstractOperations(Account accountRef) {
         this.accountRef = accountRef;
-        this.transactionList = new ArrayList<>();
     }
 
+    /**
+     * Richiede di effettuare un deposito ad Account tramite doWithDraw(amount)
+     * Se la richiesta è accettata aggiunge una nuova transazione alla lista dell'Account
+     * @param amount
+     * @param desc = causale
+     * @return true se l'operazione va a buon fine, false se viene rifiutata
+     */
     public boolean deposit(double amount, String desc) {
         boolean success = doDeposit(amount);
         if(success) {
-        	transactionList.add(new TransactionImpl(LocalDate.now(), " Deposito "+ getTransactionType() + desc, amount));
+        	accountRef.addTransaction(new TransactionImpl(LocalDate.now(), " Deposito "+ getTransactionType() + desc, amount));
         }
-        return success;
-        
-        
+        return success;    
     }
-
+    /**
+     * Richiede di effettuare un prelievo ad Account tramite doWithDraw(amount)
+     * Se la richiesta è accettata aggiunge una nuova transazione alla lista dell'Account
+     * @param amount
+     * @param desc = causale
+     * @return true se l'operazione va a buon fine, false se viene rifiutata
+     */
     public boolean withdraw(double amount, String desc) {
         boolean success = doWithdraw(amount);
         if (success) {
-            transactionList.add(new TransactionImpl(LocalDate.now(), " Prelievo "+ getTransactionType() + desc, amount));
+        	accountRef.addTransaction(new TransactionImpl(LocalDate.now(), " Prelievo "+ getTransactionType() + desc, amount));
         }
         return success;
     }
 
     protected abstract boolean doDeposit(double amount);
     protected abstract boolean doWithdraw(double amount);
+    /**
+     * 
+     * @return stringa di informazioni sul tipo di Operazione (Servizio o Obbiettivo)
+     */
     protected abstract String getTransactionType();
-
-    public List<TransactionImpl> getList() {
-        return transactionList;
-    }
-    
-    abstract public String nome();
+    public abstract String nome();
 }

@@ -44,13 +44,6 @@ public class ObjectiveView extends JFrame {
 	private String nomeObbiettivo;
 	private Optional<Objective> optObjective;
 	
-	
-	// quando nella view ConsolleObbiettivi inserisci il bottone "Nuovo" (x creare un nuovo obbiettivo).
-	// al click del bottone instanzierai una nuova istanza di ObjectiveView, passandogli True, definendo quindi la creazione di una nuova istanza.
-	
-	// quando nella view ConsolleObbiettivi inserisci il bottone "Apri", 
-	//oppure apri l'obbiettivo con il doppio click sull'obbettivo (x modificare obbiettivo).
-	// instanzi una nuova istanza di ObjectiveView, passandogli False, definendo quindi la modifica dell'istanza.
 	/**
 	 * Create the frame.
 	 */
@@ -79,10 +72,11 @@ public class ObjectiveView extends JFrame {
 		JButton btnProjection = new JButton("Previsione");
 		btnProjection.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				optObjective = controller.getObjective(nomeObbiettivo);
 				if(optObjective.isPresent()) {
-					String name= optObjective.get().getName();
+					String name = optObjective.get().getName();
 					ForecastView forecast = new ForecastView(controller, name);
-				forecast.setVisible(true);
+					forecast.setVisible(true);
 				}
 				else
 					JOptionPane.showMessageDialog(null, "Obbiettivo non creato", "Errore", JOptionPane.ERROR_MESSAGE);					
@@ -214,7 +208,7 @@ public class ObjectiveView extends JFrame {
 				btnSave.doClick();
 				// apro il form di ServicesView solo se l'obbettivo è stato salvato
 				// e non sto creando un nuovo obbiettivo con lo stesso nome di un obbiettivo già presente
-				if(!bNew || hasSaved) {
+				if((!bNew || hasSaved) && controller.getObjective(nomeObbiettivo).isPresent()) {
 					ServicesView serviceView = new ServicesView(OperationType.OBIETTIVO, textName.getText(), controller);
 					serviceView.setVisible(true);
 					setVisible(false);

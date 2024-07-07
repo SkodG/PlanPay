@@ -43,8 +43,6 @@ class ObjectiveTest {
 		assertFalse(objective2.isTargetMet());
 		assertTrue(objective1.getDate().equals(actualDayMonth));	
 		assertTrue(objective2.getDate().equals(actualDayMonth));
-		assertTrue(objective1.getList().isEmpty());
-		assertTrue(objective2.getList().isEmpty());
     }
     
 	@Test
@@ -71,7 +69,6 @@ class ObjectiveTest {
 		assertTrue(objective1.deposit(280.22, "risparmi mese"));
 		assertTrue(objective1.getBalance() == 280.22);
 		assertFalse(objective1.withdraw(50.0, "tentativo di prelievo1"));
-		assertTrue(objective1.getList().size() == 1);
 		assertTrue(account.getBalance() == 0.0);
 		
 		account.addBalance(700);
@@ -79,7 +76,6 @@ class ObjectiveTest {
 		assertTrue(objective2.isTargetMet());
 		assertTrue(objective2.withdraw(700.0, "Compro PS5 e giochi"));
 		assertTrue(objective2.getBalance() == 0.0);
-		assertTrue(objective2.getList().size() == 2);
 		assertTrue(account.getBalance() == 700.0);
 		
 		// Verifico che la possibilità di prelevare non rimanga tale 
@@ -95,7 +91,7 @@ class ObjectiveTest {
 	}
 	//TODO  assertEquals(objective1.hashCode(), sameObjective1.hashCode());
 	@Test
-	public void TestSavingForecast() {
+	public void testSavingForecast() {
 		assertThrows(IllegalInputException.class, 
 				() -> objective2.savingForecast(0, 0, 0, 0, false));		
 		assertThrows(IllegalInputException.class, 
@@ -112,5 +108,19 @@ class ObjectiveTest {
 		} catch (IllegalInputException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testDelete() {
+		account.addBalance(4000.0);
+		objective2.deposit(700, "vendita Ps5");
+		assertTrue(account.getBalance() == 3300.0);
+		objective2.reset();
+		assertTrue(account.getBalance() == 4000.0);
+		assertTrue(account.getTransactionList().size() == 2 &&
+					account.getTransactionList().get(1).getName().equals(" Prelievo Obbiettivo 'Gaming' cancellato"));
+		objective2.reset();
+		assertTrue(account.getBalance() == 4000.0);
+		assertTrue(account.getTransactionList().size() == 2);
 	}
 }

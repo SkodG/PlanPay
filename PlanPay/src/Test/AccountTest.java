@@ -21,13 +21,12 @@ class AccountTest {
 		//testo che l'account sia stato inizializzato con successo
 		assertTrue(account.getName().equals("Luca"));
 		assertTrue(account.getBalance() == 0.0);
+		assertTrue(account.getTransactionList().size() == 0);
 		
 	}
 	
 	@Test
 	public void testEquals() {
-		/*AccountImpl sameAccount = new AccountImpl("Luca");
-		assertTrue(account.equals(sameAccount));*/
 		AccountImpl diffAccount = new AccountImpl("Sara");
 		assertFalse(account.equals(diffAccount));
 	}
@@ -37,18 +36,14 @@ class AccountTest {
 		//test sulle operazioni di aggiunta e sottrazione dal saldo dell'account
 		account.addBalance(100);
 		assertTrue(account.getBalance() == 100);
-		account.setBalance(0.0);
-		assertTrue(account.getBalance() == 0.0);
-		account.addBalance(1000);
+		account.addBalance(900);
 		assertTrue(account.subBalance(500));
 		assertTrue(account.getBalance() == 500.0);
 		//se prelevo una quantità superiore al saldo dell'account restituisce false
 		//e non diminuisce il saldo
 		assertFalse(account.subBalance(10000));
-		//testo che l'operazione non sia effettivamente avvenuta (il saldo è invariato)
+		//testo che l'operazione non sia avvenuta (il saldo è invariato)
 		assertTrue(account.getBalance() == 500.0);
-		account.setBalance(300.45);
-		assertTrue(account.getBalance() == 300.45);
 	}
 	
 }

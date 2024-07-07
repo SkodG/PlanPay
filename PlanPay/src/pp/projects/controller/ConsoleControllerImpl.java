@@ -134,8 +134,9 @@ public class ConsoleControllerImpl implements ConsoleController{
 		if (!objective.isPresent()) {
 	        throw new IllegalStateException("Obbiettivo inesistente! Impossibile cancellarlo.");
 	    }
-		objective.get().delete();
+		objective.get().reset();
 	    operationsList.remove(objective.get());
+	    controllerLogin.getConsolleView().updateUIconto();
 	}
 	
 	@Override
@@ -148,9 +149,7 @@ public class ConsoleControllerImpl implements ConsoleController{
 	
 	@Override
 	public List<Transaction> getAllTransactions() {
-		return operationsList.stream()
-							  .flatMap(operat -> operat.getList().stream())
-							  .collect(Collectors.toList());
+		return Collections.unmodifiableList(account.getTransactionList());
 	}
 	
 	@Override

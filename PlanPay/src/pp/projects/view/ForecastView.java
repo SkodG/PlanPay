@@ -56,10 +56,10 @@ public class ForecastView extends JFrame {
 		Optional<Objective> optObjective = controller.getObjective(objectiveName);
 		if(optObjective.isPresent()) 
 			target = optObjective.get().getSavingTarget();
-		else
+		else {
 			JOptionPane.showMessageDialog(null, "Obbiettivo non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
-		//TODO chiudere la finestra
-
+			this.dispose();
+		}
 
 		setTitle("RISPARMIO PER OBBIETTIVO: "+ objectiveName);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

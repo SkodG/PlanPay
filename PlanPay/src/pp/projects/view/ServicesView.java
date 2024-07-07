@@ -120,33 +120,6 @@ public class ServicesView extends JFrame {
 				//do messaggio di errore
 				try {
 					DoOperation(Amount, true, operationName, operationType);
-					/**if(textName.getText().trim().isEmpty() && operationType == OperationType.SERVIZIO) {
-						JOptionPane.showMessageDialog(null, "Inserire una causale ", "Errore", JOptionPane.ERROR_MESSAGE);
-					}
-					else if(operationType == OperationType.SERVIZIO) {
-						controller.updateConto(Amount, true, textName.getText().trim(), operationType);
-						setVisible(false);
-						textAmount.setText("0,00");
-						textName.setText("");
-					}
-					else if(operationType == OperationType.OBIETTIVO) {
-						//cerco nella lista degli obbiettivi 
-						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
-						//se trovo l'obbiettivo posso eseguire l'operazione
-						if(optObjective.isPresent()) {
-							System.out.println("deposito in "+optObjective.get().getName());
-							controller.updateConto(Amount, true, operationName, operationType);
-							setVisible(false);
-							textAmount.setText("0,00");
-							textName.setText("");
-						}
-						else {
-							//messaggio di errore 
-							JOptionPane.showMessageDialog(null, 
-								"Obbiettivo non trovato! creare obbiettivo "+ operationName +" prima di effettuare un'operazione!",
-								"Errore", JOptionPane.ERROR_MESSAGE);
-						}				
-					} **/
 				}catch( IllegalOperationException i) {
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 				}
@@ -162,44 +135,6 @@ public class ServicesView extends JFrame {
 				//Se questa view è stata chiamata dalla consoleView
 				try {
 					DoOperation(Amount, false, operationName, operationType);
-					/**if(textName.getText().trim().isEmpty() && operationType == OperationType.SERVIZIO) {
-					 	JOptionPane.showMessageDialog(null, "Inserire una causale", "Errore", JOptionPane.ERROR_MESSAGE);
-					 }
-					else if(operationType == OperationType.SERVIZIO) {
-						controller.updateConto(Amount, false, textName.getText().trim(), operationType);
-						System.out.println(result);
-						//Controllo che l'operazione sia avvenuta
-						if(!result) 
-							JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
-									"Errore", JOptionPane.ERROR_MESSAGE);
-						else {
-							setVisible(false);
-							textName.setText("");
-							textAmount.setText("0,00");
-							Amount = 0.0;
-						}
-							
-					}
-					else if(operationType == OperationType.OBIETTIVO) {
-						//cerco nella lista degli obbiettivi 
-						Optional<ObjectiveImpl> optObjective = controller.getObjective(operationName);
-						//se trovo l'obbiettivo posso eseguire l'operazione
-						if(optObjective.isPresent()) {
-							controller.updateConto(Amount, false, operationName, operationType);
-							//Controllo che l'operazione sia avvenuta
-							if(!result) 
-								JOptionPane.showMessageDialog(null, "Operazione non riuscita! Fondi non sufficienti per prelievo",
-										"Errore", JOptionPane.ERROR_MESSAGE);
-							else
-								setVisible(false);
-						}
-						else {
-							//messaggio di errore 
-							JOptionPane.showMessageDialog(null, 
-									"Obbiettivo non trovato! creare obbiettivo "+ operationName +" prima di effettuare un'operazione!",
-									"Errore", JOptionPane.ERROR_MESSAGE);
-						}										
-					}**/
 				} 
 				catch(IllegalArgumentException | IllegalOperationException i){
 					JOptionPane.showMessageDialog(null, i.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

@@ -44,7 +44,7 @@ public class ObjectiveImpl extends AbstractOperations implements Objective {
 	
 	@Override
 	protected String getTransactionType() {
-		return "Obbiettivo " + getDescription()+" ";
+		return "Obbiettivo ";
 	}
 	
 	
@@ -122,5 +122,12 @@ public class ObjectiveImpl extends AbstractOperations implements Objective {
 			return true;		
 		else
 			return false;
+	}
+
+	@Override
+	public void reset() {
+		setSavingTarget(0.0);
+		if(getBalance() > 0.0)
+			withdraw(getBalance(), "'"+getName()+"'"+" cancellato");
 	}
 }

@@ -1,13 +1,18 @@
 package pp.projects.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccountImpl implements Account{
 	
 	private String name;
 	private Double balance;
+	private List<Transaction> transactionList;
 	
 	public AccountImpl(String name) {
 		this.name = name;
 		this.balance = 0.0;
+		this.transactionList = new ArrayList<>();
 	}
 	
 	@Override
@@ -16,13 +21,8 @@ public class AccountImpl implements Account{
 	}
 
 	@Override
-	public Double getBalance() {
+	public double getBalance() {
 		return Math.floor(balance*100) / 100;
-	}
-
-	@Override
-	public void setBalance(Double balance) {
-		this.balance = balance;		
 	}
 
 	@Override
@@ -30,8 +30,6 @@ public class AccountImpl implements Account{
 		this.balance += amount;		
 	}
 
-	// restituisce true se è stata prelevata la somma
-	// tenendo conto che non si può prelevare più del saldo corrente
 	@Override 
 	public boolean subBalance(double amount) {
 		boolean legalOp = false;
@@ -40,5 +38,16 @@ public class AccountImpl implements Account{
 			legalOp = true;
 		}
 		return legalOp;
+	}
+
+	@Override
+	public List<Transaction> getTransactionList() {
+		return transactionList;
+	}
+
+	@Override
+	public void addTransaction(Transaction transaction) {
+		transactionList.add(transaction);
+		
 	}
 }
