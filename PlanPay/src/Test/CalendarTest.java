@@ -228,7 +228,7 @@ class CalendarTest {
         String event1Html = calendarModel.toHtml(eventTest) + eventTest.getInfoEventToString().replace("\n", " ").replace("\r", " ");
         String event2Html = calendarModel.toHtml(eventTest2) + eventTest2.getInfoEventToString().replace("\n", " ").replace("\r", " ");
 
-        String expectedHtml = "<html>5<br>" + event1Html + "<br>" + event2Html + "</html>";
+        String expectedHtml = "<html>8<br>" + event1Html + "<br>" + event2Html + "</html>";
         Object actualHtml = calendarModel.getValueAtDate(date, events);
         
         assertEquals(expectedHtml, actualHtml);

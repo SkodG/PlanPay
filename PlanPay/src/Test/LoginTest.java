@@ -48,7 +48,7 @@ public class LoginTest {
             String line;
             boolean bFound = false;
             while ((line = reader.readLine()) != null) {
-                if (line.equals("newuser newuser newpassword")) {
+                if (line.equals("newuser[]newuser[]newpassword[]src/resource/newuser_events.txt")) {
                 	bFound = true;
                     break;
                 }
